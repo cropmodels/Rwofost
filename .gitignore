@@ -1,0 +1,42 @@
+*~
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+symbols.rds
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# zip files
+*.zip
+
+*.tar.gz
+*Rcheck/
+*.o
+*.so
+*.exe
+*.Rhistory
+*.R~
+*.Rproj.user
+*.Rbuildignore
+*.Rproj
+.Rproj.user
+
+.DS_Store
