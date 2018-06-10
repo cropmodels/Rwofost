@@ -8,10 +8,9 @@ Imports: methods, Rcpp (>= 0.12.4)
 Depends: meteor (>= 0.2-2)
 SystemRequirements: C++11
 Authors@R: c(
-	person("Robert J.", "Hijmans", role = c("cre", "aut"))
-	person("Huang", "Fang", role = c("aut"))
+	person("Robert J.", "Hijmans", role = c("cre", "aut"),  email = "r.hijmans@gmail.com"),
+	person("Huang", "Fang", role = "ctb")
 )
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Description: An implementation of the WOFOST crop growth simulation model.
-License: GPL (>=3)
-
+License: GPL (>=3) + file LICENSE 
