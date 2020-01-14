@@ -1,4 +1,11 @@
 
+
+example_weather <- function() {
+	f <- system.file("extdata/18419.rds", package="meteor")
+	readRDS(f)
+}
+
+
 .trim2 <- function(x) return(gsub("^ *|(?<= ) | *$", "", x, perl=TRUE))
 
 .w <- function() {
