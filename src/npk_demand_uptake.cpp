@@ -317,9 +317,9 @@ void WofostModel::npk_demand_uptake_rates() {
 void WofostModel::npk_demand_uptake_states() {
 
 //       Maximum NPK concentrations in leaves [kg N kg-1 DM]
-        double NMAXLV = AFGEN(crop.pn.NMAXLV_TB, crop.DVS);
-        double PMAXLV = AFGEN(crop.pn.PMAXLV_TB, crop.DVS);
-        double KMAXLV = AFGEN(crop.pn.KMAXLV_TB, crop.DVS);
+        double NMAXLV = AFGEN2(crop.pn.NMAXLV_TB, crop.DVS);
+        double PMAXLV = AFGEN2(crop.pn.PMAXLV_TB, crop.DVS);
+        double KMAXLV = AFGEN2(crop.pn.KMAXLV_TB, crop.DVS);
         //std::cout << "NMAXLV: " << NMAXLV << std::endl;
 
 //       Maximum NPK concentrations in stems and roots [kg N kg-1 DM]

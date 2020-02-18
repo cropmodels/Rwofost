@@ -165,7 +165,7 @@ void WofostModel::WATFD_rates() {
       if (soil.p.IFUNRN == 0) {
         RINPRE = (1. - soil.p.NOTINF) * atm.RAIN + soil.RIRR + soil.SS/DELT;
       } else {
-        RINPRE = (1. -soil.p.NOTINF * AFGEN(soil.p.NINFTB, atm.RAIN)) * atm.RAIN + soil.RIRR + soil.SS / DELT;
+        RINPRE = (1. -soil.p.NOTINF * AFGEN2(soil.p.NINFTB, atm.RAIN)) * atm.RAIN + soil.RIRR + soil.SS / DELT;
       }
    } else {
 //  with surface storage, infiltration limited by p.SOPE

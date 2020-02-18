@@ -48,7 +48,7 @@ double SUBSOL(double PF, double D, std::vector<double> CONTAB) { // flow is outp
       double D1  = D;
       double MH  = std::exp(ELOG10*PF1);
       if (PF1 <= 0.){
-         double K0 = std::exp( ELOG10 * AFGEN(CONTAB, -1.) );
+         double K0 = std::exp( ELOG10 * AFGEN2(CONTAB, -1.) );
          FLOW = K0 * (MH/D - 1.);
 
          return FLOW;
@@ -70,14 +70,14 @@ double SUBSOL(double PF, double D, std::vector<double> CONTAB) { // flow is outp
                   // the three points in the last interval are calculated
                      if(IINT <= 3) PFGAU[I3] = log10(START[IINT] + PGAU[k] * DEL[IINT]);
                      if(IINT == 4) PFGAU[I3] = LOGST4 + PGAU[k] * DEL[IINT];
-                     CONDUC[I3] = std::exp( ELOG10 * AFGEN(CONTAB, PFGAU[I3]) );
+                     CONDUC[I3] = std::exp( ELOG10 * AFGEN2(CONTAB, PFGAU[I3]) );
                      HULP[I3]   = DEL[j] * WGAU[k] * CONDUC[I3];
                      if(I3 > 9) HULP[I3] = HULP[I3] * ELOG10 * std::exp( ELOG10 * PFGAU[I3] );
                   }
                   else{
                      // the three points in the full-width intervals are standard
                      // variables needed in the loop below
-                     CONDUC[I3] = std::exp( ELOG10 * AFGEN(CONTAB, PFGAU[I3]) );
+                     CONDUC[I3] = std::exp( ELOG10 * AFGEN2(CONTAB, PFGAU[I3]) );
                      HULP[I3]   = DEL[j] * WGAU[k] * CONDUC[I3];
                      if(I3 > 9) HULP[I3] = HULP[I3] * ELOG10 * std::exp( ELOG10 * PFGAU[I3] );
                   }
@@ -92,7 +92,7 @@ double SUBSOL(double PF, double D, std::vector<double> CONTAB) { // flow is outp
 
 //15.5 setting upper and lower limit
       double FU =  1.27;
-      double FL = -1. * std::exp( ELOG10 * AFGEN(CONTAB, PF1));
+      double FL = -1. * std::exp( ELOG10 * AFGEN2(CONTAB, PF1));
       if (MH <= D1) FU = 0.;
       if (MH >= D1) FL = 0.;
       if (MH == D1){

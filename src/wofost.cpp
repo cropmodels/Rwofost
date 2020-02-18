@@ -126,9 +126,9 @@ void WofostModel::model_initialize() {
 	crop.GASS = 0.;
 
 	// adjusting for CO2 effects
-    double CO2AMAXadj = AFGEN(crop.p.CO2AMAXTB, wth.CO2);
-    double CO2EFFadj = AFGEN(crop.p.CO2EFFTB, wth.CO2);
-	double CO2TRAadj = AFGEN(crop.p.CO2TRATB, wth.CO2);
+    double CO2AMAXadj = AFGEN2(crop.p.CO2AMAXTB, wth.CO2);
+    double CO2EFFadj = AFGEN2(crop.p.CO2EFFTB, wth.CO2);
+	double CO2TRAadj = AFGEN2(crop.p.CO2TRATB, wth.CO2);
 	int n = crop.p.AMAXTB.size();
 	for(int i=1; i<n; i=i+2) {
 		crop.p.AMAXTB[i] = crop.p.AMAXTB[i] * CO2AMAXadj;

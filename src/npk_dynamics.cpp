@@ -235,19 +235,19 @@ class NPK_Crop_Dynamics(SimulationObject):
 
 void WofostModel::npk_crop_dynamics_initialize() {
 
-   crop.sn.ANLV = crop.WLV * AFGEN(crop.pn.NMAXLV_TB, crop.DVS);
-   crop.sn.ANST = crop.WST * AFGEN(crop.pn.NMAXLV_TB, crop.DVS) * crop.pn.NMAXST_FR;
-   crop.sn.ANRT = crop.WRT * AFGEN(crop.pn.NMAXLV_TB, crop.DVS) * crop.pn.NMAXRT_FR;
+   crop.sn.ANLV = crop.WLV * AFGEN2(crop.pn.NMAXLV_TB, crop.DVS);
+   crop.sn.ANST = crop.WST * AFGEN2(crop.pn.NMAXLV_TB, crop.DVS) * crop.pn.NMAXST_FR;
+   crop.sn.ANRT = crop.WRT * AFGEN2(crop.pn.NMAXLV_TB, crop.DVS) * crop.pn.NMAXRT_FR;
    crop.sn.ANSO = 0.;
 
-   crop.sn.APLV = crop.WLV * AFGEN(crop.pn.PMAXLV_TB, crop.DVS);
-   crop.sn.APST = crop.WST * AFGEN(crop.pn.PMAXLV_TB, crop.DVS) * crop.pn.PMAXST_FR;
-   crop.sn.APRT = crop.WRT * AFGEN(crop.pn.PMAXLV_TB, crop.DVS) * crop.pn.PMAXRT_FR;
+   crop.sn.APLV = crop.WLV * AFGEN2(crop.pn.PMAXLV_TB, crop.DVS);
+   crop.sn.APST = crop.WST * AFGEN2(crop.pn.PMAXLV_TB, crop.DVS) * crop.pn.PMAXST_FR;
+   crop.sn.APRT = crop.WRT * AFGEN2(crop.pn.PMAXLV_TB, crop.DVS) * crop.pn.PMAXRT_FR;
    crop.sn.APSO = 0.;
 
-   crop.sn.AKLV = crop.WLV * AFGEN(crop.pn.KMAXLV_TB, crop.DVS);
-   crop.sn.AKST = crop.WST * AFGEN(crop.pn.KMAXLV_TB, crop.DVS) * crop.pn.KMAXRT_FR;
-   crop.sn.AKRT = crop.WRT * AFGEN(crop.pn.KMAXLV_TB, crop.DVS) * crop.pn.KMAXRT_FR;
+   crop.sn.AKLV = crop.WLV * AFGEN2(crop.pn.KMAXLV_TB, crop.DVS);
+   crop.sn.AKST = crop.WST * AFGEN2(crop.pn.KMAXLV_TB, crop.DVS) * crop.pn.KMAXRT_FR;
+   crop.sn.AKRT = crop.WRT * AFGEN2(crop.pn.KMAXLV_TB, crop.DVS) * crop.pn.KMAXRT_FR;
    crop.sn.AKSO = 0.;
 
    crop.vn.NUPTAKE_T = 0;

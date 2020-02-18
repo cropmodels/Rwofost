@@ -75,9 +75,9 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 		crp.pn.KCRIT_FR = doubleFromList(crop, "KCRIT_FR");
 		crp.pn.NLUE_NPK = doubleFromList(crop, "NLUE_NPK");
 		crp.pn.NPK_TRANSLRT_FR = doubleFromList(crop, "NPK_TRANSLRT_FR");
-		crp.pn.NMAXLV_TB = TBFromList(crop, "NMAXLV_TB");
-		crp.pn.PMAXLV_TB = TBFromList(crop, "PMAXLV_TB");
-		crp.pn.KMAXLV_TB = TBFromList(crop, "KMAXLV_TB");
+		crp.pn.NMAXLV_TB = TBFromList2(crop, "NMAXLV_TB");
+		crp.pn.PMAXLV_TB = TBFromList2(crop, "PMAXLV_TB");
+		crp.pn.KMAXLV_TB = TBFromList2(crop, "KMAXLV_TB");
 	}
 
 	crp.p.TBASEM = doubleFromList(crop, "TBASEM");
@@ -88,15 +88,15 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	crp.p.DLC = doubleFromList(crop, "DLC");
 	crp.p.TSUM1 = doubleFromList(crop, "TSUM1");
 	crp.p.TSUM2 = doubleFromList(crop, "TSUM2");
-	crp.p.DTSMTB = TBFromList(crop, "DTSMTB");
+	crp.p.DTSMTB = TBFromList2(crop, "DTSMTB");
 	crp.p.DVSI = doubleFromList(crop, "DVSI");
 	crp.p.DVSEND = doubleFromList(crop, "DVSEND");
 	crp.p.TDWI = doubleFromList(crop, "TDWI");
 	crp.p.LAIEM = doubleFromList(crop, "LAIEM");
 	crp.p.RGRLAI = doubleFromList(crop, "RGRLAI");
-	crp.p.SLATB = TBFromList(crop, "SLATB");
+	crp.p.SLATB = TBFromList2(crop, "SLATB");
 	crp.p.SPA = doubleFromList(crop, "SPA");
-	crp.p.SSATB = TBFromList(crop, "SSATB");
+	crp.p.SSATB = TBFromList2(crop, "SSATB");
 	crp.p.SPAN = doubleFromList(crop, "SPAN");
 	crp.p.TBASE = doubleFromList(crop, "TBASE");
 	crp.p.CVL = doubleFromList(crop, "CVL");
@@ -108,14 +108,14 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	crp.p.RMO = doubleFromList(crop, "RMO");
 	crp.p.RMR = doubleFromList(crop, "RMR");
 	crp.p.RMS = doubleFromList(crop, "RMS");
-	crp.p.RFSETB = TBFromList(crop, "RFSETB");
-	crp.p.FRTB = TBFromList(crop, "FRTB");
-	crp.p.FLTB = TBFromList(crop, "FLTB");
-	crp.p.FSTB = TBFromList(crop, "FSTB");
-	crp.p.FOTB = TBFromList(crop, "FOTB");
+	crp.p.RFSETB = TBFromList2(crop, "RFSETB");
+	crp.p.FRTB = TBFromList2(crop, "FRTB");
+	crp.p.FLTB = TBFromList2(crop, "FLTB");
+	crp.p.FSTB = TBFromList2(crop, "FSTB");
+	crp.p.FOTB = TBFromList2(crop, "FOTB");
 	crp.p.PERDL = doubleFromList(crop, "PERDL");
-	crp.p.RDRRTB = TBFromList(crop, "RDRRTB");
-	crp.p.RDRSTB = TBFromList(crop, "RDRSTB");
+	crp.p.RDRRTB = TBFromList2(crop, "RDRRTB");
+	crp.p.RDRSTB = TBFromList2(crop, "RDRSTB");
 	crp.p.CFET = doubleFromList(crop, "CFET");
 	crp.p.DEPNR = doubleFromList(crop, "DEPNR");
 	crp.p.RDI = doubleFromList(crop, "RDI");
@@ -124,30 +124,30 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 
 	crp.p.IAIRDU = intFromList(crop, "IAIRDU");
 
-	crp.p.KDIFTB = TBFromList(crop, "KDIFTB");
-	crp.p.EFFTB = TBFromList(crop, "EFFTB");
-	crp.p.AMAXTB = TBFromList(crop, "AMAXTB");
-	crp.p.TMPFTB = TBFromList(crop, "TMPFTB");
-	crp.p.TMNFTB = TBFromList(crop, "TMNFTB");
+	crp.p.KDIFTB = TBFromList2(crop, "KDIFTB");
+	crp.p.EFFTB = TBFromList2(crop, "EFFTB");
+	crp.p.AMAXTB = TBFromList2(crop, "AMAXTB");
+	crp.p.TMPFTB = TBFromList2(crop, "TMPFTB");
+	crp.p.TMNFTB = TBFromList2(crop, "TMNFTB");
 
-	crp.p.CO2AMAXTB = TBFromList(crop, "CO2AMAXTB");
-	crp.p.CO2EFFTB = TBFromList(crop, "CO2EFFTB");
-	crp.p.CO2TRATB = TBFromList(crop, "CO2TRATB");
+	crp.p.CO2AMAXTB = TBFromList2(crop, "CO2AMAXTB");
+	crp.p.CO2EFFTB = TBFromList2(crop, "CO2EFFTB");
+	crp.p.CO2TRATB = TBFromList2(crop, "CO2TRATB");
 
 
 // soil parameters
 	struct WofostSoil sol;
 
 	if (cntr.IOXWL != 0) {
-		sol.p.SMTAB = TBFromList(soil, "SMTAB");
+		sol.p.SMTAB = TBFromList2(soil, "SMTAB");
 	} else { // should be no need to read it; need to check if true
-		sol.p.SMTAB = TBFromList(soil, "SMTAB");
+		sol.p.SMTAB = TBFromList2(soil, "SMTAB");
 	}
 	sol.p.SMW = doubleFromList(soil, "SMW");
 	sol.p.SMFCF = doubleFromList(soil, "SMFCF");
 	sol.p.SM0 = doubleFromList(soil, "SM0");
 	sol.p.CRAIRC = doubleFromList(soil, "CRAIRC");
-	sol.p.CONTAB = TBFromList(soil, "CONTAB");
+	sol.p.CONTAB = TBFromList2(soil, "CONTAB");
 	sol.p.K0 = doubleFromList(soil, "K0");
 	sol.p.SOPE = doubleFromList(soil, "SOPE");
 	sol.p.KSUB = doubleFromList(soil, "KSUB");
@@ -242,7 +242,7 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 
 	if (m.fatalError) {
 		for (size_t i = 0; i < m.messages.size(); i++) {
-			Rcout << m.messages[i] << endl;
+			Rcout << m.messages[i] << std::endl;
 		}
 	}
 

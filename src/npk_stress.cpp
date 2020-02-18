@@ -151,9 +151,9 @@ Class to calculate various nutrient relates stress factors:
 void WofostModel::npk_stress() {
 
 // Maximum NPK concentrations in leaves (kg N kg-1 DM)
-    double NMAXLV = AFGEN(crop.pn.NMAXLV_TB, crop.DVS);
-    double PMAXLV = AFGEN(crop.pn.PMAXLV_TB, crop.DVS);
-    double KMAXLV = AFGEN(crop.pn.KMAXLV_TB, crop.DVS);
+    double NMAXLV = AFGEN2(crop.pn.NMAXLV_TB, crop.DVS);
+    double PMAXLV = AFGEN2(crop.pn.PMAXLV_TB, crop.DVS);
+    double KMAXLV = AFGEN2(crop.pn.KMAXLV_TB, crop.DVS);
 
 // Maximum NPK concentrations in stems (kg N kg-1 DM)
     double NMAXST = crop.pn.NMAXST_FR * NMAXLV;

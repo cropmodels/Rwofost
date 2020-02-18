@@ -18,7 +18,7 @@ Modifications since WOFOST Version 4.1:
 
 Tamme van der Wal (25-July-1997)
 1) New parameter is read in: p.DVSI                 |
-2) KDIFTB, EFFTB and SSATB are now read in from data files and KDif, EFF and SSA are calculated using the AFGEN function.
+2) KDIFTB, EFFTB and SSATB are now read in from data files and KDif, EFF and SSA are calculated using the AFGEN2 function.
 KDif, EFF and SSA which are now functions of DVS or DTEMP
 
 FORMAL PARAMETERS:  (I=input,O=output,C=control,IN=init,T=time)
@@ -70,7 +70,7 @@ C++ version created by fangh on 6/27/16.
 // used for npk
 void WofostModel::maintanance_respiration() {
     double RMRES = (crop.pn.p.RMR * crop.WRT + crop.pn.p.RML * crop.WLV + crop.pn.p.RMS * crop.WST + crop.pn.p.RMO * crop.WSO);
-    RMRES *= AFGEN(crop.pn.p.RFSETB, crop.DVS);
+    RMRES *= AFGEN2(crop.pn.p.RFSETB, crop.DVS);
     double TEFF = pow(crop.pn.p.Q10, ((atm.TEMP - 25.)/10.));
     crop.vn.PMRES = RMRES * TEFF;
 }
@@ -82,11 +82,11 @@ void WofostModel::crop_initialize() {
 //  DOANTH = false;
   crop.DVS = crop.p.DVSI;
   crop.TSUM = 0.;
-  crop.FR = AFGEN(crop.p.FRTB, crop.DVS);
-  crop.FL = AFGEN(crop.p.FLTB, crop.DVS);
-  crop.FS = AFGEN(crop.p.FSTB, crop.DVS);
-  crop.FO = AFGEN(crop.p.FOTB, crop.DVS);
-  crop.SLA[0] = AFGEN(crop.p.SLATB, crop.DVS);
+  crop.FR = AFGEN2(crop.p.FRTB, crop.DVS);
+  crop.FL = AFGEN2(crop.p.FLTB, crop.DVS);
+  crop.FS = AFGEN2(crop.p.FSTB, crop.DVS);
+  crop.FO = AFGEN2(crop.p.FOTB, crop.DVS);
+  crop.SLA[0] = AFGEN2(crop.p.SLATB, crop.DVS);
 
     //test
     //cout << "SLA: " << crop.SLA[0] << " " << crop.SLA[1] <<endl;
@@ -114,7 +114,7 @@ void WofostModel::crop_initialize() {
     crop.LV[0] = crop.WLV;
     crop.LASUM = crop.p.LAIEM;
     crop.LAIEXP = crop.p.LAIEM;
-    crop.SSA = AFGEN(crop.p.SSATB, crop.DVS);
+    crop.SSA = AFGEN2(crop.p.SSATB, crop.DVS);
     crop.LAI = crop.LASUM + crop.SSA * crop.WST + crop.p.SPA * crop.WSO;
 
   crop.TMINRA = 0.;
@@ -159,7 +159,7 @@ void WofostModel::crop_rates() {
       //test
       //cout << "DAYL: " << atm.DAYL << " SINLD: " << atm.SINLD << endl;
     //increase in temperature sum
-    crop.DTSUM = AFGEN(crop.p.DTSMTB, atm.TEMP);
+    crop.DTSUM = AFGEN2(crop.p.DTSMTB, atm.TEMP);
     if(crop.DVS < 1.){
       //effects of daylength and temperature on development during vegetative phase
       double DVRED = 1.;
@@ -182,13 +182,13 @@ void WofostModel::crop_rates() {
 
   //gross assimilation and correction for sub-optimum average day temperature
   //?
-  double AMAX = AFGEN(crop.p.AMAXTB, crop.DVS);
+  double AMAX = AFGEN2(crop.p.AMAXTB, crop.DVS);
 
-  AMAX = AMAX * AFGEN(crop.p.TMPFTB, atm.DTEMP);
+  AMAX = AMAX * AFGEN2(crop.p.TMPFTB, atm.DTEMP);
     //test
 
-  crop.KDif = AFGEN(crop.p.KDIFTB, crop.DVS);
-  double EFF = AFGEN(crop.p.EFFTB, atm.DTEMP);
+  crop.KDif = AFGEN2(crop.p.KDIFTB, crop.DVS);
+  double EFF = AFGEN2(crop.p.EFFTB, atm.DTEMP);
 
   double DTGA = TOTASS(atm.DAYL, AMAX, EFF, crop.LAI, crop.KDif, atm.AVRAD, atm.SINLD, atm.COSLD, atm.DSINBE, atm.DifPP);
     //cout << "DAYL: " << atm.DAYL << " AMAX: " << AMAX << " EFF: " << EFF << "LAI: " << crop.LAI << endl;
@@ -196,7 +196,7 @@ void WofostModel::crop_rates() {
 
 
   //correction for low minimum temperature potential assimilation in kg CH2O per ha
-  DTGA = DTGA * AFGEN(crop.p.TMNFTB, crop.TMINRA);
+  DTGA = DTGA * AFGEN2(crop.p.TMNFTB, crop.TMINRA);
   crop.p.PGASS = DTGA * 30./44.;
 
   //(evapo)transpiration rates
@@ -224,16 +224,16 @@ void WofostModel::crop_rates() {
   
   //respiration and partitioning of carbohydrates between growth and maintenance respiration
 	double RMRES = (crop.p.RMR * crop.WRT + crop.p.RML * crop.WLV + crop.p.RMS * crop.WST + crop.p.RMO * crop.WSO);
-	RMRES *= AFGEN (crop.p.RFSETB, crop.DVS);
+	RMRES *= AFGEN2 (crop.p.RFSETB, crop.DVS);
 	double TEFF  = pow(crop.p.Q10, ((atm.TEMP - 25.)/10.));
 	crop.MRES  = std::min(crop.GASS, RMRES * TEFF);	
 	crop.ASRC  = crop.GASS - crop.MRES;
 
   //DM partitioning factors, and dry matter increase
-	crop.FR = AFGEN(crop.p.FRTB, crop.DVS);
-	crop.FL = AFGEN(crop.p.FLTB, crop.DVS);
-	crop.FS = AFGEN(crop.p.FSTB, crop.DVS);
-	crop.FO = AFGEN(crop.p.FOTB, crop.DVS);
+	crop.FR = AFGEN2(crop.p.FRTB, crop.DVS);
+	crop.FL = AFGEN2(crop.p.FLTB, crop.DVS);
+	crop.FS = AFGEN2(crop.p.FSTB, crop.DVS);
+	crop.FO = AFGEN2(crop.p.FOTB, crop.DVS);
 
 
    crop.TRANRF = crop.TRA/crop.TRAMX;   //commented previously
@@ -288,7 +288,7 @@ void WofostModel::crop_rates() {
   //growth rate roots and aerial parts
   double ADMI = (1. - crop.FR) * DMI;
   double GRRT = crop.FR * DMI;
-  crop.DRRT = crop.WRT * AFGEN(crop.p.RDRRTB, crop.DVS);
+  crop.DRRT = crop.WRT * AFGEN2(crop.p.RDRRTB, crop.DVS);
   crop.GWRT = GRRT - crop.DRRT;
 
   //growth rate leaves
@@ -326,7 +326,7 @@ void WofostModel::crop_rates() {
 
   //physiologic ageing of leaves per time step
   crop.FYSDEL = std::max(0., (atm.TEMP - crop.p.TBASE)/(35. - crop.p.TBASE));
-  crop.SLAT = AFGEN(crop.p.SLATB, crop.DVS);
+  crop.SLAT = AFGEN2(crop.p.SLATB, crop.DVS);
 
   //leaf area not to exceed exponential growth curve
   if(crop.LAIEXP > 6.){
@@ -343,7 +343,7 @@ void WofostModel::crop_rates() {
   }
   //growth rate stems
   double GRST = crop.FS * ADMI;
-  crop.DRST = AFGEN(crop.p.RDRSTB, crop.DVS) * crop.WST;
+  crop.DRST = AFGEN2(crop.p.RDRSTB, crop.DVS) * crop.WST;
   crop.GWST = GRST - crop.DRST;
 
   //growth rate storage organs
@@ -445,7 +445,7 @@ void WofostModel::crop_states() {
 
   //total gross assimilation and maintenance respiration
   //leaf area index
-  crop.SSA = AFGEN(crop.p.SSATB, crop.DVS);
+  crop.SSA = AFGEN2(crop.p.SSATB, crop.DVS);
     //test
 
   crop.LAI = crop.LASUM + crop.SSA * crop.WST + crop.p.SPA * crop.WSO;

@@ -85,7 +85,7 @@ void WofostModel::STDAY() {
         soil.EVS = atm.ES0;
     } else { 
     //  maximum capillary rise to surface (cf. Ritchie)
-        soil.CAPRMX = AFGEN(soil.CAPRFU, -soil.WEXC);
+        soil.CAPRMX = AFGEN2(soil.CAPRFU, -soil.WEXC);
         soil.EVS = std::min( atm.ES0, soil.CAPRMX + atm.RAIN );
     }
     soil.WEXC = std::max(-1., soil.WEXC + atm.RAIN - soil.EVS);
