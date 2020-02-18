@@ -136,7 +136,6 @@ Calculates the crop N/P/K demand and its uptake from the soil.
     ================  =================================== ====================  ===========
 */
 
-using namespace std;
 
 #include <math.h>
 #include <vector>
@@ -266,9 +265,9 @@ void WofostModel::npk_demand_uptake_rates() {
 //  NPK uptake rate in storage organs (kg N ha-1 d-1)
 //  is the mimimum of supply and demand divided by the
 //  time coefficient for N/P/K translocation
-    crop.rn.RNUSO = min(crop.vn.NDEMSO, crop.vn.NTRANSLOCATABLE) / crop.pn.TCNT;
-    crop.rn.RPUSO = min(crop.vn.PDEMSO, crop.vn.PTRANSLOCATABLE) / crop.pn.TCPT;
-    crop.rn.RKUSO = min(crop.vn.KDEMSO, crop.vn.KTRANSLOCATABLE) / crop.pn.TCKT;
+    crop.rn.RNUSO = std::min(crop.vn.NDEMSO, crop.vn.NTRANSLOCATABLE) / crop.pn.TCNT;
+    crop.rn.RPUSO = std::min(crop.vn.PDEMSO, crop.vn.PTRANSLOCATABLE) / crop.pn.TCPT;
+    crop.rn.RKUSO = std::min(crop.vn.KDEMSO, crop.vn.KTRANSLOCATABLE) / crop.pn.TCKT;
 
 //  No nutrients are absorbed after development stage DVSNPK_STOP or
 //  when severe water shortage occurs i.e. TRANRF <= 0.01
@@ -281,13 +280,13 @@ void WofostModel::npk_demand_uptake_rates() {
 	  }
 
     // biological nitrogen fixation
-    crop.rn.RNFIX = (max(0., crop.pn.NFIX_FR * NDEMTO) * NutrientLIMIT);
+    crop.rn.RNFIX = (std::max(0., crop.pn.NFIX_FR * NDEMTO) * NutrientLIMIT);
 
     //std::cout << "NDEMTO: " << NDEMTO << " NAVAIL: " << soil.sn.NAVAIL << std::endl;
     // NPK uptake rate from soil
-    crop.rn.RNUPTAKE = (max(0., min(NDEMTO - crop.rn.RNFIX, soil.sn.NAVAIL)) * NutrientLIMIT);
-    crop.rn.RPUPTAKE = (max(0., min(PDEMTO, soil.sn.PAVAIL)) * NutrientLIMIT);
-    crop.rn.RKUPTAKE = (max(0., min(KDEMTO, soil.sn.KAVAIL)) * NutrientLIMIT);
+    crop.rn.RNUPTAKE = (std::max(0., std::min(NDEMTO - crop.rn.RNFIX, soil.sn.NAVAIL)) * NutrientLIMIT);
+    crop.rn.RPUPTAKE = (std::max(0., std::min(PDEMTO, soil.sn.PAVAIL)) * NutrientLIMIT);
+    crop.rn.RKUPTAKE = (std::max(0., std::min(KDEMTO, soil.sn.KAVAIL)) * NutrientLIMIT);
 
     // NPK uptake rate
     // if no demand then uptake rate = 0.
@@ -338,22 +337,22 @@ void WofostModel::npk_demand_uptake_states() {
 
 //       N demand [kg ha-1]
 
-        crop.vn.NDEMLV = max(NMAXLV * crop.WLV - crop.sn.ANLV, 0.);
+        crop.vn.NDEMLV = std::max(NMAXLV * crop.WLV - crop.sn.ANLV, 0.);
         //std::cout << "NDEMLV: " << crop.vn.NDEMLV << " WLV: " << crop.WLV << " ANLV: " << crop.sn.ANLV << std::endl;
 		// maybe should be divided by one day, see equation 5 Shibu et al., 2010
-        crop.vn.NDEMST = max(NMAXST * crop.WST - crop.sn.ANST, 0.);
-        crop.vn.NDEMRT = max(NMAXRT * crop.WRT - crop.sn.ANRT, 0.);
-        crop.vn.NDEMSO = max(NMAXSO * crop.WSO - crop.sn.ANSO, 0.);
+        crop.vn.NDEMST = std::max(NMAXST * crop.WST - crop.sn.ANST, 0.);
+        crop.vn.NDEMRT = std::max(NMAXRT * crop.WRT - crop.sn.ANRT, 0.);
+        crop.vn.NDEMSO = std::max(NMAXSO * crop.WSO - crop.sn.ANSO, 0.);
 
 //       P demand [kg ha-1]
-        crop.vn.PDEMLV = max(PMAXLV * crop.WLV - crop.sn.APLV, 0.);
-        crop.vn.PDEMST = max(PMAXST * crop.WST - crop.sn.APST, 0.);
-        crop.vn.PDEMRT = max(PMAXRT * crop.WRT - crop.sn.APRT, 0.);
-        crop.vn.PDEMSO = max(PMAXSO * crop.WSO - crop.sn.APSO, 0.);
+        crop.vn.PDEMLV = std::max(PMAXLV * crop.WLV - crop.sn.APLV, 0.);
+        crop.vn.PDEMST = std::max(PMAXST * crop.WST - crop.sn.APST, 0.);
+        crop.vn.PDEMRT = std::max(PMAXRT * crop.WRT - crop.sn.APRT, 0.);
+        crop.vn.PDEMSO = std::max(PMAXSO * crop.WSO - crop.sn.APSO, 0.);
 
 //       K demand [kg ha-1]
-        crop.vn.KDEMLV = max(KMAXLV * crop.WLV - crop.sn.AKLV, 0.);
-        crop.vn.KDEMST = max(KMAXST * crop.WST - crop.sn.AKST, 0.);
-        crop.vn.KDEMRT = max(KMAXRT * crop.WRT - crop.sn.AKRT, 0.);
-        crop.vn.KDEMSO = max(KMAXSO * crop.WSO - crop.sn.AKSO, 0.);
+        crop.vn.KDEMLV = std::max(KMAXLV * crop.WLV - crop.sn.AKLV, 0.);
+        crop.vn.KDEMST = std::max(KMAXST * crop.WST - crop.sn.AKST, 0.);
+        crop.vn.KDEMRT = std::max(KMAXRT * crop.WRT - crop.sn.AKRT, 0.);
+        crop.vn.KDEMSO = std::max(KMAXSO * crop.WSO - crop.sn.AKSO, 0.);
 }

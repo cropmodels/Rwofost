@@ -30,7 +30,6 @@ transmip.SSIon, diffuse radiation etc.
  DSINBE  R4  Daily total of effective solar height         s      O
 */
 
-using namespace std;
 #include <math.h>
 #include <vector>
 #include "wofost.h"
@@ -45,7 +44,7 @@ void WofostModel::ASTRO() {
     if (atm.latitude > 90. || atm.latitude < -90.) {
         //cout << "astro.cpp invalid LAT " << endl;
         //terminate();
-        string m ("ASTRO LAT > 90 or LAT < -90");
+        std::string m ("ASTRO LAT > 90 or LAT < -90");
         messages.push_back(m);
     }
     //Declination and solar constant for this day

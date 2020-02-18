@@ -8,12 +8,8 @@ example_weather <- function() {
 
 .trim2 <- function(x) return(gsub("^ *|(?<= ) | *$", "", x, perl=TRUE))
 
-.w <- function() {
-	WofostModel$new()
-}
 
-
-.wof <- function(crop, soil, control, weather) {
+wofost_model <- function(crop, weather, soil, control) {
 	m <- WofostModel$new()
 	if (!missing(crop)) { crop(m) <- crop }
 	if (!missing(soil)) { soil(m) <- soil }
@@ -25,21 +21,21 @@ example_weather <- function() {
 setMethod("run", signature('Rcpp_WofostModel'), 
 	function(x, ...) {
 		x$run()
-		out <- x$out
-		date <- as.Date(x$control$emergence, origin="1970-01-01") + out$step
-		Wtot <- out$WRT + out$WLV + out$WST + out$WSO
-		v <- data.frame(date, out$TSUM, out$LAI, out$WRT, out$WLV, out$WST, out$WSO, Wtot,
-							  out$EVAP, out$TRAN, out$TRANRF, out$WA, out$WC, out$RWA)
-		colnames(v) <- c("date", "TSUM", "LAI", "WRT", "WLV", "WST", "WSO", "Wtot",
-							"EVAP", "TRAN", "TRANRF", "WA", "WC", "RWA")
-		v
+#		out <- x$out
+#		date <- as.Date(x$control$modelstart, origin="1970-01-01") + out$step
+#		Wtot <- out$WRT + out$WLV + out$WST + out$WSO
+#		v <- data.frame(date, out$TSUM, out$LAI, out$WRT, out$WLV, out$WST, out$WSO, Wtot,
+#							  out$EVAP, out$TRAN, out$TRANRF, out$WA, out$WC, out$RWA)
+#		colnames(v) <- c("date", "TSUM", "LAI", "WRT", "WLV", "WST", "WSO", "Wtot",
+#							"EVAP", "TRAN", "TRANRF", "WA", "WC", "RWA")
+#		v
 	}
 )
 
 
 setMethod("crop<-", signature('Rcpp_WofostModel', 'list'), 
 	function(x, value) {
-		parameters <- c("TBASEM", "TEFFMX", "TSUMEM", "IDSL", "DLO", "DLC", "TSUM1", "TSUM2", "DTSMTB", "DVSI", "DVSEND", "TDWI", "LAIEM", "RGRLAI", "SLATB", "SPA", "SSATB", "SPAN", "TBASE", "CVL", "CVO", "CVR", "CVS", "Q10", "RML", "RMO", "RMR", "RMS", "RFSETB", "FRTB", "FLTB", "FSTB", "FOTB", "PERDL", "RDRRTB", "RDRSTB", "CFET", "DEPNR", "RDI", "RRI", "RDMCR", "IAIRDU", "KDifTB", "EFFTB", "AMAXTB", "TMPFTB", "TMNFTB", "CO2AMAXTB", "CO2EFFTB", "CO2TRATB")
+		parameters <- c("TBASEM", "TEFFMX", "TSUMEM", "IDSL", "DLO", "DLC", "TSUM1", "TSUM2", "DTSMTB", "DVSI", "DVSEND", "TDWI", "LAIEM", "RGRLAI", "SLATB", "SPA", "SSATB", "SPAN", "TBASE", "CVL", "CVO", "CVR", "CVS", "Q10", "RML", "RMO", "RMR", "RMS", "RFSETB", "FRTB", "FLTB", "FSTB", "FOTB", "PERDL", "RDRRTB", "RDRSTB", "CFET", "DEPNR", "RDI", "RRI", "RDMCR", "IAIRDU", "KDIFTB", "EFFTB", "AMAXTB", "TMPFTB", "TMNFTB", "CO2AMAXTB", "CO2EFFTB", "CO2TRATB")
 		if (is.null(value$IARDU)) {
 			value$IAIRDU = 0
 		}
@@ -47,19 +43,19 @@ setMethod("crop<-", signature('Rcpp_WofostModel', 'list'),
 		if (!all(parameters %in% nms)) stop(paste("parameters missing:", paste(parameters[!(parameters %in% nms)], collapse=", ")))
 		value <- value[parameters]
 		nms <- names(value)
-		lapply(1:length(value), function(i) eval(parse(text = paste0("x$crop$", nms[i], " <- ", value[i]))))
+		lapply(1:length(value), function(i) eval(parse(text = paste0("x$crop$p$", nms[i], " <- ", value[i]))))
 		return(x)
 	}
 )
 
 setMethod("soil<-", signature('Rcpp_WofostModel', 'list'), 
 	function(x, value) {
-		parameters <- c("SMTAB", "SMW", "SMFCF", "SM0", "CRAIRC", "CONTAB", "K0", "SOPE", "KSUB", "SPADS", "SPASS", "SPODS", "SPOSS", "DEFLIM", "IZT", "ifUNRN", "WAV", "ZTI", "DD", "IDRAIN", "NOTINF", "SSMAX", "SMLIM", "SSI", "RDMSOL")
+		parameters <- c("SMTAB", "SMW", "SMFCF", "SM0", "CRAIRC", "CONTAB", "K0", "SOPE", "KSUB", "SPADS", "SPASS", "SPODS", "SPOSS", "DEFLIM", "IZT", "IFUNRN", "WAV", "ZTI", "DD", "IDRAIN", "NOTINF", "SSMAX", "SMLIM", "SSI", "RDMSOL")
 		nms <- names(value)
 		if (!all(parameters %in% nms)) stop(paste("parameters missing:", paste(parameters[!(parameters %in% nms)], collapse=", ")))
 		value <- value[parameters]
 		nms <- names(value)
-		lapply(1:length(value), function(i) eval(parse(text = paste0("x$soil$", nms[i], " <- ", value[i]))))
+		lapply(1:length(value), function(i) eval(parse(text = paste0("x$soil$p$", nms[i], " <- ", value[i]))))
 		return(x)
 	}
 )
@@ -76,9 +72,32 @@ setMethod("weather<-", signature('Rcpp_WofostModel', 'list'),
 )
 
 
+
+setMethod("weather<-", signature("Rcpp_WofostModel", "list"), 
+	function(x, value) {
+		parameters <- c("date", "srad", "tmin", "tmax", "prec", "wind", "vapr")
+		nms <- colnames(value)
+		if (!all(parameters %in% nms)) stop(paste("weather variables missing:", paste(parameters[!(parameters %in% nms)], collapse=", ")))
+
+		w <- DailyWeather$new()
+		w$date <- as.integer(value$date)
+		w$srad <- value$srad
+		w$tmin <- value$tmin
+		w$tmax <- value$tmax
+		w$prec <- value$prec
+		w$wind <- value$wind
+		w$vapr <- value$vapr
+		
+		x$weather <- w
+		return(x)
+	}
+)
+
+
+
 setMethod("control<-", signature('Rcpp_WofostModel', 'list'), 
 	function(x, value) {
-		parameters <- c("modelstart", "cropstart", "IWB", "IOXWL", "ISTCHO", "IDESOW", "IDLSOW", "IENCHO", "IDAYEN", "IDURMX")
+		parameters <- c("modelstart", "cropstart", "IPRODL", "IOXWL", "ISTCHO", "IDESOW", "IDLSOW", "IENCHO", "IDAYEN", "IDURMX")
 		nms <- names(value)
 		if (!all(parameters %in% nms)) stop(paste("parameters missing:", paste(parameters[!(parameters %in% nms)], collapse=", ")))
 		value <- value[parameters]

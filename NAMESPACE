@@ -1,4 +1,4 @@
 useDynLib(Rwofost)
-import(methods, Rcpp)
-importFrom("meteor", "crop<-", "soil<-", "control<-", "weather<-", "run")
+import(methods, Rcpp, meteor)
+exportMethods("crop<-", "soil<-", "control<-", "weather<-", "run")
 exportPattern("^[^\\.]")

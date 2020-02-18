@@ -142,7 +142,6 @@ Approach based on LINTUL N/P/K made by Joost Wolf
 
 */
 
-using namespace std;
 
 #include <math.h>
 #include <vector>
@@ -219,22 +218,23 @@ void WofostModel::npk_translocation_rates() {
 void WofostModel::npk_translocation_states() {
 
 //   translocatable N amount in the organs [kg N ha-1]
-    crop.sn.ATNLV = max(0., crop.sn.ANLV - crop.WLV * crop.pn.NRESIDLV);
-    crop.sn.ATNST = max(0., crop.sn.ANST - crop.WST * crop.pn.NRESIDST);
-    crop.sn.ATNRT = max((crop.sn.ATNLV + crop.sn.ATNST) * crop.pn.NPK_TRANSLRT_FR, crop.sn.ANRT - crop.WRT * crop.pn.NRESIDRT);
+    crop.sn.ATNLV = std::max(0., crop.sn.ANLV - crop.WLV * crop.pn.NRESIDLV);
+    crop.sn.ATNST = std::max(0., crop.sn.ANST - crop.WST * crop.pn.NRESIDST);
+    crop.sn.ATNRT = std::max((crop.sn.ATNLV + crop.sn.ATNST) * crop.pn.NPK_TRANSLRT_FR, crop.sn.ANRT - crop.WRT * crop.pn.NRESIDRT);
 
 //   translocatable P amount in the organs [kg P ha-1]
-    crop.sn.ATPLV = max(0., crop.sn.APLV - crop.WLV * crop.pn.PRESIDLV);
-    crop.sn.ATPST = max(0., crop.sn.APST - crop.WST * crop.pn.PRESIDST);
-    crop.sn.ATPRT = max((crop.sn.ATPLV + crop.sn.ATPST) * crop.pn.NPK_TRANSLRT_FR, crop.sn.APRT - crop.WRT * crop.pn.PRESIDRT);
+    crop.sn.ATPLV = std::max(0., crop.sn.APLV - crop.WLV * crop.pn.PRESIDLV);
+    crop.sn.ATPST = std::max(0., crop.sn.APST - crop.WST * crop.pn.PRESIDST);
+    crop.sn.ATPRT = std::max((crop.sn.ATPLV + crop.sn.ATPST) * crop.pn.NPK_TRANSLRT_FR, crop.sn.APRT - crop.WRT * crop.pn.PRESIDRT);
 
 //   translocatable K amount in the organs [kg K ha-1]
-    crop.sn.ATKLV = max(0., crop.sn.AKLV - crop.WLV * crop.pn.KRESIDLV);
-    crop.sn.ATKST = max(0., crop.sn.AKST - crop.WST * crop.pn.KRESIDST);
-    crop.sn.ATKRT = max((crop.sn.ATKLV + crop.sn.ATKST) * crop.pn.NPK_TRANSLRT_FR, crop.sn.AKRT - crop.WRT * crop.pn.KRESIDRT);
+    crop.sn.ATKLV = std::max(0., crop.sn.AKLV - crop.WLV * crop.pn.KRESIDLV);
+    crop.sn.ATKST = std::max(0., crop.sn.AKST - crop.WST * crop.pn.KRESIDST);
+    crop.sn.ATKRT = std::max((crop.sn.ATKLV + crop.sn.ATKST) * crop.pn.NPK_TRANSLRT_FR, crop.sn.AKRT - crop.WRT * crop.pn.KRESIDRT);
 
 //   total translocatable NPK amount in the organs [kg N ha-1]
     crop.vn.NTRANSLOCATABLE = crop.sn.ATNLV + crop.sn.ATNST + crop.sn.ATNRT;
     crop.vn.PTRANSLOCATABLE = crop.sn.ATPLV + crop.sn.ATPST + crop.sn.ATPRT;
     crop.vn.KTRANSLOCATABLE = crop.sn.ATKLV + crop.sn.ATKST + crop.sn.ATKRT;
 }
+

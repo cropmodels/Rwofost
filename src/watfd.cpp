@@ -34,7 +34,7 @@ p.RDM     R*4  maximum rooting depth                              cm      I
 RD      R*4  rooting depth                                      cm      I
 p.IAIRDU  I*4  indicates presence(1) or absence(0) of airducts            I
              in the roots. 1= can tolerate waterlogging
-p.ifUNRN  I*4  flag indicating the way to calculate the                   I
+p.IFUNRN  I*4  flag indicating the way to calculate the                   I
              non-infiltrating fraction of rainfall:
              0. fraction is fixed at p.NOTINF
              1. fraction depends on p.NOTINF and on daily rainfall
@@ -60,7 +60,6 @@ p.SMFCF   R*4  soil moisture content at field capacity          cm3 cm-3  O
 */
 
 
-using namespace std;
 #include <vector>
 
 #include "SimUtil.h"
@@ -155,7 +154,7 @@ void WofostModel::WATFD_rates() {
       } else {
          soil.DSLR   = soil.DSLR + 1.;
          double EVSMXT = soil.EVSMX * (sqrt(soil.DSLR) - sqrt(soil.DSLR - 1.));
-         soil.EVS    = min(soil.EVSMX, EVSMXT + soil.RIN);
+         soil.EVS    = std::min(soil.EVSMX, EVSMXT + soil.RIN);
        }
     }
 
@@ -163,7 +162,7 @@ void WofostModel::WATFD_rates() {
    double RINPRE;
    if (soil.SS <= 0.1)  {
 // without surface storage
-      if (soil.p.ifUNRN == 0) {
+      if (soil.p.IFUNRN == 0) {
         RINPRE = (1. - soil.p.NOTINF) * atm.RAIN + soil.RIRR + soil.SS/DELT;
       } else {
         RINPRE = (1. -soil.p.NOTINF * AFGEN(soil.p.NINFTB, atm.RAIN)) * atm.RAIN + soil.RIRR + soil.SS / DELT;
@@ -173,7 +172,7 @@ void WofostModel::WATFD_rates() {
 //!!  Next line replaced TvdW 24-jul-97
 //!!  original: AVAIL  = SS+(RAIN+RIRR-EVW)*DELT
       double AVAIL = soil.SS + (atm.RAIN * (1. - soil.p.NOTINF) + soil.RIRR - soil.EVW) * DELT;
-      RINPRE = min (soil.p.SOPE * DELT, AVAIL) / DELT;
+      RINPRE = std::min (soil.p.SOPE * DELT, AVAIL) / DELT;
    }
 
 // percolation
@@ -186,14 +185,14 @@ void WofostModel::WATFD_rates() {
   double WELOW = soil.p.SMFCF * (soil.p.RDM - crop.RD);
   soil.LOSS  = LIMIT (0., soil.p.KSUB, (soil.WLOW - WELOW)/DELT + PERC1 );
 // for rice water losses are limited to p.K0/20
-  if (crop.p.IAIRDU == 1) soil.LOSS = min (soil.LOSS, 0.05 * soil.p.K0);
+  if (crop.p.IAIRDU == 1) soil.LOSS = std::min (soil.LOSS, 0.05 * soil.p.K0);
 
 // percolation not to exceed uptake capacity of subsoil
    double PERC2 = ((soil.p.RDM - crop.RD) * soil.p.SM0 - soil.WLOW) / DELT + soil.LOSS;
-   soil.PERC  = min (PERC1, PERC2);
+   soil.PERC  = std::min (PERC1, PERC2);
 
 // adjustment of infiltration rate
-   soil.RIN = min(RINPRE, (soil.p.SM0-soil.SM) * crop.RD/DELT + crop.TRA + soil.EVS + soil.PERC);
+   soil.RIN = std::min(RINPRE, (soil.p.SM0-soil.SM) * crop.RD/DELT + crop.TRA + soil.EVS + soil.PERC);
 
 // rates of change in amounts of moisture W and WLOW
    soil.DW    = -crop.TRA - soil.EVS - soil.PERC + soil.RIN;
@@ -215,7 +214,7 @@ void WofostModel::WATFD_states() {
 
 // surface storage and runoff
   double SSPRE = soil.SS + (atm.RAIN + soil.RIRR - soil.EVW - soil.RIN) * DELT;
-  soil.SS    = min (SSPRE, soil.p.SSMAX);
+  soil.SS    = std::min (SSPRE, soil.p.SSMAX);
   soil.TSR   = soil.TSR + (SSPRE - soil.SS);
 
 // amount of water in rooted zone

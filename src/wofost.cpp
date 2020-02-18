@@ -5,13 +5,13 @@ Date: June 2016
 License: GNU General Public License (GNU GPL) v. 2
 */
 
-using namespace std;
 #include <vector>
 #include "wofost.h"
 #include "SimUtil.h"
 #include <math.h>
 #include <string.h>
-#include <iostream>
+//#include <iostream>
+//#include <Rcpp.h>
 
 
 void WofostModel::weather_step() {
@@ -31,7 +31,7 @@ void WofostModel::weather_step() {
 		DOY = doy_from_days(wth.date[time]);
 
 		ASTRO();
-		vector<double> penman = PENMAN(DOY, atm.latitude, atm.elevation, atm.ANGSTA, atm.ANGSTB, atm.TMIN, atm.TMAX, atm.AVRAD, atm.VAP, atm.WIND, atm.ATMTR);
+		std::vector<double> penman = PENMAN(DOY, atm.latitude, atm.elevation, atm.ANGSTA, atm.ANGSTB, atm.TMIN, atm.TMAX, atm.AVRAD, atm.VAP, atm.WIND, atm.ATMTR);
 
 		atm.E0 = penman[0];
 		atm.ES0 = penman[1];
@@ -44,11 +44,28 @@ void WofostModel::model_output(){
     //out.push_back( { double(step), crop.TSUM, crop.DVS, crop.GASS, crop.LAI, crop.WLV, crop.WST, crop.WRT, crop.WSO,
 		//	atm.E0, soil.SM, crop.TRA, soil.WLOW, soil.W, double(i)});
 
-		out.push_back( {double(step), crop.TSUM, crop.DVS, crop.LAI, soil.sn.KAVAIL, crop.vn.KDEMLV, crop.LASUM, crop.SSA, crop.WST, crop.p.SPA, crop.WSO } );
+		out.push_back( {double(step), crop.TSUM, crop.DVS, crop.LAI, crop.WRT, crop.WLV, crop.WST, crop.WSO } );
 }
 
 
 void WofostModel::model_initialize() {
+
+// start time (relative to weather data)
+	if (control.modelstart < wth.date[0]) {
+		std::string m = "model cannot start before beginning of the weather data";
+	    messages.push_back(m);
+	    fatalError = true;
+	} else if (control.modelstart > wth.date[wth.date.size()-1]) {
+		std::string m = "model cannot start after the end of the weather data";
+	    messages.push_back(m);
+	    fatalError = true;
+	} else {
+		time=0;
+		while (wth.date[time] < control.modelstart) {
+			time++;
+		}
+	}
+//	Rcpp::Rcout << time << endl;
 
 	if (control.ISTCHO == 0) { // model starts at emergence)
 		ISTATE = 3;
@@ -62,22 +79,27 @@ void WofostModel::model_initialize() {
 	DELT = 1.;
 //	ISTATE = 3;
 
+	control.IWB = control.IPRODL;
 	if (control.IWB == 0) {
 		IOX = 0;
 	} else {
 		IOX = control.IOXWL;   //for water-limited
 	}
 
+/*
+	atm.latitude = latitude;
+	atm.elevation = elevation;
+	atm.AngstromA = ANGSTA;
+	atm.AngstromB = ANGSTB;
+	atm.CO2 = CO2;
+*/
+
+
  //   DOY = wth.date[time].dayofyear();
 	DOY = doy_from_days(wth.date[time]);
 
     crop.alive = true;
 	fatalError = false;
-
-	atm.latitude = wth.latitude;
-	atm.elevation = wth.elevation;
-	atm.ANGSTA = wth.AngstromA;
-	atm.ANGSTB = wth.AngstromB;
 
 	soil_initialize();
 	if(control.npk_model){
@@ -113,18 +135,17 @@ void WofostModel::model_initialize() {
 		crop.p.CO2EFFTB[i] = crop.p.CO2EFFTB[i] * CO2EFFadj;
 		crop.p.CO2TRATB[i] = crop.p.CO2TRATB[i] * CO2TRAadj;
 	}
+
+	out_names = {"step", "Tsum", "DVS", "LAI", "WRT", "WLV", "WST", "WSO"};
+
 }
 
 
 
 void WofostModel::model_run() {
 
-	//out_names = {"step", "Tsum", "DVS", "GASS", "LAI", "WLV", "WST", "WRT", "WSO", "E0", "SM", "TRA", "WLOW", "W", "run"};
-  out_names = {"step", "Tsum", "DVS", "LAI", "KAVAIL", "KDEMLV", "LASUM", "SSA", "WST", "p.SPA", "WSO"}; //, "KDEMRT", "KDEMSO", "KDEMST", "KNI", "KSOIL", "LAI", "SM", "TAGP", "TRA", "TWLV", "TWRT", "TWSO", "TWST"};
-
 	step = 1;
 	npk_step = 0;
-	time = control.modelstart;
 	unsigned cropstart_step = step + control.cropstart;
 
 	model_initialize();
@@ -170,8 +191,8 @@ void WofostModel::model_run() {
 		step++;
 	}
 	crop.emergence = step;
-		// remove one step/day as crop simulation should start
-		// on the day of emergence, not the next day
+	// remove one step/day as crop simulation should start
+	// on the day of emergence, not the next day
 	time--;
 	step--;
 	out.pop_back();
@@ -182,7 +203,7 @@ void WofostModel::model_run() {
 	} else if (control.IENCHO == 2) {
 		maxdur = step + control.IDURMX;
 	} else if (control.IENCHO == 3) {
-		maxdur = min(cropstart_step + control.IDAYEN, step + control.IDURMX);
+		maxdur = std::min(cropstart_step + control.IDAYEN, step + control.IDURMX);
 	} else {
 		// throw error
 		maxdur = step + 365;

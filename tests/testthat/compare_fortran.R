@@ -1,63 +1,6 @@
-\name{wofost}
-
-\alias{wofost}
-
-\title{
-WOFOST crop growth model
-}
-
-\description{
-This functions runs the WOFOST crop growth model
-}
-
-\usage{
-wofost(crop, weather, soil, control)
-}
-
-\arguments{
-\item{crop}{list. Crop parameters}
-\item{weather}{data.frame with weather data}
-\item{soil}{list. Soil parameters}
-\item{control}{list. Model control options}
-}
-
-\value{
-matrix
-}
-
-\references{
-Van Diepen, C.A., J. Wolf, and H van Keulen, 1989. WOFOST: a simulation model of crop production. Soil Use and Management, 5: 16-24
-
-Van Keulen, H. and J. Wolf, 1986. Modelling of agricultural production : weather, soils and crops. \url{http://edepot.wur.nl/168025}
-}
-
-
-\examples{
-# input data
-	library(Rwofost)
-	w <- example_weather()
-	w$srad <- w$srad * 1000
-	crop <- wofost_crop('barley')
-	soil <- wofost_soil('ec1')
-	contr <- wofost_control()
-	contr$modelstart <- as.Date("2012-02-06")
-
-	# run model
-	d <- wofost(crop, w, soil, contr)
-
-	# output
-	head(d)
-	tail(d)
-	plot(d[,'step'], d[, 'LAI'])
-
-	#or 
-	m <- wofost_model(crop, w, soil, contr)
-	run(m)
-
 
 ## compare with FORTRAN wofost
 ## 1
-library(Rwofost)
 crop <- wofost_crop("rapeseed_1001")
 f <- system.file("extdata/Netherlands_Swifterbant.csv", package="meteor")
 wth_n <- read.csv(f)
@@ -163,4 +106,3 @@ rp <- wofost(crop, wth, soil, cont)
 
 plot(c(1:nrow(d)), d[, 'LAI'], type = "l")
 points(rp[, 'step'], rp[, 'LAI'])
-}

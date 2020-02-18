@@ -48,7 +48,6 @@ corresponds with Wind's loam with a drain  depth of 150 cm.
 
 #include "wofost.h"
 #include "SimUtil.h"
-using namespace std;
 
 void WofostModel::STDAY_initialize() {
 	
@@ -87,12 +86,12 @@ void WofostModel::STDAY() {
     } else { 
     //  maximum capillary rise to surface (cf. Ritchie)
         soil.CAPRMX = AFGEN(soil.CAPRFU, -soil.WEXC);
-        soil.EVS = min( atm.ES0, soil.CAPRMX + atm.RAIN );
+        soil.EVS = std::min( atm.ES0, soil.CAPRMX + atm.RAIN );
     }
-    soil.WEXC = max(-1., soil.WEXC + atm.RAIN - soil.EVS);
+    soil.WEXC = std::max(-1., soil.WEXC + atm.RAIN - soil.EVS);
     // seepage
     if (soil.WEXC > 0.){
-        soil.SEEP = min(soil.WEXC * soil.SPAC + soil.SPOC, soil.WEXC);
+        soil.SEEP = std::min(soil.WEXC * soil.SPAC + soil.SPOC, soil.WEXC);
         soil.WEXC = soil.WEXC - soil.SEEP;
     }
     // criterion for workable day

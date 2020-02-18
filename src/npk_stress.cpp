@@ -231,7 +231,7 @@ void WofostModel::npk_stress() {
         crop.vn.KNI = 0.001;
 	}
 
-    crop.vn.NPKI = min(min(crop.vn.NNI, crop.vn.PNI), crop.vn.KNI);
+    crop.vn.NPKI = std::min( std::min(crop.vn.NNI, crop.vn.PNI), crop.vn.KNI);
 
     // Nutrient reduction factor for assimilation
     crop.vn.NPKREF = LIMIT(0., 1.0, 1. - (crop.pn.NLUE_NPK * pow((1.0001-crop.vn.NPKI), 2)));

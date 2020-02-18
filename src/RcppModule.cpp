@@ -6,7 +6,6 @@ License: GNU General Public License (GNU GPL) v. 2
 
 #include <Rcpp.h>
 using namespace Rcpp;
-using namespace std;
 #include "R_interface_util.h"
 #include "wofost.h"
 
@@ -53,7 +52,7 @@ RCPP_MODULE(wofost){
 		.field("modelstart", &WofostControl::modelstart) 
 		.field("cropstart", &WofostControl::cropstart)  
 		//.field("long_output", &WofostControl::long_output
-		.field("IWB", &WofostControl::IWB)
+		.field("IPRODL", &WofostControl::IPRODL)
 		.field("IOXWL", &WofostControl::IOXWL)
 		.field("ISTCHO", &WofostControl::ISTCHO) 
 		.field("IDESOW", &WofostControl::IDESOW) 
@@ -64,6 +63,7 @@ RCPP_MODULE(wofost){
 	;
 
     class_<DailyWeather>("DailyWeather")
+		.constructor()
 		.field("latitude", &DailyWeather::latitude) 
 		.field("CO2",  &DailyWeather::CO2) 
 		.field("date", &DailyWeather::date) 
@@ -125,7 +125,7 @@ RCPP_MODULE(wofost){
 		.field("RRI", &WofostCropParameters::RRI)
 		.field("RDMCR", &WofostCropParameters::RDMCR)
 		.field("IAIRDU", &WofostCropParameters::IAIRDU)
-		.field("KDifTB", &WofostCropParameters::KDifTB)
+		.field("KDIFTB", &WofostCropParameters::KDIFTB)
 		.field("EFFTB", &WofostCropParameters::EFFTB)
 		.field("AMAXTB", &WofostCropParameters::AMAXTB)
 		.field("TMPFTB", &WofostCropParameters::TMPFTB)
@@ -159,7 +159,7 @@ RCPP_MODULE(wofost){
 		.field("SPOSS", &WofostSoilParameters::SPOSS)
 		.field("DEFLIM", &WofostSoilParameters::DEFLIM)
 		.field("IZT", &WofostSoilParameters::IZT)  // groundwater present
-		.field("ifUNRN", &WofostSoilParameters::ifUNRN)
+		.field("IFUNRN", &WofostSoilParameters::IFUNRN)
 		.field("WAV", &WofostSoilParameters::WAV)
 		.field("ZTI", &WofostSoilParameters::ZTI)
 		.field("DD", &WofostSoilParameters::DD)

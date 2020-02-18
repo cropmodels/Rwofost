@@ -29,7 +29,6 @@ C++ implementation
 
 #include <math.h>
 #include <vector>
-using namespace std;
 
 //double MAX(double x, double y){
 //    return std::max(x, y);
@@ -70,13 +69,13 @@ double ASSIM(double AMAX, double EFF, double LAI, double KDif, double SINB, doub
         VISD = (1. - SCV) * PARDIR * KDIRBL * exp(-KDIRBL * LAIC);
         //absorbed flux in W/m2 for shaded leaves and assimilation
         VISSHD = VISDF + VIST - VISD;
-        FGRSH = AMAX * (1. - exp(-VISSHD * EFF / max(2.0, AMAX)));
+        FGRSH = AMAX * (1. - exp(-VISSHD * EFF / std::max(2.0, AMAX)));
         //direct light absorbed by leaves perpendicular on direct beam and assimilation of sunlit leaf area
         VISPP  = (1. - SCV) * PARDIR / SINB;
         if (VISPP <= 0.) {
             FGRSUN = FGRSH;
         } else {
-            FGRSUN = AMAX * (1. - (AMAX - FGRSH) * (1. - exp(-VISPP * EFF / max(2.0, AMAX))) / (EFF * VISPP));
+            FGRSUN = AMAX * (1. - (AMAX - FGRSH) * (1. - exp(-VISPP * EFF / std::max(2.0, AMAX))) / (EFF * VISPP));
         }
         //fraction of sunlit leaf area (FSLLA) and local assimilation rate (FGL)
         FSLLA = exp(-KDIRBL * LAIC);

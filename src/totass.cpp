@@ -33,7 +33,6 @@ DTGA    R4  Daily total gross assimilation           kg CO2/ha/d O
 
 */
 
-using namespace std;
 #include <math.h>
 #include <vector>
 #include "wofost.h"
@@ -57,9 +56,9 @@ double TOTASS(double DAYL, double AMAX, double EFF, double LAI, double KDif, dou
     if(AMAX > 0. && LAI > 0) {
         for (int i = 0; i < 3; i++) {
             HOUR = 12.0 + 0.5 * DAYL * XGAUSS[i];
-            SINB = max(0., SINLD + COSLD * cos(2 * PI * (HOUR + 12) / 24));
+            SINB = std::max(0., SINLD + COSLD * cos(2 * PI * (HOUR + 12) / 24));
             PAR = 0.5 * AVRAD * SINB * (1.+0.4 * SINB) / DSINBE;
-            PARDIF = min(PAR, SINB * DifPP);
+            PARDIF = std::min(PAR, SINB * DifPP);
             PARDIR = PAR-PARDIF;
             //call function
             FGROS = ASSIM (AMAX,EFF,LAI,KDif,SINB,PARDIR,PARDIF);

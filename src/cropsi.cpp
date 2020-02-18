@@ -18,7 +18,7 @@ Modifications since WOFOST Version 4.1:
 
 Tamme van der Wal (25-July-1997)
 1) New parameter is read in: p.DVSI                 |
-2) KDifTB, EFFTB and SSATB are now read in from data files and KDif, EFF and SSA are calculated using the AFGEN function.
+2) KDIFTB, EFFTB and SSATB are now read in from data files and KDif, EFF and SSA are calculated using the AFGEN function.
 KDif, EFF and SSA which are now functions of DVS or DTEMP
 
 FORMAL PARAMETERS:  (I=input,O=output,C=control,IN=init,T=time)
@@ -56,12 +56,8 @@ IAIRDU  I4  indicates presence (1) or absence (0) of
 RDI     R4  initial rooting depth                         cm     O
 p.RDMCR   R4  crop-dependent maximum rooting depth          cm     O
 
-
-
 C++ version created by fangh on 6/27/16.
 */
-
-using namespace std;
 
 #include <math.h>
 #include <vector>
@@ -191,7 +187,7 @@ void WofostModel::crop_rates() {
   AMAX = AMAX * AFGEN(crop.p.TMPFTB, atm.DTEMP);
     //test
 
-  crop.KDif = AFGEN(crop.p.KDifTB, crop.DVS);
+  crop.KDif = AFGEN(crop.p.KDIFTB, crop.DVS);
   double EFF = AFGEN(crop.p.EFFTB, atm.DTEMP);
 
   double DTGA = TOTASS(atm.DAYL, AMAX, EFF, crop.LAI, crop.KDif, atm.AVRAD, atm.SINLD, atm.COSLD, atm.DSINBE, atm.DifPP);
@@ -215,7 +211,7 @@ void WofostModel::crop_rates() {
   double reduction;
   if (control.npk_model) {
     npk_stress();
-    reduction = min(crop.vn.NPKREF, crop.TRA / crop.TRAMX);
+    reduction = std::min(crop.vn.NPKREF, crop.TRA / crop.TRAMX);
   }  else {
     reduction = crop.TRA / crop.TRAMX;
   }
@@ -250,7 +246,7 @@ void WofostModel::crop_rates() {
 // RH: this seems wrong. FR is affected but this is not corrected for
 // sum of FR, FL, FS, FO shouldd remain 1.
 		double FRTMOD = std::max( 1., 1 / (crop.TRANRF + 0.5));
-		crop.FR = min(0.6, crop.FR * FRTMOD);
+		crop.FR = std::min(0.6, crop.FR * FRTMOD);
 		crop.FL = crop.FL;
 		crop.FS = crop.FS;
 		crop.FO = crop.FO;
@@ -275,15 +271,15 @@ void WofostModel::crop_rates() {
     //test
     //cout << "Fcheck: " << FCHECK << endl;
   if(fabs(FCHECK) > 0.0001){
-		string m = "Error in partitioning functions on doy " + to_string(DOY) + "FCHECK = " + to_string(FCHECK) + " FR = "
-                + to_string(crop.FR) +" FL = " + to_string(crop.FL) + " FS = " + to_string(crop.FS) + " FO = " + to_string(crop.FO);
+		std::string m = "Error in partitioning functions on doy " + std::to_string(DOY) + "FCHECK = " + std::to_string(FCHECK) + " FR = "
+                + std::to_string(crop.FR) +" FL = " + std::to_string(crop.FL) + " FS = " + std::to_string(crop.FS) + " FO = " + std::to_string(crop.FO);
 	    messages.push_back(m);
 	    fatalError = true;
   }
   //check on carbon balance
   double CCHECK = (crop.GASS - crop.MRES - (crop.FR + (crop.FL + crop.FS + crop.FO)*(1. - crop.FR)) * DMI/CVF)/ std::max(0.0001, crop.GASS);
   if(fabs(CCHECK) > 0.0001){
-    string m = "Carbon balance leak (CCHECK in cropsi)";
+    std::string m = "Carbon balance leak (CCHECK in cropsi)";
     messages.push_back(m);
     fatalError = true;
   }

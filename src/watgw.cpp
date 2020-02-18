@@ -57,7 +57,7 @@ p.IDRAIN  I*4  indicates presence (1) or absence (0) of drains            I
 RD      R*4  rooting depth                                      cm      I
 p.IAIRDU  I*4  indicates presence(1) or absence(0) of airducts            I
              in the roots. 1= can tolerate waterlogging
-p.ifUNRN  I*4  flag indicating the way to calculate the                   I
+p.IFUNRN  I*4  flag indicating the way to calculate the                   I
              non-infiltrating fraction of rainfall:
              0. fraction is fixed at p.NOTINF
              1. fraction depends on p.NOTINF and on daily rainfall
@@ -83,12 +83,9 @@ p.SMFCF   R*4  soil moisture content at field capacity          cm3 cm-3  O
 
 */
 
-
 #include "wofost.h"
 #include "SimUtil.h"
 #include <math.h>
-#include <iostream>
-using namespace std;
 
 void WofostModel::WATGW_initialize() {
     //!!!      DATA XDEF/16000./
@@ -157,7 +154,7 @@ void WofostModel::WATGW_initialize() {
     soil.SS = soil.p.SSI;
     soil.ZT = LIMIT(0.1, XDEF, soil.p.ZTI);
     if(soil.p.IDRAIN == 1){
-        soil.ZT = max(soil.ZT, soil.p.DD);
+        soil.ZT = std::max(soil.ZT, soil.p.DD);
     }
     //        amount of air in soil below rooted zone
     soil.SUBAIR = AFGEN(soil.SDEFTB, soil.ZT - crop.RD);
@@ -241,7 +238,7 @@ void WofostModel::WATGW_rates() {
         } else{
             soil.DSLR = soil.DSLR + 1;
             double EVSMXT = soil.EVSMX * (sqrt(soil.DSLR) - sqrt(soil.DSLR - 1.));
-            soil.EVS = min(soil.EVSMX, EVSMXT + soil.RIN);
+            soil.EVS = std::min(soil.EVSMX, EVSMXT + soil.RIN);
         }
     }
     //        preliminary infiltration rate
@@ -251,11 +248,11 @@ void WofostModel::WATGW_rates() {
         //!!         Next line replaced TvdW 24-jul-97
         //!!            AVAIL  = SS+(RAIN+RIRR-EVW)*DELT
         double AVAIL = soil.SS + (atm.RAIN * (1. - soil.p.NOTINF) + soil.RIRR - soil.EVW) * DELT;
-        RINPRE = min(soil.p.SOPE * DELT, AVAIL) / DELT;
+        RINPRE = std::min(soil.p.SOPE * DELT, AVAIL) / DELT;
     } else {
-        if(soil.p.ifUNRN == 0) { 
+        if(soil.p.IFUNRN == 0) { 
 			RINPRE = (1. - soil.p.NOTINF) * atm.RAIN + soil.RIRR + soil.SS/DELT; 
-		} else { // if(soil.p.ifUNRN == 1){
+		} else { // if(soil.p.IFUNRN == 1){
             RINPRE = (1. - soil.p.NOTINF * AFGEN(soil.p.NINFTB, atm.RAIN)) * atm.RAIN + soil.RIRR + soil.SS/DELT;
         }
     }
@@ -277,14 +274,14 @@ void WofostModel::WATGW_rates() {
         double FLOW = SUBSOL(soil.PF, ZTMRD, soil.p.CONTAB);
         //           flow is accounted for as capillary rise or percolation
         if(FLOW >= 0.){
-            soil.CR = min(FLOW, max(soil.WE - soil.W, 0.) / DELT);
+            soil.CR = std::min(FLOW, std::max(soil.WE - soil.W, 0.) / DELT);
         }
         if(FLOW <= 0.){
-            soil.PERC = -1. * max(FLOW, min(soil.WE - soil.W, 0.) / DELT);
+            soil.PERC = -1. * std::max(FLOW, std::min(soil.WE - soil.W, 0.) / DELT);
         }
         //           hypothesis : for rice percolation is limited to p.K0/20
         if(crop.p.IAIRDU == 1){
-            soil.PERC = min(soil.PERC, 0.05 * soil.p.K0);
+            soil.PERC = std::min(soil.PERC, 0.05 * soil.p.K0);
         }
     }
     //        drainage rate
@@ -294,8 +291,8 @@ void WofostModel::WATGW_rates() {
         double DR2;
         if(ZTMRD <= 0.){
             //              ground water above drains and within rootzone
-            DR2 = max(0., soil.W + max(0., soil.p.DD - crop.RD) * soil.p.SM0 - soil.WEDTOT) / DELT;
-            soil.DMAX = min(DR1, DR2);
+            DR2 = std::max(0., soil.W + std::max(0., soil.p.DD - crop.RD) * soil.p.SM0 - soil.WEDTOT) / DELT;
+            soil.DMAX = std::min(DR1, DR2);
         } else{
             //              groundwater above drains and below root zone ; available
             //              is the difference between equilibrium water above drains
@@ -303,7 +300,7 @@ void WofostModel::WATGW_rates() {
             //              root zone).
 
             DR2 = (AFGEN(soil.SDEFTB, soil.p.DD - crop.RD) - soil.SUBAIR) / DELT;
-            soil.DMAX = min(DR1, DR2);
+            soil.DMAX = std::min(DR1, DR2);
         }
 
     } else{
@@ -324,7 +321,7 @@ void WofostModel::WATGW_rates() {
 		}
         //           infiltration rate not to exceed available soil air volume
         soil.PERC = soil.DMAX;
-        soil.RIN = min(RINPRE, AIRC * soil.ZT / DELT + crop.TRA + soil.EVS + soil.PERC);
+        soil.RIN = std::min(RINPRE, AIRC * soil.ZT / DELT + crop.TRA + soil.EVS + soil.PERC);
         soil.DZ = (crop.TRA + soil.EVS + soil.PERC - soil.RIN) / AIRC;
         //           check if groundwater table stays within rooted zone
         if (soil.DZ * DELT > crop.RD - soil.ZT) {
@@ -347,7 +344,7 @@ void WofostModel::WATGW_rates() {
         }
         soil.DZ = (AFGEN(soil.DEFDTB, DEF1) + crop.RD - soil.ZT) / DELT;
         //           infiltration rate not to exceed available soil air volume
-        soil.RIN = min(RINPRE, (soil.p.SM0 - soil.SM - 0.0004) * crop.RD / DELT + crop.TRA + soil.EVS + soil.PERC - soil.CR);
+        soil.RIN = std::min(RINPRE, (soil.p.SM0 - soil.SM - 0.0004) * crop.RD / DELT + crop.TRA + soil.EVS + soil.PERC - soil.CR);
     }
         //        rate of change in amount of moisture in the root zone
     soil.DW = crop.TRA - soil.EVS - soil.PERC + soil.CR + soil.RIN;
@@ -380,7 +377,7 @@ void WofostModel::WATGW_states(){
     soil.TOTIRR = soil.TOTIRR + soil.RIRR * DELT;
     //        surface storage and runoff
     double SSPRE = soil.SS + (atm.RAIN + soil.RIRR - soil.EVW - soil.RIN) * DELT;
-    soil.SS = min(SSPRE, soil.p.SSMAX);
+    soil.SS = std::min(SSPRE, soil.p.SSMAX);
     soil.TSR = soil.TSR + (SSPRE - soil.SS);
     //        amount of water in rooted zone
     soil.W = soil.W + soil.DW * DELT;
@@ -424,7 +421,7 @@ void WofostModel::WATGW_states(){
     //        finish conditions due to lasting lack of oxygen in root zone
     //        (non-rice crops only)
     if(crop.p.IAIRDU == 0 && soil.RTDF >= 10.){
-        string m ("Crop failure due to waterlogging");
+        std::string m ("Crop failure due to waterlogging");
         messages.push_back(m);
         fatalError = true;
     } else{

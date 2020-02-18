@@ -9,18 +9,29 @@ Copyright 1988, 2013 Alterra, Wageningen-UR, Licensed under the EUPL, Version 1.
 
 Author: C.A. van Diepen, April 1989
 
+EVTRA routine calculates for a given crop cover the maximum evaporation rate from a shaded wet soil surface and from a shaded water surface, and the maximum and actual crop transpiration rate.
 
-This routine calculates for a given crop cover the maximum evaporation rate from a shaded wet soil surface and from a shaded
-water surface, and the maximum and actual crop transpiration rate.
+SWEAF computes the fraction of easily available soil water between field capacity and wilting point is a function of the potential evapotranspiration rate (for a closed canopy) in cm/day, ET0, and the crop group number, CGNR (from 1 (=drought-sensitive) to 5 (=drought-resistent)). The function SWEAF describes this relationship given in tabular form by Doorenbos and  Kassam (1979) and by Van Keulen and Wolf (1986; p.108, table 20). Chapter 20 in documentation WOFOST Version 4.1 (1988)
+
+
 */
 
-
-using namespace std;
 #include <vector>
 #include <math.h>
 #include "wofost.h"
 #include "SimUtil.h"
-#include <iostream>
+
+
+double SWEAF(double ET0, double CGNR){
+    double A = 0.76, B = 1.5;
+    double sweaf = 1./(A + B * ET0) - (5. - CGNR) * 0.10;
+    if (CGNR < 3.) {
+        sweaf = sweaf + (ET0 - 0.6) / (CGNR * (CGNR + 3.));
+    }
+    sweaf = LIMIT (0.10, 0.95, sweaf);
+    return sweaf;
+}
+
 
 
 void WofostModel::EVTRA() {
@@ -38,8 +49,8 @@ void WofostModel::EVTRA() {
     //maximum evaporation and transpiration rates
     double EKL = exp( -KGLOB * crop.LAI);
     soil.EVWMX = atm.E0 * EKL;
-    soil.EVSMX = max(0., atm.ES0 * EKL);
-    crop.TRAMX = max(0.0001, atm.ET0*(1. - EKL));
+    soil.EVSMX = std::max(0., atm.ES0 * EKL);
+    crop.TRAMX = std::max(0.0001, atm.ET0*(1. - EKL));
 
     //actual transpiration rate
 
@@ -67,7 +78,7 @@ void WofostModel::EVTRA() {
             double SMAIR = soil.p.SM0 - soil.p.CRAIRC;
             //count days since start oxygen shortage (up to 4 days)
             if (soil.SM >= SMAIR){
-                DSOS = min((DSOS + 1.), 4.);
+                DSOS = std::min((DSOS + 1.), 4.);
             } else {
                 DSOS = 0.;
             }

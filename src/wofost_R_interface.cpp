@@ -8,7 +8,6 @@ License: GNU General Public License (GNU GPL) v. 2
 
 #include <Rcpp.h>
 using namespace Rcpp;
-using namespace std;
 #include <vector>
 #include "SimUtil.h"
 #include "wofost.h"
@@ -24,11 +23,12 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	struct WofostCrop crp;
 
 	std::vector<long> startvec = longFromList(control, "modelstart");
-	long start = startvec[0];
+	cntr.modelstart = startvec[0];
+
 	cntr.cropstart = intFromList(control, "cropstart");
 	//cntr.long_output = boolFromList(control, "long_output");
 
-	cntr.IWB = intFromList(control, "IPRODL"); // translate IPRDL to IWB
+	cntr.IPRODL = intFromList(control, "IPRODL"); // translate IPRDL to IWB
 	cntr.IOXWL = intFromList(control, "IOXWL");
 
 	cntr.ISTCHO = intFromList(control, "ISTCHO");
@@ -124,7 +124,7 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 
 	crp.p.IAIRDU = intFromList(crop, "IAIRDU");
 
-	crp.p.KDifTB = TBFromList(crop, "KDIFTB");
+	crp.p.KDIFTB = TBFromList(crop, "KDIFTB");
 	crp.p.EFFTB = TBFromList(crop, "EFFTB");
 	crp.p.AMAXTB = TBFromList(crop, "AMAXTB");
 	crp.p.TMPFTB = TBFromList(crop, "TMPFTB");
@@ -160,7 +160,7 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 
 	//soil variables that used to be in the control object
 	sol.p.IZT = intFromList(soil, "IZT");  // groundwater present
-	sol.p.ifUNRN = intFromList(soil, "IFUNRN");
+	sol.p.IFUNRN = intFromList(soil, "IFUNRN");
 	sol.p.WAV = doubleFromList(soil, "WAV");
 	sol.p.ZTI = doubleFromList(soil, "ZTI");
 	sol.p.DD = doubleFromList(soil, "DD");
@@ -204,13 +204,6 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 //		wth.date[i] = date(wdate[i].getYear(), wdate[i].getMonth(),  wdate[i].getDay());
 //	}
 
-	wth.latitude = doubleFromList(control, "latitude");
-	wth.elevation = doubleFromList(control, "elevation");
-	wth.AngstromA = doubleFromList(control, "ANGSTA");
-	wth.AngstromB = doubleFromList(control, "ANGSTB");
-	wth.CO2 = doubleFromList(control, "CO2");
-
-
 	//stop( "complete reading data" );
 
 //		Rcout << "start " << start[s].getYear() << " " << start[s].getYearday() << endl;
@@ -225,7 +218,7 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 		// absolute to relative time
 //		Rcout << "offset: " << int(start[s] - wdate[0]) << endl;
 
-	cntr.modelstart = start - wth.date[0];
+	//cntr.modelstart = start - wth.date[0];
 	
 
 	WofostModel m;
@@ -234,22 +227,21 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	m.control = cntr;
 	m.wth = wth;
 
-	// cout << "reading data complete" << endl;
-	// throw "error";
-	// exit(0);
-
+/*
+	m.latitude = doubleFromList(control, "latitude");
+	m.elevation = doubleFromList(control, "elevation");
+	m.ANGSTA = doubleFromList(control, "ANGSTA");
+	m.ANGSTB = doubleFromList(control, "ANGSTB");
+	m.CO2 = doubleFromList(control, "CO2");
+*/
 	m.model_run();
 
 // handle messages
 	// std::vector<std::string>  messages;
 	// bool fatalError;
 
-//	NumericMatrix mat(2, 2);
-//	return(mat);
-
 	if (m.fatalError) {
-		int size = m.messages.size();
-		for (int i = 0; i < size; i++) {
+		for (size_t i = 0; i < m.messages.size(); i++) {
 			Rcout << m.messages[i] << endl;
 		}
 	}
@@ -268,9 +260,6 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	for (int j = 0; j < nc; j++) {
 		cnames[j] = m.out_names[j];
 	}
-
 	colnames(mat) = cnames;
 	return(mat);
-
-
 }

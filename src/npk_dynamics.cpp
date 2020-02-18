@@ -223,7 +223,6 @@ class NPK_Crop_Dynamics(SimulationObject):
         RPLOSS = Float(-99.)
         RKLOSS = Float(-99.)
 
-using namespace std;
 */
 
 
@@ -232,7 +231,7 @@ using namespace std;
 #include "wofost.h"
 #include "SimUtil.h"
 #include <string.h>
-#include <iostream>
+//#include <iostream>
 
 void WofostModel::npk_crop_dynamics_initialize() {
 

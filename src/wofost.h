@@ -10,7 +10,7 @@ License: GNU General Public License (GNU GPL) v. 2
 //#include "date.h"
 #include "SimUtil.h"
 
-using namespace std;
+//using namespace std;
 
 double TOTASS(double DAYL, double AMAX, double EFF, double LAI, double KDif, double AVRAD, double SINLD, double COSLD, double DSINBE, double DifPP);
 double ASSIM(double AMAX, double EFF, double LAI, double KDif, double SINB, double PARDIR, double PARDif);
@@ -25,7 +25,7 @@ struct WofostOutput {
 
 
 struct WofostControl {
-	unsigned modelstart;
+	long modelstart;
 	unsigned cropstart; // sowing, emergence, ...;
 	bool long_output;
 	bool npk_model = false;  //if model is npk, default false
@@ -33,8 +33,7 @@ struct WofostControl {
 	unsigned IDESOW;
 	int INYRG, ISTCHO, IDLSOW, IENCHO, IDAYEN, IDURMX;
 	int IOXWL;   //IOX for water limited
-	int	IWB; // water limited (1) or potential (0)
-
+	int	IPRODL, IWB; // water limited (1) or potential (0)
 	std::vector<double> N_amount, P_amount, K_amount;
 	std::vector<long> NPKdates;
 };
@@ -60,7 +59,7 @@ struct WofostCropParameters {
 	//emergence parameters
 	double TBASEM, TEFFMX, TSUMEM;
 	//tables
-	std::vector<double> DTSMTB, AMAXTB, TMPFTB, KDifTB, EFFTB, TMNFTB, RFSETB, SLATB, FRTB, FLTB, FSTB, FOTB, RDRSTB, RDRRTB, SSATB;
+	std::vector<double> DTSMTB, AMAXTB, TMPFTB, KDIFTB, EFFTB, TMNFTB, RFSETB, SLATB, FRTB, FLTB, FSTB, FOTB, RDRSTB, RDRRTB, SSATB;
 	std::vector<double> CO2AMAXTB, CO2EFFTB, CO2TRATB;
 } ;
 
@@ -91,7 +90,7 @@ struct WofostCrop {
 // variables
 	double TRA, TRANRF;
 	double LASUM, KDif, SSA, TRAMX ;
-	std::vector<double> SLA = vector<double>(366), LV = vector<double>(366), LVAGE = vector<double>(366), TMNSAV = vector<double>(7);
+	std::vector<double> SLA = std::vector<double>(366), LV = std::vector<double>(366), LVAGE = std::vector<double>(366), TMNSAV = std::vector<double>(7);
 	double FR, FL, FS, FO;
 	bool alive;
 	int emergence;
@@ -159,7 +158,7 @@ struct WofostSoilParametersNPK {
 
 struct WofostSoilParameters {
 
-	int IZT, ifUNRN;
+	int IZT, IFUNRN;
 	int NOTINF; // fraction not inflitrating rainfall
 	int IDRAIN; // presence of drains
 	double RDM, SM0, SMFCF, SMW, SOPE, KSUB, CRAIRC, K0, SMLIM, SSI;
@@ -217,15 +216,19 @@ struct WofostSoil {
 
 
 struct WofostAtmosphere {
-	double latitude, elevation;
+	double latitude=52;
+	double elevation=0;
 	double RAIN, RAINT, AVRAD, TEMP, DTEMP, TMIN, TMAX, E0, ES0, ET0, DAYL, DAYLP, WIND, VAP;
 	double SINLD, COSLD, DTGA, DSINB, DSINBE, DifPP;
-	double ANGSTA, ANGSTB, ATMTR;
+	double ATMTR;
+	double ANGSTA = -0.18; 
+	double ANGSTB = -0.55; 
+	double CO2 = 400;
 };
 
 
-
 struct WofostModel {
+
 
 	unsigned step, time, DOY, npk_step;
 	int IDHALT, ISTATE, IOX;

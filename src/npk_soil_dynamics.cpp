@@ -200,9 +200,9 @@ void WofostModel::npk_soil_dynamics_rates() {
         NutrientLIMIT = 0;
 		}
 
-    soil.rn.RNSOIL = -max(0., min(soil.pn.NSOILBASE_FR * soil.pn.NSOILBASE * NutrientLIMIT, soil.sn.NSOIL));
-    soil.rn.RPSOIL = -max(0., min(soil.pn.PSOILBASE_FR * soil.pn.PSOILBASE * NutrientLIMIT, soil.sn.PSOIL));
-    soil.rn.RKSOIL = -max(0., min(soil.pn.KSOILBASE_FR * soil.pn.KSOILBASE * NutrientLIMIT, soil.sn.KSOIL));
+    soil.rn.RNSOIL = - std::max(0., std::min(soil.pn.NSOILBASE_FR * soil.pn.NSOILBASE * NutrientLIMIT, soil.sn.NSOIL));
+    soil.rn.RPSOIL = - std::max(0., std::min(soil.pn.PSOILBASE_FR * soil.pn.PSOILBASE * NutrientLIMIT, soil.sn.PSOIL));
+    soil.rn.RKSOIL = - std::max(0., std::min(soil.pn.KSOILBASE_FR * soil.pn.KSOILBASE * NutrientLIMIT, soil.sn.KSOIL));
 
 
 	double FERT_N_SUPPLY, FERT_P_SUPPLY, FERT_K_SUPPLY;

@@ -50,13 +50,11 @@ ET0     R4  Penman potential transpiration from a crop
 #include <cstdlib>
 #include "SimUtil.h"
 #include <iostream>
-using namespace std;
 
 
 //int main(){return 0;}
 
-std::vector<double> PENMAN (int DOY, double LAT, double ELEV, double ANGSTA, double ANGSTB, double TMIN,
-                        double TMAX, double AVRAD, double VAP, double WIND2, double ATMTR){
+std::vector<double> PENMAN (int DOY, double LAT, double ELEV, double ANGSTA, double ANGSTB, double TMIN, double TMAX, double AVRAD, double VAP, double WIND2, double ATMTR){
 
 //     psychrometric instrument constant (mbar/Celsius-1)
 //     albedo for water surface, soil surface and canopy
