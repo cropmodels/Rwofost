@@ -29,7 +29,7 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="../../meteor/inst/include/SimUtil.h" />
+		<Unit filename="../src/SimUtil.h" />
 		<Unit filename="../src/assim.cpp" />
 		<Unit filename="../src/astro.cpp" />
 		<Unit filename="../src/cropsi.cpp" />
