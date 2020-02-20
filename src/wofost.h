@@ -257,8 +257,6 @@ struct WofostModel {
 	WofostLocation loc;
 	
 	WofostOutput output;
-	
-//	std::vector<std::vector<double>> out;
 
 	void weather_step();
 
@@ -313,29 +311,16 @@ struct WofostModel {
 	void ROOTD_states();
 
 	void ASTRO();
-	void PENMAN(const int& DOY);
-	void PENMAN_MONTEITH(const int& DOY);
-	void ET(const int& DOY);
+	void PENMAN();
+	void PENMAN_MONTEITH();
+	void ET();
 	void EVTRA();
 
-	void model_output();
 
 	void model_initialize();
 	void model_run();
-
-	//04/2017 npk add
-	//void npk_model_run();
-
-	void test();
-
-	//WofostModel(WofostCrop c, WofostSoil s, WofostControl t, Weather w) : crop(c), soil(s), control(t), wth(w) { };
+	void model_output();
 
 };
 
 
-//Undecide variables
-//TSUM
-//crop LAI initialization
-//DAYLP and DAYL
-//ITOLD in states
-//NO RD in crop

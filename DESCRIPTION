@@ -1,8 +1,8 @@
 Package: Rwofost
 Type: Package
 Title: WOFOST Crop Growth Simulation Model
-Version: 0.5
-Date: 2020-02-19
+Version: 0.5-1
+Date: 2020-02-20
 LinkingTo: Rcpp
 Imports: meteor, methods (>= 0.2-2), Rcpp (>= 0.12.4)
 Depends: R (>= 3.5.0), testthat
@@ -10,4 +10,4 @@ SystemRequirements: C++11
 Authors@R: c(person("Robert J.", "Hijmans", role = c("cre", "aut"),  email = "r.hijmans@gmail.com"), person("Huang", "Fang", role = "ctb"), person("C.A.", "van Diepen", role = "ctb"), person("Daniel", "van Kraalingen", role = "ctb"), person("Allard", "de Wit", role = "ctb"), person("Tamme", "van der Wal", role = "ctb"), person("C.", "Rappoldt", role = "ctb"), person("I.G.A.M.", "Noy", role = "ctb"))
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 Description: An implementation of the WOFOST crop growth simulation model.
-License: GPL (>=3) + file LICENSE 
+License: GPL (>=3)

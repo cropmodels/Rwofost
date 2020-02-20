@@ -16,6 +16,7 @@ License: GNU General Public License (GNU GPL) v. 2
 void WofostModel::weather_step() {
 	if (time >= wth.tmin.size()) {
 		fatalError = true;
+		messages.push_back("reached end of weather data");
 	} else {
 		atm.TMIN = wth.tmin[time];
 		atm.TMAX = wth.tmax[time];
@@ -28,40 +29,18 @@ void WofostModel::weather_step() {
 		atm.RAIN = wth.prec[time] / 10 ; // cm !
 
 		DOY = doy_from_days(wth.date[time]);
-
-		//ASTRO();
-		//std::vector<double> penman = PENMAN(DOY, atm.latitude, atm.elevation, loc.AngstromA, loc.AngstromB, atm.TMIN, atm.TMAX, atm.AVRAD, atm.VAP, atm.WIND, atm.ATMTR);
-		//atm.E0 = penman[0];
-		//atm.ES0 = penman[1];
-		//atm.ET0 = penman[2];
-		ET(DOY);
+		ET();
 	}
 }
 
 
 
 void WofostModel::model_output(){
-    //out.push_back( { double(step), crop.TSUM, crop.DVS, crop.GASS, crop.LAI, crop.WLV, crop.WST, crop.WRT, crop.WSO,
-		//	atm.E0, soil.SM, crop.TRA, soil.WLOW, soil.W, double(i)});
-  //wth.date[time]
-
-	//out.push_back( {double(step), crop.TSUM, crop.DVS, crop.LAI, crop.WRT, crop.WLV, crop.WST, crop.WSO } );
-
 	output.values.insert(output.values.end(),
-			{double(step), crop.TSUM, crop.DVS, crop.LAI, crop.WRT, crop.WLV, crop.WST, crop.WSO }
-		);
-
-
-/*	output.step.push_back(step);
-	output.TSUM.push_back(crop.TSUM);
-	output.DVS.push_back(crop.DVS);
-	output.GASS.push_back(crop.GASS);
-	output.LAI.push_back(crop.LAI);
-	output.WLV.push_back(crop.WLV);
-	output.WST.push_back(crop.WST);
-	output.WRT.push_back(crop.WRT);
-	output.WSO.push_back(crop.WSO);
-*/
+		{double(step), crop.TSUM, crop.DVS, crop.LAI, 
+			crop.WRT, crop.WLV, crop.WST, crop.WSO 	
+		}
+	);
 }
 
 
@@ -104,8 +83,9 @@ void WofostModel::model_initialize() {
 	}
 
 	output.names = {"step", "Tsum", "DVS", "LAI", "WRT", "WLV", "WST", "WSO"};
-
- //   DOY = wth.date[time].dayofyear();
+	output.values.resize(0);
+	output.values.reserve(output.names.size() * 150);
+	
 	DOY = doy_from_days(wth.date[time]);
 
     crop.alive = true;
@@ -134,7 +114,8 @@ void WofostModel::model_initialize() {
 	crop.DTSUME = 0.;
     crop.TRA = 0.;
 	crop.GASS = 0.;
-
+	crop.GRLV = 0;
+	
 	// adjusting for CO2 effects
     double CO2AMAXadj = AFGEN(crop.p.CO2AMAXTB, loc.CO2);
 	for(size_t i=1; i<crop.p.AMAXTB.size(); i=i+2) {

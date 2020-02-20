@@ -35,16 +35,20 @@ Van Keulen, H. and J. Wolf, 1986. Modelling of agricultural production : weather
 
 \examples{
 # input data
-library(Rwofost)
-w <- example_weather()
+# weather data
+f <- system.file("extdata/18419.rds", package="meteor")
+w <- readRDS(f)
 w$srad <- w$srad * 1000
+
 crop <- wofost_crop('barley')
 soil <- wofost_soil('ec1')
+
 contr <- wofost_control()
 contr$modelstart <- as.Date("2012-02-06")
 loc <- list(latitude=52.57, elevation=50, CO2=360)
 
-# run model
+# There are two ways to run the model
+# A) direct way
 d <- wofost(crop, w, soil, contr, loc)
 
 # output
@@ -52,17 +56,19 @@ head(d)
 tail(d)
 plot(d[,'step'], d[, 'LAI'])
 
-# or 
+# B) indirect way, first create model and then run it
+# the advantage is that you can change single parameters of the model and run again
+
 m <- wofost_model(crop, w, soil, contr, loc)
 x <- run(m)
-plot(x[,'date'], d[, 'LAI'])
+plot(x[,'date'], x[, 'LAI'])
+
+m$control$modelstart = as.Date("2012-03-06")
+x <- run(m)
+lines(x[,'date'], x[, 'LAI'])
 
 
-
-
-## compare with FORTRAN wofost
-## 1
-library(Rwofost)
+## Other examples
 crop <- wofost_crop("rapeseed_1001")
 f <- system.file("extdata/Netherlands_Swifterbant.csv", package="meteor")
 wth_n <- read.csv(f)
@@ -74,95 +80,35 @@ soil <- wofost_soil("soil_5")
 cont$modelstart <- as.Date('1977-01-01')
 
 rp <- wofost(crop, wth_n, soil, cont, loc)
-
-#m <- wofost_model(crop, wth_n, soil, cont)
-#rp <- run(m)
-
-
-f <- system.file("test/1/wofost.out", package="Rwofost")
-d <- readWofostOutput(f)
-plot(d[,'DAY'], d[,'LAI'], type='l')
-points(rp[,'step'], rp[, 'LAI'])
+plot(rp[,'step'], rp[, 'LAI'])
 
 # yield
-plot(d[,'DAY'], d[,'WSO'], type='l')
-points(rp[, 1], rp[,'WSO'])
+plot(rp[, 1], rp[,'WSO'])
 
 
-## 2
-# no photoperiod effect
-crop$IDSL <- 0
-rp <- wofost(crop, wth_n, soil, cont, loc)
-f <- system.file("test/2/wofost.out", package="Rwofost")
-d <- readWofostOutput(f)
-plot(d[,'DAY'], d[,'LAI'], type='l')
-points(rp[,'step'], rp[, 'LAI'])
+## water limited
+cont <- wofost_control()
+cont$IPRODL <- 1
+cont$modelstart <- as.Date('1985-01-01')
 
-
-
-## 3 water limited
-library(Rwofost)
 crop <- wofost_crop("maize_1")
 f <- system.file("extdata/Philippines_IRRI.csv", package="meteor")
 wth_n <- read.csv(f)
 wth_n$date <- as.Date(wth_n$date)
-cont <- wofost_control()
 soil <- wofost_soil("soil_5")
-cont$modelstart <- as.Date('1985-01-01')
-cont$IPRODL <- 1
 loc$elevation <- 21
 loc$latitude <- 14.18
 loc$ANGSTA <- -0.25
 loc$ANGSTB <- -0.45
 rp <- wofost(crop, wth_n, soil, cont, loc)
 
-f <- system.file("test/3/wofost.out", package="Rwofost")
-d <- readWofostOutput(f, TRUE)
-plot(d[,'DAY'], d[,'LAI'], type='l')
-points(rp[,'step'], rp[, 'LAI'])
+plot(rp[,'step'], rp[, 'LAI'])
 
 
-
-
-## 4 water limited with groundwater
-library(Rwofost)
-crop <- wofost_crop("maize_1")
-f <- system.file("extdata/Philippines_IRRI.csv", package="meteor")
-wth_n <- read.csv(f)
-wth_n$date <- as.Date(wth_n$date)
-cont <- wofost_control()
-soil <- wofost_soil("ec1")
-cont$modelstart <- as.Date("1985-01-01")
-cont$IPRODL <- 1
+## with groundwater
 cont$IZT <- 1
 rp <- wofost(crop, wth_n, soil, cont)
-
-f <- system.file("test/4/wofost.out", package="Rwofost")
-d <- readWofostOutput(f, TRUE)
-plot(d[,'DAY'], d[,'LAI'], type='l')
-points(rp[,'step'], rp[, 'LAI'])
-
-
-
-## 5 npk mode
-library(Rwofost)
-f <- system.file("test/5/wofost_npk_reference_results.csv", package="Rwofost")
-d = read.csv(f)
-soil <- wofost_soil("ec4")
-crop <- wofost_crop("winterwheat_102")
-cont <- wofost_control()
-cont$IPRODL <- 0
-f <- system.file("extdata/Netherlands_Wageningen.csv", package="meteor")
-wth <- read.csv(f)
-wth$date = as.Date(wth$date)
-wth = wth[wth$date >= "1976-01-01", ]
-cont$modelstart <- as.Date("1976-01-01")
-
-cont$npk_model = 1
-cont$latitude <- 51.58
-
-rp <- wofost(crop, wth, soil, cont, loc)
-
-plot(c(1:nrow(d)), d[, 'LAI'], type = "l")
-points(rp[, 'step'], rp[, 'LAI'])
+plot(rp[,'step'], rp[, 'LAI'])
 }
+
+

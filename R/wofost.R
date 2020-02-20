@@ -1,12 +1,8 @@
 
-
-example_weather <- function() {
+.example_weather <- function() {
 	f <- system.file("extdata/18419.rds", package="meteor")
 	readRDS(f)
 }
-
-
-.trim2 <- function(x) return(gsub("^ *|(?<= ) | *$", "", x, perl=TRUE))
 
 
 wofost_model <- function(crop, weather, soil, control, location) {
@@ -243,29 +239,6 @@ wofost_crop <- function(name='') {
 		}
 }
 
-
-
-readWofostOutput <- function(f, wlim=FALSE) {
-
-	r <- .trim2(readLines(f));
-	hdr <- grep("YEAR DAY", r)
-	i <- substr(r,1,4) %in% 1970:2016
-	x <- r[i]
-	x <- strsplit(x, ' ')
-	n <- length(x) / 2
-
-	if (!wlim) {
-		pot <- t(sapply(x[1:n], rbind))
-		pot <- matrix(as.numeric(pot), ncol=ncol(pot))
-		colnames(pot) <- unlist(strsplit(r[hdr[1]], ' '))
-		return(pot)
-	} else {
-		wlm <- t(sapply(x[(n+1):length(x)], rbind))
-		wlm <- matrix(as.numeric(wlm), ncol=ncol(wlm))
-		colnames(wlm) <- unlist(strsplit(r[hdr[2]], ' '))
-		return(wlm)
-	}
-}
 
 
 .getNumLst <- function(ini) {

@@ -129,10 +129,9 @@ void WofostModel::crop_initialize() {
 
 void WofostModel::crop_rates() {
 
-  //seven day running average of minimum temperature
-    //shift minimum temperatures to the left
-
-	for(int i = 0; i < 6; i++){
+   //seven day running average of minimum temperature
+   //shift minimum temperatures to the left
+	for (int i = 0; i < 6; i++) {
       crop.TMNSAV[i] = crop.TMNSAV[i + 1];
     }
     crop.TMNSAV[6] = atm.TMIN;
@@ -181,15 +180,11 @@ void WofostModel::crop_rates() {
   double AMAX = AFGEN(crop.p.AMAXTB, crop.DVS);
 
   AMAX = AMAX * AFGEN(crop.p.TMPFTB, atm.DTEMP);
-    //test
 
   crop.KDif = AFGEN(crop.p.KDIFTB, crop.DVS);
   double EFF = AFGEN(crop.p.EFFTB, atm.DTEMP);
 
   double DTGA = TOTASS(atm.DAYL, AMAX, EFF, crop.LAI, crop.KDif, atm.AVRAD, atm.SINLD, atm.COSLD, atm.DSINBE, atm.DifPP);
-    //cout << "DAYL: " << atm.DAYL << " AMAX: " << AMAX << " EFF: " << EFF << "LAI: " << crop.LAI << endl;
-    //test
-
 
   //correction for low minimum temperature potential assimilation in kg CH2O per ha
   DTGA = DTGA * AFGEN(crop.p.TMNFTB, crop.TMINRA);
@@ -198,11 +193,8 @@ void WofostModel::crop_rates() {
   //(evapo)transpiration rates
   EVTRA();
   //water stress reduction
-    //test
-  //cout << "TRA: " << crop.TRA << " TRAMX: " << crop.TRAMX << endl;
 
   //  crop.GASS = crop.p.PGASS * crop.TRA / crop.TRAMX;
-  //cout << "GASS: " << crop.GASS << endl;
   // nutrient status and reduction factor
   double reduction;
   if (control.npk_model) {
@@ -335,7 +327,7 @@ void WofostModel::crop_rates() {
     //sink-limited increase in leaf area
     double GLA = std::min(crop.GLAIEX, GLASOL);
     //adjustment of specific leaf area of youngest leaf class
-    if(crop.GRLV > 0.) {
+    if (crop.GRLV > 0.) {
       crop.SLAT = GLA / crop.GRLV;
     }
   }

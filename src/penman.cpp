@@ -7,17 +7,13 @@ License: GNU General Public License (GNU GPL) v. 2
 Based on FORTRAN code WOFOST version 7.1.7, release September 2013
 Copyright 1988, 2013 Alterra, Wageningen-UR, Licensed under the EUPL, Version 1.1. 
 
-
 Authors: I.G.A.M. Noy and C.A. van Diepen, September 1986
 revised van Kraalingen, April, van Diepen, October 1991
 Added checks to avoid negative evaporation, Allard de Wit, Sep 2011
 
-
 Chapter 10 in documentation WOFOST Version 4.1 (1988)
 
-This routine calculates the potential evapo(transpi)ration rates from a free water surface (E0), a bare soil surface
-(ES0), and a crop canopy (ET0) in mm/d. For these calculations the analysis by Penman is followed (Frere and Popov, 1979;
-Penman, 1948, 1956, and 1963). Subroutines and functions called: ASTRO, LIMIT.
+This routine calculates the potential evapo(transpi)ration rates from a free water surface (E0), a bare soil surface (ES0), and a crop canopy (ET0) in mm/d. For these calculations the analysis by Penman is followed (Frere and Popov, 1979; Penman, 1948, 1956, and 1963). Subroutines and functions called: ASTRO, LIMIT.
 
 
 FORMAL PARAMETERS:  (I=input,O=output,C=control,IN=init,T=time)
@@ -39,9 +35,6 @@ ES0     R4  Penman potential evaporation from a moist
             bare soil surface                            mm/d     O
 ET0     R4  Penman potential transpiration from a crop
             canopy                                       mm/d     O
-
-
-
 */
 
 
@@ -49,7 +42,7 @@ ET0     R4  Penman potential transpiration from a crop
 #include "wofost.h"
 #include <cmath>
 
-void WofostModel::PENMAN(const int& DOY) {
+void WofostModel::PENMAN() {
 
 //double LAT, double ELEV, double ANGSTA, double ANGSTB, double TMIN, double TMAX, double AVRAD, double VAP, double WIND2, double ATMTR){
 
@@ -126,7 +119,7 @@ double Celsius2Kelvin(double temp) {
 	return ( temp + 273.16 );
 }
 
-void WofostModel::PENMAN_MONTEITH(const int& DOY) {
+void WofostModel::PENMAN_MONTEITH() {
 
 /* 
     Calculates reference ET0 based on the Penman-Monteith model.
@@ -228,12 +221,12 @@ void WofostModel::PENMAN_MONTEITH(const int& DOY) {
 
 
 
-void WofostModel::ET(const int& DOY) {
+void WofostModel::ET() {
 	ASTRO();
 	//if ((loc.AngstromA > 0) & (loc.AngstromB > 0)) {
-		PENMAN(DOY);
+		PENMAN();
 	//} else {
-	//	PENMAN_MONTEITH(DOY);
+	//	PENMAN_MONTEITH();
 	//}
 }
 
