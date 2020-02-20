@@ -47,6 +47,7 @@ ET0     R4  Penman potential transpiration from a crop
 
 #include "SimUtil.h"
 #include "wofost.h"
+#include <cmath>
 
 void PENMAN(const int& DOY, WofostAtmosphere& atm) {
 
