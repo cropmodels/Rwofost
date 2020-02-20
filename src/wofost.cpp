@@ -30,7 +30,7 @@ void WofostModel::weather_step() {
 		DOY = doy_from_days(wth.date[time]);
 
 		//ASTRO();
-		//std::vector<double> penman = PENMAN(DOY, atm.latitude, atm.elevation, atm.ANGSTA, atm.ANGSTB, atm.TMIN, atm.TMAX, atm.AVRAD, atm.VAP, atm.WIND, atm.ATMTR);
+		//std::vector<double> penman = PENMAN(DOY, atm.latitude, atm.elevation, loc.AngstromA, loc.AngstromB, atm.TMIN, atm.TMAX, atm.AVRAD, atm.VAP, atm.WIND, atm.ATMTR);
 		//atm.E0 = penman[0];
 		//atm.ES0 = penman[1];
 		//atm.ET0 = penman[2];
@@ -45,7 +45,7 @@ void WofostModel::model_output(){
 		//	atm.E0, soil.SM, crop.TRA, soil.WLOW, soil.W, double(i)});
   //wth.date[time]
 
-	out.push_back( {double(step), crop.TSUM, crop.DVS, crop.LAI, crop.WRT, crop.WLV, crop.WST, crop.WSO } );
+	//out.push_back( {double(step), crop.TSUM, crop.DVS, crop.LAI, crop.WRT, crop.WLV, crop.WST, crop.WSO } );
 
 	output.values.insert(output.values.end(),
 			{double(step), crop.TSUM, crop.DVS, crop.LAI, crop.WRT, crop.WLV, crop.WST, crop.WSO }
@@ -105,15 +105,6 @@ void WofostModel::model_initialize() {
 
 	output.names = {"step", "Tsum", "DVS", "LAI", "WRT", "WLV", "WST", "WSO"};
 
-/*
-	atm.latitude = latitude;
-	atm.elevation = elevation;
-	atm.AngstromA = ANGSTA;
-	atm.AngstromB = ANGSTB;
-	atm.CO2 = CO2;
-*/
-
-
  //   DOY = wth.date[time].dayofyear();
 	DOY = doy_from_days(wth.date[time]);
 
@@ -145,19 +136,18 @@ void WofostModel::model_initialize() {
 	crop.GASS = 0.;
 
 	// adjusting for CO2 effects
-    double CO2AMAXadj = AFGEN(crop.p.CO2AMAXTB, wth.CO2);
+    double CO2AMAXadj = AFGEN(crop.p.CO2AMAXTB, loc.CO2);
 	for(size_t i=1; i<crop.p.AMAXTB.size(); i=i+2) {
 		crop.p.AMAXTB[i] = crop.p.AMAXTB[i] * CO2AMAXadj;
 	}
-    double CO2EFFadj = AFGEN(crop.p.CO2EFFTB, wth.CO2);
+    double CO2EFFadj = AFGEN(crop.p.CO2EFFTB, loc.CO2);
 	for(size_t i=1; i<crop.p.CO2EFFTB.size(); i=i+2) {
 		crop.p.CO2EFFTB[i] = crop.p.CO2EFFTB[i] * CO2EFFadj;
 	}
-	double CO2TRAadj = AFGEN(crop.p.CO2TRATB, wth.CO2);
+	double CO2TRAadj = AFGEN(crop.p.CO2TRATB, loc.CO2);
 	for(size_t i=1; i<crop.p.CO2TRATB.size(); i=i+2) {
 		crop.p.CO2TRATB[i] = crop.p.CO2TRATB[i] * CO2TRAadj;
 	}
-
 
 }
 
@@ -216,7 +206,7 @@ void WofostModel::model_run() {
 	// on the day of emergence, not the next day
 	time--;
 	step--;
-	out.pop_back();
+	//out.pop_back();
 	output.values.erase(output.values.end()-output.names.size(), output.values.end());
 
 	unsigned maxdur;
@@ -239,7 +229,7 @@ void WofostModel::model_run() {
 
 		weather_step();
 		crop_rates();
-		if(control.npk_model){
+		if (control.npk_model){
 			npk_soil_dynamics_rates();
 		} else {
 			soil_rates();

@@ -4,7 +4,6 @@ Date: July 2016
 
 License: GNU General Public License (GNU GPL) v. 2
 
-
 Based on FORTRAN code WOFOST version 7.1.7, release September 2013
 Copyright 1988, 2013 Alterra, Wageningen-UR, Licensed under the EUPL, Version 1.1.
 
@@ -13,7 +12,7 @@ Author: C.A. van Diepen, February 1989, revised July 1990, December 1992
 In this routine the simulation of the potential or the water-limited crop growth is performed.
 
 Modifications since WOFOST Version 4.1:
-- 3 extra parameters for the description of exponential growth of young leaves : p.RGRLAI  p.LAIEM   p.DVSEND
+- 3 extra parameters for the description of exponential growth of young leaves : RGRLAI LAIEM DVSEND
 - simulation of crop emergence
 
 Tamme van der Wal (25-July-1997)
@@ -55,8 +54,6 @@ IAIRDU  I4  indicates presence (1) or absence (0) of
             (1) means tolerating water-saturated soils
 RDI     R4  initial rooting depth                         cm     O
 p.RDMCR   R4  crop-dependent maximum rooting depth          cm     O
-
-C++ version created by fangh on 6/27/16.
 */
 
 #include <math.h>
@@ -64,7 +61,7 @@ C++ version created by fangh on 6/27/16.
 #include "wofost.h"
 #include "SimUtil.h"
 #include <string.h>
-#include <iostream>
+//#include <iostream>
 
 /*
 // used for npk
@@ -330,7 +327,7 @@ void WofostModel::crop_rates() {
   crop.SLAT = AFGEN(crop.p.SLATB, crop.DVS);
 
   //leaf area not to exceed exponential growth curve
-  if(crop.LAIEXP > 6.){
+  if (crop.LAIEXP > 6) {
     double DTEFF = std::max(0., atm.TEMP - crop.p.TBASE);
     crop.GLAIEX = crop.LAIEXP * crop.p.RGRLAI * DTEFF;
     //source-limited increase in leaf area

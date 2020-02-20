@@ -19,6 +19,21 @@ double SUBSOL (double PF, double D, std::vector<double> CONTAB);// flow is outpu
 //double SWEAF(double ET0, double CGNR);
 //std::vector<double> PENMAN (int DOY, double LAT, double ELEV, double ANGSTA, double ANGSTB, double TMIN, double TMAX, double AVRAD, double VAP, double WIND2, double ATMTR);
 
+class WofostWeather {
+public:
+	std::vector<long> date;
+	std::vector<double> srad, tmin, tmax, prec, wind, vapr;
+};
+
+
+
+class WofostLocation {
+public:
+	double latitude, elevation;
+	double AngstromA = -0.18;
+	double AngstromB = -0.55;
+	double CO2 = 410;
+};
 
 
 struct WofostControl {
@@ -213,14 +228,9 @@ struct WofostSoil {
 
 
 struct WofostAtmosphere {
-	double latitude=52;
-	double elevation=0;
 	double RAIN, RAINT, AVRAD, TEMP, DTEMP, TMIN, TMAX, E0, ES0, ET0, DAYL, DAYLP, WIND, VAP;
 	double SINLD, COSLD, DTGA, DSINB, DSINBE, DifPP;
 	double ATMTR, ANGOT;
-	double ANGSTA = -0.18; 
-	double ANGSTB = -0.55; 
-	double CO2 = 400;
 };
 
 struct WofostOutput {
@@ -243,12 +253,12 @@ struct WofostModel {
 	WofostControl control;
 
 	WofostAtmosphere atm;
-	DailyWeather wth;
+	WofostWeather wth;
+	WofostLocation loc;
 	
 	WofostOutput output;
 	
-	std::vector<std::vector<double>> out;
-
+//	std::vector<std::vector<double>> out;
 
 	void weather_step();
 
@@ -303,6 +313,8 @@ struct WofostModel {
 	void ROOTD_states();
 
 	void ASTRO();
+	void PENMAN(const int& DOY);
+	void PENMAN_MONTEITH(const int& DOY);
 	void ET(const int& DOY);
 	void EVTRA();
 

@@ -14,7 +14,7 @@ In this routine the depth of the root zone is calculated for each day of the cro
 
 #include "wofost.h"
 #include "SimUtil.h"
-#include <iostream>
+//#include <iostream>
 
 void WofostModel::ROOTD_initialize() {
 // compute the depth of the root zone for each day of the crop cycle	

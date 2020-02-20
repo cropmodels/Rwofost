@@ -5,7 +5,6 @@ Date: June 2016
 License: GNU General Public License (GNU GPL) v. 2
 */
 
-
 #include <Rcpp.h>
 using namespace Rcpp;
 #include <vector>
@@ -15,8 +14,7 @@ using namespace Rcpp;
 //#include <iostream>
 
 // [[Rcpp::export]]
-NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
-
+NumericMatrix wofost(List crop, DataFrame weather, List soil, List control, List location) {
 
 // control parameters
 	struct WofostControl cntr;
@@ -189,7 +187,7 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 
 
 // weather
-	DailyWeather wth;
+	WofostWeather wth;
 	wth.tmin = doubleFromDF(weather, "tmin");
 	wth.tmax = doubleFromDF(weather, "tmax");
 	wth.srad = doubleFromDF(weather, "srad");
@@ -197,42 +195,20 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	wth.vapr = doubleFromDF(weather, "vapr");
 	wth.wind = doubleFromDF(weather, "wind");
 	wth.date = longFromDF(weather, "date");
-//	DateVector wdate = dateFromDF(weather, "date");
-//	wth.date.resize(wdate.size());
-//	for (int i = 0; i < wdate.size(); i++) {
-//		wth.date[i] = date(wdate[i].getYear(), wdate[i].getMonth(),  wdate[i].getDay());
-//	}
-
-	//stop( "complete reading data" );
-
-//		Rcout << "start " << start[s].getYear() << " " << start[s].getYearday() << endl;
-//		Rcout << "weather " << wdate[0].getYear() << " " << wdate[0].getYearday() << endl;
-
-/*		if (start[s] < wdate[0]) {
-			stop("start requested before the beginning of the weather data");
-		} else if (start[s] > wdate[nwth-1]) {
-			stop("start requested after the end of the weather data");
-		}
-*/
-		// absolute to relative time
-//		Rcout << "offset: " << int(start[s] - wdate[0]) << endl;
-
-	//cntr.modelstart = start - wth.date[0];
 	
+
+	
+	WofostLocation loc;
+	loc.latitude = doubleFromList(location, "latitude");
+	loc.elevation = doubleFromList(location, "elevation");
+	loc.CO2 = doubleFromList(location, "CO2");
 
 	WofostModel m;
 	m.crop = crp;
 	m.soil = sol;
 	m.control = cntr;
 	m.wth = wth;
-
-/*
-	m.latitude = doubleFromList(control, "latitude");
-	m.elevation = doubleFromList(control, "elevation");
-	m.ANGSTA = doubleFromList(control, "ANGSTA");
-	m.ANGSTB = doubleFromList(control, "ANGSTB");
-	m.CO2 = doubleFromList(control, "CO2");
-*/
+	m.loc = loc;
 	m.model_run();
 
 // handle messages

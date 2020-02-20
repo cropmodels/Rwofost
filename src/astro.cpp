@@ -41,7 +41,7 @@ void WofostModel::ASTRO() {
     double ANGLE = -4., RAD = 0.0174533;
 	double PI = 3.141592653589793238462643383279502884197169399375;
     //Error check on latitude
-    if (atm.latitude > 90. || atm.latitude < -90.) {
+    if (loc.latitude > 90. || loc.latitude < -90.) {
         //cout << "astro.cpp invalid LAT " << endl;
         //terminate();
         std::string m ("ASTRO LAT > 90 or LAT < -90");
@@ -56,8 +56,8 @@ void WofostModel::ASTRO() {
 
     //double SINLD, COSLD, AOB;
     double AOB;
-    atm.SINLD = sin(RAD * atm.latitude) * sin(DEC);
-    atm.COSLD = cos(RAD * atm.latitude) * cos(DEC);
+    atm.SINLD = sin(RAD * loc.latitude) * sin(DEC);
+    atm.COSLD = cos(RAD * loc.latitude) * cos(DEC);
     AOB = atm.SINLD/atm.COSLD;
 
 // For very high latitudes and days in summer and winter a limit is inserted

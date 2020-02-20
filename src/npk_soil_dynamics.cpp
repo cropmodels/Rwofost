@@ -174,7 +174,7 @@ class NPK_Soil_Dynamics(SimulationObject):
 #include "wofost.h"
 #include "SimUtil.h"
 #include <string.h>
-#include <iostream>
+//#include <iostream>
 
 void WofostModel::npk_soil_dynamics_initialize() {
   soil_initialize();

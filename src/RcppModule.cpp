@@ -8,8 +8,8 @@ License: GNU General Public License (GNU GPL) v. 2
 #include "wofost.h"
 
 
-void setWeather(WofostModel* m, Rcpp::NumericVector date, Rcpp::NumericVector tmin, Rcpp::NumericVector tmax, Rcpp::NumericVector srad, Rcpp::NumericVector prec, Rcpp::NumericVector wind, Rcpp::NumericVector vapr, double latitude, double AngA, double AngB) {
-	DailyWeather wth;
+void setWeather(WofostModel* m, Rcpp::NumericVector date, Rcpp::NumericVector tmin, Rcpp::NumericVector tmax, Rcpp::NumericVector srad, Rcpp::NumericVector prec, Rcpp::NumericVector wind, Rcpp::NumericVector vapr) {
+	WofostWeather wth;
 	wth.tmin = Rcpp::as<std::vector<double>>(tmin);
 	wth.tmax = Rcpp::as<std::vector<double>>(tmax);
 	wth.srad = Rcpp::as<std::vector<double>>(srad);
@@ -17,16 +17,17 @@ void setWeather(WofostModel* m, Rcpp::NumericVector date, Rcpp::NumericVector tm
 	wth.vapr = Rcpp::as<std::vector<double>>(vapr);
 	wth.prec = Rcpp::as<std::vector<double>>(prec);
 	wth.date = Rcpp::as<std::vector<long>>(date);
-	wth.latitude  = latitude;
-	wth.AngstromA = AngA;
-	wth.AngstromB = AngB;
+//	wth.latitude  = latitude;
+//	wth.AngstromA = AngA;
+//	wth.AngstromB = AngB;
 //	wth.elevation = location[2];
 	m->wth = wth;
 }
 
 
 
-RCPP_EXPOSED_CLASS(DailyWeather)
+RCPP_EXPOSED_CLASS(WofostWeather)
+RCPP_EXPOSED_CLASS(WofostLocation)
 
 RCPP_EXPOSED_CLASS(WofostCrop)
 RCPP_EXPOSED_CLASS(WofostCropParameters)
@@ -58,17 +59,22 @@ RCPP_MODULE(wofost){
 		.field("IDURMX", &WofostControl::IDURMX) 
 	;
 
-    class_<DailyWeather>("DailyWeather")
+    class_<WofostLocation>("WofostLocation")
 		.constructor()
-		.field("latitude", &DailyWeather::latitude) 
-		.field("CO2",  &DailyWeather::CO2) 
-		.field("date", &DailyWeather::date) 
-		.field("srad", &DailyWeather::srad) 
-		.field("tmin", &DailyWeather::tmin) 
-		.field("tmax", &DailyWeather::tmax) 
-		.field("prec", &DailyWeather::prec) 
-		.field("wind", &DailyWeather::wind) 
-		.field("vapr", &DailyWeather::vapr) 
+		.field("latitude", &WofostLocation::latitude) 
+		.field("elevation", &WofostLocation::elevation) 
+		.field("CO2",  &WofostLocation::CO2) 
+	;
+	
+    class_<WofostWeather>("WofostWeather")
+		.constructor()
+		.field("date", &WofostWeather::date) 
+		.field("srad", &WofostWeather::srad) 
+		.field("tmin", &WofostWeather::tmin) 
+		.field("tmax", &WofostWeather::tmax) 
+		.field("prec", &WofostWeather::prec) 
+		.field("wind", &WofostWeather::wind) 
+		.field("vapr", &WofostWeather::vapr) 
 	;
 	
 	// incomplete
@@ -189,19 +195,11 @@ RCPP_MODULE(wofost){
 		.field("crop", &WofostModel::crop, "crop")
 		.field("soil", &WofostModel::soil, "soil")
 		.field("control", &WofostModel::control, "control")
-		.field("out", &WofostModel::out, "out")
 		.field("weather", &WofostModel::wth, "weather")
+		.field("location", &WofostModel::loc, "location")
 		.field("output", &WofostModel::output, "output")
 	;			
 
- /*   class_<WofostOutput>("WofostOutput")
-		.field_readonly("LAI", &WofostOutput::LAI)
-		.field_readonly("WLV", &WofostOutput::WLV)
-		.field_readonly("WST", &WofostOutput::WST)
-		.field_readonly("WRT", &WofostOutput::WRT)
-		.field_readonly("WSO", &WofostOutput::WSO)
-	;
-*/	
 };
 
 	

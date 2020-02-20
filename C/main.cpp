@@ -122,12 +122,12 @@ WofostSoil getSoilParameters(const char *filename) {
 
 
 // weather
-DailyWeather getWeatherParameters(const char *filename) {
+WofostWeather getWeatherParameters(const char *filename) {
 
 	std::vector< std::vector<std::string> > matrix = readCSV(filename);
 	std::vector<std::vector<std::string> > control = readINI(controlFile);
 
-	DailyWeather wth;
+	WofostWeather wth;
 	date dates;
 
 	std::vector<std::string> ss;
@@ -146,11 +146,6 @@ DailyWeather getWeatherParameters(const char *filename) {
 		wth.wind.push_back( std::stod(matrix[i][5]) );
 		wth.prec.push_back( std::stod(matrix[i][6]) );
 	} // ordering should not matter
-
-	wth.latitude  = dFromINI(control, "latitude");
-	wth.elevation = dFromINI(control, "elevation");
-	wth.AngstromA = dFromINI(control, "ANGSTA");
-	wth.AngstromB = dFromINI(control, "ANGSTB");
 
 	return wth;
 }
@@ -172,6 +167,17 @@ WofostControl getControlParameters(const char *filename) {
 	return tim;
 }
 
+
+WofostLocation getLocationParameters(const char *filename) {
+	WofostLocation loc;
+	std::vector<std::vector<std::string> > control = readINI(controlFile);
+	loc.latitude  = dFromINI(control, "latitude");
+	loc.elevation = dFromINI(control, "elevation");
+	loc.CO2  = dFromINI(control, "latitude");
+	loc.AngstromA = dFromINI(control, "ANGSTA");
+	loc.AngstromB = dFromINI(control, "ANGSTB");
+    return loc;
+}
 
 //	tim.INYRG = iFromINI(control, "INYRG");
 //	tim.IDLSOW = iFromINI(control, "IDLSOW");
@@ -236,7 +242,8 @@ int main(int argc, char *argv[]) {
 	WofostCrop crp = getCropParameters(cropFile);
 	WofostSoil sol = getSoilParameters(soilFile);
 	WofostControl tim = getControlParameters(controlFile);
-	DailyWeather wth = getWeatherParameters(weatherFile);
+	WofostWeather wth = getWeatherParameters(weatherFile);
+	WofostLocation loc = getLocationParameters(controlFile);
 
 //	unsigned int nwth = wth.tmin.size();
 
@@ -247,6 +254,7 @@ int main(int argc, char *argv[]) {
     int start = date2int(date(1977, 1, 1));
 	m.control.modelstart = start;
 	m.wth = wth;
+	m.loc = loc;
 //    m.wth$latitude <- 52.57
 
 	m.model_run();

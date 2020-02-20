@@ -9,12 +9,13 @@ example_weather <- function() {
 .trim2 <- function(x) return(gsub("^ *|(?<= ) | *$", "", x, perl=TRUE))
 
 
-wofost_model <- function(crop, weather, soil, control) {
+wofost_model <- function(crop, weather, soil, control, location) {
 	m <- WofostModel$new()
 	if (!missing(crop)) { crop(m) <- crop }
 	if (!missing(soil)) { soil(m) <- soil }
 	if (!missing(control)) { control(m) <- control }
 	if (!missing(weather)) { weather(m) <- weather }
+	if (!missing(location)) { location(m) <- location }
 	return(m)
 }
 
@@ -47,6 +48,22 @@ setMethod("crop<-", signature('Rcpp_WofostModel', 'list'),
 	}
 )
 
+if (!isGeneric("location<-")) { setGeneric("location<-", function(x, value) standardGeneric("location<-")) }	
+
+setMethod("location<-", signature('Rcpp_WofostModel', 'list'), 
+	function(x, value) {
+		parameters <- c("latitude", "CO2", "elevation")
+		nms <- names(value)
+		if (!all(parameters %in% nms)) stop(paste("parameters missing:", paste(parameters[!(parameters %in% nms)], collapse=", ")))
+		value <- value[parameters]
+		nms <- names(value)
+		# also OK: "AngstromA", "AngstromB")
+		lapply(1:length(value), function(i) eval(parse(text = paste0("x$location$", nms[i], " <- ", value[i]))))
+		return(x)
+	}
+)
+
+
 setMethod("soil<-", signature('Rcpp_WofostModel', 'list'), 
 	function(x, value) {
 		parameters <- c("SMTAB", "SMW", "SMFCF", "SM0", "CRAIRC", "CONTAB", "K0", "SOPE", "KSUB", "SPADS", "SPASS", "SPODS", "SPOSS", "DEFLIM", "IZT", "IFUNRN", "WAV", "ZTI", "DD", "IDRAIN", "NOTINF", "SSMAX", "SMLIM", "SSI", "RDMSOL")
@@ -78,7 +95,7 @@ setMethod("weather<-", signature("Rcpp_WofostModel", "list"),
 		nms <- colnames(value)
 		if (!all(parameters %in% nms)) stop(paste("weather variables missing:", paste(parameters[!(parameters %in% nms)], collapse=", ")))
 
-		w <- DailyWeather$new()
+		w <- WofostWeather$new()
 		w$date <- as.integer(value$date)
 		w$srad <- value$srad
 		w$tmin <- value$tmin

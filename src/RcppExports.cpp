@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // wofost
-NumericMatrix wofost(List crop, DataFrame weather, List soil, List control);
-RcppExport SEXP _Rwofost_wofost(SEXP cropSEXP, SEXP weatherSEXP, SEXP soilSEXP, SEXP controlSEXP) {
+NumericMatrix wofost(List crop, DataFrame weather, List soil, List control, List location);
+RcppExport SEXP _Rwofost_wofost(SEXP cropSEXP, SEXP weatherSEXP, SEXP soilSEXP, SEXP controlSEXP, SEXP locationSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -15,7 +15,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< DataFrame >::type weather(weatherSEXP);
     Rcpp::traits::input_parameter< List >::type soil(soilSEXP);
     Rcpp::traits::input_parameter< List >::type control(controlSEXP);
-    rcpp_result_gen = Rcpp::wrap(wofost(crop, weather, soil, control));
+    Rcpp::traits::input_parameter< List >::type location(locationSEXP);
+    rcpp_result_gen = Rcpp::wrap(wofost(crop, weather, soil, control, location));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -23,7 +24,7 @@ END_RCPP
 RcppExport SEXP _rcpp_module_boot_wofost();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_Rwofost_wofost", (DL_FUNC) &_Rwofost_wofost, 4},
+    {"_Rwofost_wofost", (DL_FUNC) &_Rwofost_wofost, 5},
     {"_rcpp_module_boot_wofost", (DL_FUNC) &_rcpp_module_boot_wofost, 0},
     {NULL, NULL, 0}
 };

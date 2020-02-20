@@ -10,16 +10,6 @@
 #include <algorithm>
 
 
-class DailyWeather {
-	public:
-		double longitude, latitude, elevation;
-		double AngstromA, AngstromB;
-		double CO2 = 400;
-		std::vector<long> date;
-		std::vector<double> srad, tmin, tmax, prec, wind, vapr;
-};
-
-
 template <class T> T minvalue(std::vector<T> v) {
   return *std::min_element(v.begin(),v.end());  
 }
