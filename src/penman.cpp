@@ -44,16 +44,201 @@ ET0     R4  Penman potential transpiration from a crop
 
 */
 
-#include <vector>
-#include <algorithm>
-#include <cmath>
-#include <cstdlib>
+
 #include "SimUtil.h"
-#include <iostream>
+#include "wofost.h"
+
+void PENMAN(const int& DOY, WofostAtmosphere& atm) {
+
+//double LAT, double ELEV, double ANGSTA, double ANGSTB, double TMIN, double TMAX, double AVRAD, double VAP, double WIND2, double ATMTR){
+
+//  psychrometric instrument constant (mbar/Celsius-1)
+	double PSYCON = 0.67;
+//  albedo for water surface, soil surface and canopy
+	double REFCFW = 0.05, REFCFS = 0.15, REFCFC = 0.25;
+//  latent heat of evaporation of water (J/kg=J/mm)
+	double LHVAP = 2.45e6;
+//  Stefan Boltzmann constant (J/m2/d/K4)
+	double STBC = 4.9e-3;
+
+//10.2 preparatory calculations
+//  mean daily temperature and temperature difference (Celsius)
+//  coefficient Bu in wind function, dependent on temperature difference
+	double TMPA  = ( atm.TMIN + atm.TMAX ) / 2.; // average temp
+	double TDif  = atm.TMAX - atm.TMIN;
+
+	double BU    = 0.54 + 0.35 * LIMIT(0, 1, (TDif - 12.) / 4.);
+
+//  barometric pressure (mbar)
+//  psychrometric constant (mbar/Celsius)
+	double PBAR  = 1013. * exp(-0.034 * atm.elevation / (TMPA+273.));
+	double GAMMA = PSYCON * PBAR/1013.;
 
 
-//int main(){return 0;}
+//  saturated vapour pressure according to equation of Goudriaan
+//  (1977) derivative of SVAP with respect to temperature, i.e.
+//  slope of the SVAP-temperature curve (mbar/Celsius);
+//  measured vapour pressure not to exceed saturated vapour pressure
 
+	double SVAP  = 6.10588 * exp (17.32491*TMPA / (TMPA+238.102));
+	double DELTA = 238.102 * 17.32491 * SVAP / pow((TMPA+238.102), 2);
+	double VAP   = std::min(atm.VAP, SVAP);
+
+//  the expression n/N (RELSSD) from the Penman formula is estimated
+//  from the Angstrom formula: RI=RA(A+B.n/N) -> n/N=(RI/RA-A)/B,
+//  where RI/RA is the atmospheric transmission computed by ASTRO
+
+    double RELSSD = LIMIT(0.,1., (atm.ATMTR - std::abs(atm.ANGSTA)) / std::abs(atm.ANGSTB));
+
+//  Terms in Penman formula, for water, soil and canopy
+//  net outgoing long-wave radiation (J/m2/d) acc. to Brunt (1932)
+	double RB  = STBC * pow((TMPA+273.), 4) * (0.56-0.079 * sqrt(VAP)) * (0.1+0.9*RELSSD);
+
+//  net absorbed radiation, expressed in mm/d
+    double RNW = (atm.AVRAD * (1.-REFCFW)-RB) / LHVAP;
+    double RNS = (atm.AVRAD * (1.-REFCFS)-RB) / LHVAP;
+    double RNC = (atm.AVRAD * (1.-REFCFC)-RB) / LHVAP;
+
+//  evaporative demand of the atmosphere (mm/d)
+    double EA  = 0.26 * std::max(0.,(SVAP-VAP)) * (0.5+BU * atm.WIND);
+    double EAC = 0.26 * std::max(0.,(SVAP-VAP)) * (1.0+BU * atm.WIND);
+    
+//  Penman formula (1948)
+    atm.E0  = (DELTA*RNW+GAMMA*EA)/(DELTA+GAMMA);
+    atm.ES0 = (DELTA*RNS+GAMMA*EA)/(DELTA+GAMMA);
+    atm.ET0 = (DELTA*RNC+GAMMA*EAC)/(DELTA+GAMMA);
+
+//  Ensure reference evaporation >= 0.
+    atm.E0  = std::max(0., atm.E0) / 10;
+    atm.ES0 = std::max(0., atm.ES0)  / 10;
+    atm.ET0 = std::max(0., atm.ET0)  / 10;
+       
+}
+
+
+
+double SatVapourPressure(double temp) {
+    return ( 0.6108 * exp((17.27 * temp) / (237.3 + temp)) );
+}
+
+double Celsius2Kelvin(double temp) {
+	return ( temp + 273.16 );
+}
+
+void PENMAN_MONTEITH(const int& DOY, WofostAtmosphere& atm) {
+
+/* 
+    Calculates reference ET0 based on the Penman-Monteith model.
+
+     This routine calculates the potential evapotranspiration rate from
+     a reference crop canopy (ET0) in mm/d. For these calculations the
+     analysis by FAO is followed as laid down in the FAO publication
+     `Guidelines for computing crop water requirements - FAO Irrigation
+     and drainage paper 56 <http://www.fao.org/docrep/X0490E/x0490e00.htm#Contents>`_
+
+    Input variables::
+
+        DAY   -  Python datetime.date object                   -
+        LAT   -  Latitude of the site                        degrees
+        ELEV  - Elevation above sea level                      m
+        TMIN  - Minimum temperature                            C
+        TMAX  - Maximum temperature                            C
+        AVRAD - Daily shortwave radiation                   J m-2 d-1
+        VAP   - 24 hour average vapour pressure               hPa
+        WIND2 - 24 hour average windspeed at 2 meter          m/s
+
+    Output is:
+
+        ET0   - Penman-Monteith potential transpiration
+                rate from a crop canopy                     [mm/d]
+    """
+*/
+    // psychrometric instrument constant (kPa/Celsius)
+    double PSYCON = 0.665;
+    // albedo and surface resistance [sec/m] for the reference crop canopy
+    double REFCFC = 0.23; 
+	double CRES = 70.;
+    // latent heat of evaporation of water [J/kg == J/mm] and
+    double LHVAP = 2.45E6;
+    // Stefan Boltzmann constant (J/m2/d/K4, e.g multiplied by 24*60*60)
+    double STBC = 4.903E-3;
+    // Soil heat flux [J/m2/day] explicitly set to zero
+    double G = 0.;
+
+    // mean daily temperature (Celsius)
+    double TMPA = (atm.TMIN + atm.TMAX) / 2.;
+
+    // Vapour pressure to kPa
+    double VAP = atm.VAP / 10;
+
+    // atmospheric pressure at standard temperature of 293K (kPa)
+    double T = 293.0;
+    double PATM = 101.3 * pow((T - (0.0065 * atm.elevation))/T, 5.26);
+
+    // psychrometric constant (kPa/Celsius)
+    double GAMMA = PSYCON * PATM * 1.0E-3;
+
+    // Derivative of SVAP with respect to mean temperature, i.e.
+    // slope of the SVAP-temperature curve (kPa/Celsius);
+    double SVAP_TMPA = SatVapourPressure(TMPA);
+    double DELTA = (4098. * SVAP_TMPA)/pow((TMPA + 237.3), 2);
+
+    // Daily average saturated vapour pressure [kPa] from min/max temperature
+    double SVAP_TMAX = SatVapourPressure(atm.TMAX);
+    double SVAP_TMIN = SatVapourPressure(atm.TMIN);
+    double SVAP = (SVAP_TMAX + SVAP_TMIN) / 2.;
+
+    // measured vapour pressure not to exceed saturated vapour pressure
+    VAP = std::min(VAP, SVAP);
+
+    // Longwave radiation according at Tmax, Tmin (J/m2/d)
+    // and preliminary net outgoing long-wave radiation (J/m2/d)
+    double STB_TMAX = STBC * pow(Celsius2Kelvin(atm.TMAX), 4);
+    double STB_TMIN = STBC * pow(Celsius2Kelvin(atm.TMIN), 4);
+    double RNL_TMP = ((STB_TMAX + STB_TMIN) / 2.) * (0.34 - 0.14 * sqrt(VAP));
+
+    // Clear Sky radiation [J/m2/DAY] from Angot TOA radiation
+    double CSKYRAD = (0.75 + (2e-05 * atm.elevation)) * atm.ANGOT;
+
+    if (CSKYRAD > 0) {
+        // Final net outgoing longwave radiation [J/m2/day]
+        double RNL = RNL_TMP * (1.35 * (atm.AVRAD/CSKYRAD) - 0.35);
+
+        // radiative evaporation equivalent for the reference surface
+        // [mm/DAY]
+        double  RN = ((1-REFCFC) * atm.AVRAD - RNL)/LHVAP;
+
+        // aerodynamic evaporation equivalent [mm/day]
+        double  EA = ((900./(TMPA + 273)) * atm.WIND * (SVAP - VAP));
+
+        // Modified psychometric constant (gamma*)[kPa/C]
+        double MGAMMA = GAMMA * (1. + (CRES/208. * atm.WIND));
+
+        // Reference ET in mm/day
+        atm.ET0 = (DELTA * (RN-G))/(DELTA + MGAMMA) + (GAMMA * EA)/(DELTA + MGAMMA);
+        atm.ET0 = std::max(0., atm.ET0);
+    } else {
+        atm.ET0 = 0.;
+	}
+	// ignoring the difference between canopy, soil and water, as canopy is much more important.
+    atm.E0  = atm.ET0;
+    atm.ES0 = atm.ET0;
+}	
+
+
+
+void WofostModel::ET(const int& DOY) {
+	ASTRO();
+	//if ((atm.ANGSTA > 0) & (atm.ANGSTB > 0)) {
+		PENMAN(DOY, atm);
+	//} else {
+	//	PENMAN_MONTEITH(DOY, atm);
+	//}
+}
+
+
+
+/*
 std::vector<double> PENMAN (int DOY, double LAT, double ELEV, double ANGSTA, double ANGSTB, double TMIN, double TMAX, double AVRAD, double VAP, double WIND2, double ATMTR){
 
 //     psychrometric instrument constant (mbar/Celsius-1)
@@ -144,3 +329,4 @@ std::vector<double> PENMAN (int DOY, double LAT, double ELEV, double ANGSTA, dou
 
       return result;
 }
+*/

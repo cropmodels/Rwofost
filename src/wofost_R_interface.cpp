@@ -26,8 +26,7 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	cntr.modelstart = startvec[0];
 
 	cntr.cropstart = intFromList(control, "cropstart");
-	//cntr.long_output = boolFromList(control, "long_output");
-
+	cntr.long_output = boolFromList(control, "long_output");
 	cntr.IPRODL = intFromList(control, "IPRODL"); // translate IPRDL to IWB
 	cntr.IOXWL = intFromList(control, "IOXWL");
 
@@ -246,20 +245,19 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 		}
 	}
 
-	int nr = m.out.size();
-	int nc = m.out[0].size();
+	size_t nc = m.output.names.size();
+	size_t nr = m.output.values.size() / nc;
 	NumericMatrix mat(nr, nc);
+	CharacterVector cnames = wrap(m.output.names);
+	colnames(mat) = cnames;
 
-	for (int i = 0; i < nr; i++) {
-		for (int j = 0; j < nc; j++) {
-			mat(i, j) = m.out[i][j];
+	size_t k=0;
+	for (size_t i = 0; i < nr; i++) {
+		for (size_t j = 0; j < nc; j++) {
+			mat(i, j) = m.output.values[k];
+			k++;
 		}
 	}
 
-	CharacterVector cnames(nc);
-	for (int j = 0; j < nc; j++) {
-		cnames[j] = m.out_names[j];
-	}
-	colnames(mat) = cnames;
 	return(mat);
 }

@@ -21,14 +21,13 @@ wofost_model <- function(crop, weather, soil, control) {
 setMethod("run", signature('Rcpp_WofostModel'), 
 	function(x, ...) {
 		x$run()
-#		out <- x$out
-#		date <- as.Date(x$control$modelstart, origin="1970-01-01") + out$step
-#		Wtot <- out$WRT + out$WLV + out$WST + out$WSO
-#		v <- data.frame(date, out$TSUM, out$LAI, out$WRT, out$WLV, out$WST, out$WSO, Wtot,
-#							  out$EVAP, out$TRAN, out$TRANRF, out$WA, out$WC, out$RWA)
-#		colnames(v) <- c("date", "TSUM", "LAI", "WRT", "WLV", "WST", "WSO", "Wtot",
-#							"EVAP", "TRAN", "TRANRF", "WA", "WC", "RWA")
-#		v
+		out <- matrix(x$output$values, ncol=length(x$output$names), byrow=TRUE)
+		colnames(out) <- x$output$names
+		out <- data.frame(out)
+		date <- as.Date(x$control$modelstart, origin="1970-01-01") + out$step
+		out <- data.frame(date, out)
+#		out$Wtot <- out$WRT + out$WLV + out$WST + out$WSO
+		out
 	}
 )
 
@@ -253,11 +252,19 @@ readWofostOutput <- function(f, wlim=FALSE) {
 
 
 .getNumLst <- function(ini) {
-  v <- ini[,3]
-  vv <- sapply(v, function(i) strsplit(i, ','), USE.NAMES = FALSE)
-  vv <- sapply(vv, as.numeric)
-  lst <- lapply(vv, function(i) if(length(i) > 1) { matrix(i, ncol=2, byrow=TRUE) } else {i})
-  names(lst) <- ini[,2]
-  lst
+	v <- ini[,3]
+	vv <- sapply(v, function(i) strsplit(i, ','), USE.NAMES = FALSE)
+	vv <- sapply(vv, as.numeric)
+	lst <- lapply(vv, function(i) {
+			if(length(i) > 1) { 
+				#matrix(i, ncol=2, byrow=TRUE) 
+				matrix(i, nrow=2) 
+			} else {
+				i
+			}
+		}
+	)
+	names(lst) <- ini[,2]
+	lst
 }
 

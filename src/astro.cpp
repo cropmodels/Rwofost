@@ -83,7 +83,7 @@ void WofostModel::ASTRO() {
 
     //Calculate solution for base=-4 (ANGLE) degrees
     //double AOB_CORR, DAYLP, ANGOT, ATMTR;
-    double AOB_CORR, ANGOT;
+    double AOB_CORR;
 
     AOB_CORR = (-sin(ANGLE * RAD) + atm.SINLD) / atm.COSLD;
     if (AOB_CORR > 1.0) {
@@ -95,10 +95,10 @@ void WofostModel::ASTRO() {
     }
 
     //extraterrestrial radiation and atmospheric transmip.SSIon
-    ANGOT  = SC * atm.DSINB;
+    atm.ANGOT  = SC * atm.DSINB;
     //Check for DAYL=0 as in that case the angot radiation is 0 as well
     if (atm.DAYL > 0.0)  {
-        atm.ATMTR = atm.AVRAD / ANGOT;
+        atm.ATMTR = atm.AVRAD / atm.ANGOT;
     } else {
         atm.ATMTR = 0;
     }

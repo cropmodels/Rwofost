@@ -99,11 +99,11 @@ void WofostModel::WATGW_initialize() {
 //     infiltration parameters WOFOST_WRR
     soil.p.NINFTB = {0.0, 0.0, 0.5, 0.0, 1.5, 1.0, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.};
     
-    soil.p.SMFCF = AFGEN2(soil.p.SMTAB, log10(200.));
-    soil.p.SMW = AFGEN2(soil.p.SMTAB, log10(16000.));
-    soil.p.SM0 = AFGEN2(soil.p.SMTAB, -1.);
+    soil.p.SMFCF = AFGEN(soil.p.SMTAB, log10(200.));
+    soil.p.SMW = AFGEN(soil.p.SMTAB, log10(16000.));
+    soil.p.SM0 = AFGEN(soil.p.SMTAB, -1.);
     
-    soil.p.K0 = pow(10., AFGEN2(soil.p.CONTAB, -1.));
+    soil.p.K0 = pow(10., AFGEN(soil.p.CONTAB, -1.));
 
     int ILSM = soil.p.SMTAB.size();
     soil.p.PFTAB.resize(ILSM);
@@ -141,7 +141,7 @@ void WofostModel::WATGW_initialize() {
         soil.SDEFTB[i2 - 2] = soil.MH1;
         soil.SDEFTB[i2 - 1] = soil.SDEFTB[i2 - 3];
         for(int j = 0; j < 3; j++){
-            soil.SDEFTB[i2 - 1] = soil.SDEFTB[i2 - 1] + WGAU[j] * (soil.MH1 - soil.MH0) * (soil.p.SM0 - AFGEN2(soil.p.SMTAB, log10(soil.MH0 + (soil.MH1 - soil.MH0)*PGAU[j])));
+            soil.SDEFTB[i2 - 1] = soil.SDEFTB[i2 - 1] + WGAU[j] * (soil.MH1 - soil.MH0) * (soil.p.SM0 - AFGEN(soil.p.SMTAB, log10(soil.MH0 + (soil.MH1 - soil.MH0)*PGAU[j])));
         }
         soil.DEFDTB[i2 - 2] = soil.SDEFTB[i2 - 1];
         soil.DEFDTB[i2 - 1] = soil.SDEFTB[i2 - 2];
@@ -157,16 +157,16 @@ void WofostModel::WATGW_initialize() {
         soil.ZT = std::max(soil.ZT, soil.p.DD);
     }
     //        amount of air in soil below rooted zone
-    soil.SUBAIR = AFGEN2(soil.SDEFTB, soil.ZT - crop.RD);
+    soil.SUBAIR = AFGEN(soil.SDEFTB, soil.ZT - crop.RD);
 
     //        amount of moisture in soil below rooted zone
     soil.WZ = (XDEF - crop.RD) * soil.p.SM0 - soil.SUBAIR;
     soil.WZI = soil.WZ;
     //        equilibrium amount of soil moisture in rooted zone
 
-    soil.WE = soil.p.SM0 * crop.RD + soil.SUBAIR - AFGEN2(soil.SDEFTB, soil.ZT);
+    soil.WE = soil.p.SM0 * crop.RD + soil.SUBAIR - AFGEN(soil.SDEFTB, soil.ZT);
     //        equilibrium amount of moisture above drains up to the surface
-    soil.WEDTOT = soil.p.SM0 * soil.p.DD - AFGEN2(soil.SDEFTB, soil.p.DD);
+    soil.WEDTOT = soil.p.SM0 * soil.p.DD - AFGEN(soil.SDEFTB, soil.p.DD);
 //        initial moisture content in rooted zone
     if(soil.ZT < crop.RD + 100.){
         //           groundwater in or close to rootzone
@@ -181,7 +181,7 @@ void WofostModel::WATGW_initialize() {
     soil.WI = soil.W;
     //        soil evaporation, days since last rain
     soil.DSLR = 1.;
-    if(soil.SM <= AFGEN2(soil.p.SMTAB, 3.0)){
+    if(soil.SM <= AFGEN(soil.p.SMTAB, 3.0)){
         soil.DSLR = 5.;
     }
     //----------------------------------------------------------
@@ -253,7 +253,7 @@ void WofostModel::WATGW_rates() {
         if(soil.p.IFUNRN == 0) { 
 			RINPRE = (1. - soil.p.NOTINF) * atm.RAIN + soil.RIRR + soil.SS/DELT; 
 		} else { // if(soil.p.IFUNRN == 1){
-            RINPRE = (1. - soil.p.NOTINF * AFGEN2(soil.p.NINFTB, atm.RAIN)) * atm.RAIN + soil.RIRR + soil.SS/DELT;
+            RINPRE = (1. - soil.p.NOTINF * AFGEN(soil.p.NINFTB, atm.RAIN)) * atm.RAIN + soil.RIRR + soil.SS/DELT;
         }
     }
     //        indicator for groundwater table within (-) or below (+) rootzone
@@ -266,9 +266,9 @@ void WofostModel::WATGW_rates() {
     if(ZTMRD > 0.){
         //           groundwater table below rooted zone:
         //           equilibrium amount of soil moisture in rooted zone
-        soil.WE = soil.p.SM0 * crop.RD + soil.SUBAIR - AFGEN2(soil.SDEFTB, soil.ZT);
+        soil.WE = soil.p.SM0 * crop.RD + soil.SUBAIR - AFGEN(soil.SDEFTB, soil.ZT);
         //           soil suction
-        soil.PF = AFGEN2(soil.p.PFTAB, soil.SM);
+        soil.PF = AFGEN(soil.p.PFTAB, soil.SM);
         //           calculate capillary flow
         //call subsol;
         double FLOW = SUBSOL(soil.PF, ZTMRD, soil.p.CONTAB);
@@ -299,7 +299,7 @@ void WofostModel::WATGW_rates() {
             //              and equilibrium water above groundwater level (both until
             //              root zone).
 
-            DR2 = (AFGEN2(soil.SDEFTB, soil.p.DD - crop.RD) - soil.SUBAIR) / DELT;
+            DR2 = (AFGEN(soil.SDEFTB, soil.p.DD - crop.RD) - soil.SUBAIR) / DELT;
             soil.DMAX = std::min(DR1, DR2);
         }
 
@@ -333,7 +333,7 @@ void WofostModel::WATGW_rates() {
             soil.CR = (soil.DZ * DELT - (crop.RD - soil.ZT)) * AIRC / DELT;
             //              new equilibrium groundwater depth, based on the soil water
             //              deficit
-            soil.DZ = (AFGEN2(soil.DEFDTB, soil.CR * DELT) + crop.RD - soil.ZT) / DELT;
+            soil.DZ = (AFGEN(soil.DEFDTB, soil.CR * DELT) + crop.RD - soil.ZT) / DELT;
         }
     }else{
         //           groundwater table below rootzone
@@ -342,7 +342,7 @@ void WofostModel::WATGW_rates() {
         if(DEF1 < 0.){
             soil.PERC = soil.PERC + DEF1/DELT;
         }
-        soil.DZ = (AFGEN2(soil.DEFDTB, DEF1) + crop.RD - soil.ZT) / DELT;
+        soil.DZ = (AFGEN(soil.DEFDTB, DEF1) + crop.RD - soil.ZT) / DELT;
         //           infiltration rate not to exceed available soil air volume
         soil.RIN = std::min(RINPRE, (soil.p.SM0 - soil.SM - 0.0004) * crop.RD / DELT + crop.TRA + soil.EVS + soil.PERC - soil.CR);
     }
@@ -390,7 +390,7 @@ void WofostModel::WATGW_states(){
     //        groundwater depth
     soil.ZT = soil.ZT + soil.DZ * DELT;
     //        amount of air and water below rooted zone
-    soil.SUBAIR = AFGEN2(soil.SDEFTB, soil.ZT - crop.RDOLD);
+    soil.SUBAIR = AFGEN(soil.SDEFTB, soil.ZT - crop.RDOLD);
     double XDEF = 1000.;
     soil.WZ = (XDEF - crop.RDOLD) * soil.p.SM0 - soil.SUBAIR;
 
@@ -401,7 +401,7 @@ void WofostModel::WATGW_states(){
     if(crop.RD - crop.RDOLD > 0.001){
         //           save old value SUBAIR, new values SUBAIR and WZ
         double SUBAI0 = soil.SUBAIR;
-        soil.SUBAIR = AFGEN2(soil.SDEFTB, soil.ZT - crop.RD);
+        soil.SUBAIR = AFGEN(soil.SDEFTB, soil.ZT - crop.RD);
         soil.WZ = (XDEF - crop.RD) * soil.p.SM0 - soil.SUBAIR;
         //           water added to rooted zone by root growth
         double WDR = soil.p.SM0 * (crop.RD - crop.RDOLD) - (SUBAI0 - soil.SUBAIR);

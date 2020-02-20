@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="cwofost" />
+		<Option pch_mode="2" />
+		<Option compiler="cygwin" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/cwofost" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="cygwin" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/cwofost" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="cygwin" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="../../meteor/inst/include/SimUtil.h" />
+		<Unit filename="../src/assim.cpp" />
+		<Unit filename="../src/astro.cpp" />
+		<Unit filename="../src/cropsi.cpp" />
+		<Unit filename="../src/evtra.cpp" />
+		<Unit filename="../src/npk_demand_uptake.cpp" />
+		<Unit filename="../src/npk_dynamics.cpp" />
+		<Unit filename="../src/npk_soil_dynamics.cpp" />
+		<Unit filename="../src/npk_stress.cpp" />
+		<Unit filename="../src/npk_translocation.cpp" />
+		<Unit filename="../src/penman.cpp" />
+		<Unit filename="../src/rootd.cpp" />
+		<Unit filename="../src/soil.cpp" />
+		<Unit filename="../src/stday.cpp" />
+		<Unit filename="../src/subsol.cpp" />
+		<Unit filename="../src/totass.cpp" />
+		<Unit filename="../src/watfd.cpp" />
+		<Unit filename="../src/watgw.cpp" />
+		<Unit filename="../src/watpp.cpp" />
+		<Unit filename="../src/wofost.cpp" />
+		<Unit filename="../src/wofost.h" />
+		<Unit filename="date.cpp" />
+		<Unit filename="date.h" />
+		<Unit filename="files.cpp" />
+		<Unit filename="files.h" />
+		<Unit filename="main.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

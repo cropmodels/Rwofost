@@ -11,7 +11,6 @@ License: GNU General Public License (GNU GPL) v. 2
 #include <math.h>
 #include <string.h>
 //#include <iostream>
-//#include <Rcpp.h>
 
 
 void WofostModel::weather_step() {
@@ -30,21 +29,39 @@ void WofostModel::weather_step() {
 
 		DOY = doy_from_days(wth.date[time]);
 
-		ASTRO();
-		std::vector<double> penman = PENMAN(DOY, atm.latitude, atm.elevation, atm.ANGSTA, atm.ANGSTB, atm.TMIN, atm.TMAX, atm.AVRAD, atm.VAP, atm.WIND, atm.ATMTR);
-
-		atm.E0 = penman[0];
-		atm.ES0 = penman[1];
-		atm.ET0 = penman[2];
+		//ASTRO();
+		//std::vector<double> penman = PENMAN(DOY, atm.latitude, atm.elevation, atm.ANGSTA, atm.ANGSTB, atm.TMIN, atm.TMAX, atm.AVRAD, atm.VAP, atm.WIND, atm.ATMTR);
+		//atm.E0 = penman[0];
+		//atm.ES0 = penman[1];
+		//atm.ET0 = penman[2];
+		ET(DOY);
 	}
 }
+
 
 
 void WofostModel::model_output(){
     //out.push_back( { double(step), crop.TSUM, crop.DVS, crop.GASS, crop.LAI, crop.WLV, crop.WST, crop.WRT, crop.WSO,
 		//	atm.E0, soil.SM, crop.TRA, soil.WLOW, soil.W, double(i)});
+  //wth.date[time]
 
-		out.push_back( {double(step), crop.TSUM, crop.DVS, crop.LAI, crop.WRT, crop.WLV, crop.WST, crop.WSO } );
+	out.push_back( {double(step), crop.TSUM, crop.DVS, crop.LAI, crop.WRT, crop.WLV, crop.WST, crop.WSO } );
+
+	output.values.insert(output.values.end(),
+			{double(step), crop.TSUM, crop.DVS, crop.LAI, crop.WRT, crop.WLV, crop.WST, crop.WSO }
+		);
+
+
+/*	output.step.push_back(step);
+	output.TSUM.push_back(crop.TSUM);
+	output.DVS.push_back(crop.DVS);
+	output.GASS.push_back(crop.GASS);
+	output.LAI.push_back(crop.LAI);
+	output.WLV.push_back(crop.WLV);
+	output.WST.push_back(crop.WST);
+	output.WRT.push_back(crop.WRT);
+	output.WSO.push_back(crop.WSO);
+*/
 }
 
 
@@ -86,6 +103,8 @@ void WofostModel::model_initialize() {
 		IOX = control.IOXWL;   //for water-limited
 	}
 
+	output.names = {"step", "Tsum", "DVS", "LAI", "WRT", "WLV", "WST", "WSO"};
+
 /*
 	atm.latitude = latitude;
 	atm.elevation = elevation;
@@ -126,17 +145,19 @@ void WofostModel::model_initialize() {
 	crop.GASS = 0.;
 
 	// adjusting for CO2 effects
-    double CO2AMAXadj = AFGEN2(crop.p.CO2AMAXTB, wth.CO2);
-    double CO2EFFadj = AFGEN2(crop.p.CO2EFFTB, wth.CO2);
-	double CO2TRAadj = AFGEN2(crop.p.CO2TRATB, wth.CO2);
-	int n = crop.p.AMAXTB.size();
-	for(int i=1; i<n; i=i+2) {
+    double CO2AMAXadj = AFGEN(crop.p.CO2AMAXTB, wth.CO2);
+	for(size_t i=1; i<crop.p.AMAXTB.size(); i=i+2) {
 		crop.p.AMAXTB[i] = crop.p.AMAXTB[i] * CO2AMAXadj;
+	}
+    double CO2EFFadj = AFGEN(crop.p.CO2EFFTB, wth.CO2);
+	for(size_t i=1; i<crop.p.CO2EFFTB.size(); i=i+2) {
 		crop.p.CO2EFFTB[i] = crop.p.CO2EFFTB[i] * CO2EFFadj;
+	}
+	double CO2TRAadj = AFGEN(crop.p.CO2TRATB, wth.CO2);
+	for(size_t i=1; i<crop.p.CO2TRATB.size(); i=i+2) {
 		crop.p.CO2TRATB[i] = crop.p.CO2TRATB[i] * CO2TRAadj;
 	}
 
-	out_names = {"step", "Tsum", "DVS", "LAI", "WRT", "WLV", "WST", "WSO"};
 
 }
 
@@ -177,7 +198,7 @@ void WofostModel::model_run() {
 				crop_emerged = true;
 			}
 		}
-		model_output(); //?
+		model_output();
 		if(control.npk_model){
 			npk_soil_dynamics_states();
 		} else {
@@ -196,6 +217,7 @@ void WofostModel::model_run() {
 	time--;
 	step--;
 	out.pop_back();
+	output.values.erase(output.values.end()-output.names.size(), output.values.end());
 
 	unsigned maxdur;
 	if (control.IENCHO == 1) {
@@ -212,6 +234,8 @@ void WofostModel::model_run() {
 	crop_initialize();
 
 	while ((crop.alive) && (step < maxdur)) {
+
+//       std::cout << step << std::endl;
 
 		weather_step();
 		crop_rates();

@@ -146,9 +146,9 @@ Calculates the crop N/P/K demand and its uptake from the soil.
 
 /* initiatlize
 
-        NMAXLV_TB = AfgenTrait()  # maximum N concentration in leaves as function of dvs
-        PMAXLV_TB = AfgenTrait()  # maximum P concentration in leaves as function of dvs
-        KMAXLV_TB = AfgenTrait()  # maximum P concentration in leaves as function of dvs
+        NMAXLV_TB = AFGENTrait()  # maximum N concentration in leaves as function of dvs
+        PMAXLV_TB = AFGENTrait()  # maximum P concentration in leaves as function of dvs
+        KMAXLV_TB = AFGENTrait()  # maximum P concentration in leaves as function of dvs
 
         NMAXRT_FR = Float(-99.)  # maximum N concentration in roots as fraction of maximum N concentration in leaves
         PMAXRT_FR = Float(-99.)  # maximum P concentration in roots as fraction of maximum P concentration in leaves
@@ -317,9 +317,9 @@ void WofostModel::npk_demand_uptake_rates() {
 void WofostModel::npk_demand_uptake_states() {
 
 //       Maximum NPK concentrations in leaves [kg N kg-1 DM]
-        double NMAXLV = AFGEN2(crop.pn.NMAXLV_TB, crop.DVS);
-        double PMAXLV = AFGEN2(crop.pn.PMAXLV_TB, crop.DVS);
-        double KMAXLV = AFGEN2(crop.pn.KMAXLV_TB, crop.DVS);
+        double NMAXLV = AFGEN(crop.pn.NMAXLV_TB, crop.DVS);
+        double PMAXLV = AFGEN(crop.pn.PMAXLV_TB, crop.DVS);
+        double KMAXLV = AFGEN(crop.pn.KMAXLV_TB, crop.DVS);
         //std::cout << "NMAXLV: " << NMAXLV << std::endl;
 
 //       Maximum NPK concentrations in stems and roots [kg N kg-1 DM]

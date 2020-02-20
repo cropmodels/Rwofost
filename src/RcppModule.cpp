@@ -5,12 +5,10 @@ License: GNU General Public License (GNU GPL) v. 2
 */
 
 #include <Rcpp.h>
-using namespace Rcpp;
-#include "R_interface_util.h"
 #include "wofost.h"
 
 
-void setWeather(WofostModel* m, NumericVector date, NumericVector tmin, NumericVector tmax, NumericVector srad, NumericVector prec, NumericVector wind, NumericVector vapr, double latitude, double AngA, double AngB) {
+void setWeather(WofostModel* m, Rcpp::NumericVector date, Rcpp::NumericVector tmin, Rcpp::NumericVector tmax, Rcpp::NumericVector srad, Rcpp::NumericVector prec, Rcpp::NumericVector wind, Rcpp::NumericVector vapr, double latitude, double AngA, double AngB) {
 	DailyWeather wth;
 	wth.tmin = Rcpp::as<std::vector<double>>(tmin);
 	wth.tmax = Rcpp::as<std::vector<double>>(tmax);
@@ -25,8 +23,6 @@ void setWeather(WofostModel* m, NumericVector date, NumericVector tmin, NumericV
 //	wth.elevation = location[2];
 	m->wth = wth;
 }
-
-
 
 
 
@@ -181,6 +177,11 @@ RCPP_MODULE(wofost){
 		.field("pn", &WofostSoil::pn, "soil nutrient parameters")
 	;
 	
+    class_<WofostOutput>("WofostOutput")
+		.field("names", &WofostOutput::names, "names")
+		.field("values", &WofostOutput::values, "values")
+	;
+
     class_<WofostModel>("WofostModel")
 		.constructor()
 		.method("run", &WofostModel::model_run, "run the model")		
@@ -190,7 +191,7 @@ RCPP_MODULE(wofost){
 		.field("control", &WofostModel::control, "control")
 		.field("out", &WofostModel::out, "out")
 		.field("weather", &WofostModel::wth, "weather")
-		
+		.field("output", &WofostModel::output, "output")
 	;			
 
  /*   class_<WofostOutput>("WofostOutput")

@@ -124,9 +124,9 @@ Class to calculate various nutrient relates stress factors:
     """
 
     class Parameters(ParamTemplate):
-        NMAXLV_TB = AfgenTrait()  // maximum N concentration in leaves as function of dvs
-        PMAXLV_TB = AfgenTrait()  // maximum P concentration in leaves as function of dvs
-        KMAXLV_TB = AfgenTrait()  // maximum P concentration in leaves as function of dvs
+        NMAXLV_TB = AFGENTrait()  // maximum N concentration in leaves as function of dvs
+        PMAXLV_TB = AFGENTrait()  // maximum P concentration in leaves as function of dvs
+        KMAXLV_TB = AFGENTrait()  // maximum P concentration in leaves as function of dvs
         NCRIT_FR = Float(-99.)   // optimal N concentration as fraction of maximum N concentration
         PCRIT_FR = Float(-99.)   // optimal P concentration as fraction of maximum P concentration
         KCRIT_FR = Float(-99.)   // optimal K concentration as fraction of maximum K concentration
@@ -151,9 +151,9 @@ Class to calculate various nutrient relates stress factors:
 void WofostModel::npk_stress() {
 
 // Maximum NPK concentrations in leaves (kg N kg-1 DM)
-    double NMAXLV = AFGEN2(crop.pn.NMAXLV_TB, crop.DVS);
-    double PMAXLV = AFGEN2(crop.pn.PMAXLV_TB, crop.DVS);
-    double KMAXLV = AFGEN2(crop.pn.KMAXLV_TB, crop.DVS);
+    double NMAXLV = AFGEN(crop.pn.NMAXLV_TB, crop.DVS);
+    double PMAXLV = AFGEN(crop.pn.PMAXLV_TB, crop.DVS);
+    double KMAXLV = AFGEN(crop.pn.KMAXLV_TB, crop.DVS);
 
 // Maximum NPK concentrations in stems (kg N kg-1 DM)
     double NMAXST = crop.pn.NMAXST_FR * NMAXLV;

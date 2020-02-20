@@ -15,13 +15,10 @@ License: GNU General Public License (GNU GPL) v. 2
 double TOTASS(double DAYL, double AMAX, double EFF, double LAI, double KDif, double AVRAD, double SINLD, double COSLD, double DSINBE, double DifPP);
 double ASSIM(double AMAX, double EFF, double LAI, double KDif, double SINB, double PARDIR, double PARDif);
 double SUBSOL (double PF, double D, std::vector<double> CONTAB);// flow is output
-double SWEAF(double ET0, double CGNR);
-std::vector<double> PENMAN (int DOY, double LAT, double ELEV, double ANGSTA, double ANGSTB, double TMIN, double TMAX, double AVRAD, double VAP, double WIND2, double ATMTR);
 
+//double SWEAF(double ET0, double CGNR);
+//std::vector<double> PENMAN (int DOY, double LAT, double ELEV, double ANGSTA, double ANGSTB, double TMIN, double TMAX, double AVRAD, double VAP, double WIND2, double ATMTR);
 
-struct WofostOutput {
-	double LAI;
-};
 
 
 struct WofostControl {
@@ -220,15 +217,19 @@ struct WofostAtmosphere {
 	double elevation=0;
 	double RAIN, RAINT, AVRAD, TEMP, DTEMP, TMIN, TMAX, E0, ES0, ET0, DAYL, DAYLP, WIND, VAP;
 	double SINLD, COSLD, DTGA, DSINB, DSINBE, DifPP;
-	double ATMTR;
+	double ATMTR, ANGOT;
 	double ANGSTA = -0.18; 
 	double ANGSTB = -0.55; 
 	double CO2 = 400;
 };
 
+struct WofostOutput {
+	std::vector<std::string> names;
+	std::vector<double> values;
+};
+
 
 struct WofostModel {
-
 
 	unsigned step, time, DOY, npk_step;
 	int IDHALT, ISTATE, IOX;
@@ -243,9 +244,11 @@ struct WofostModel {
 
 	WofostAtmosphere atm;
 	DailyWeather wth;
+	
+	WofostOutput output;
+	
+	std::vector<std::vector<double>> out;
 
-	std::vector<std::vector<double> > out;
-	std::vector<std::string> out_names;
 
 	void weather_step();
 
@@ -300,6 +303,7 @@ struct WofostModel {
 	void ROOTD_states();
 
 	void ASTRO();
+	void ET(const int& DOY);
 	void EVTRA();
 
 	void model_output();

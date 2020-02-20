@@ -1,0 +1,151 @@
+# depslib dependency file v1.0
+1582051646 source:c:\github\cropmodels\rwofost\src\assim.cpp
+	<math.h>
+	<vector>
+
+1582065154 source:c:\github\cropmodels\rwofost\src\astro.cpp
+	<math.h>
+	<vector>
+	"wofost.h"
+
+1582065129 c:\github\cropmodels\rwofost\src\wofost.h
+	<vector>
+	<string>
+	"SimUtil.h"
+
+1582173684 source:c:\github\cropmodels\rwofost\src\cropsi.cpp
+	<math.h>
+	<vector>
+	"wofost.h"
+	"SimUtil.h"
+	<string.h>
+	<iostream>
+
+1582055592 source:c:\github\cropmodels\rwofost\src\evtra.cpp
+	<vector>
+	<math.h>
+	"wofost.h"
+	"SimUtil.h"
+
+1582173684 source:c:\github\cropmodels\rwofost\src\npk_demand_uptake.cpp
+	<math.h>
+	<vector>
+	"wofost.h"
+	"SimUtil.h"
+	<string.h>
+
+1582173684 source:c:\github\cropmodels\rwofost\src\npk_dynamics.cpp
+	<math.h>
+	<vector>
+	"wofost.h"
+	"SimUtil.h"
+	<string.h>
+
+1582051404 source:c:\github\cropmodels\rwofost\src\npk_soil_dynamics.cpp
+	<math.h>
+	<vector>
+	"wofost.h"
+	"SimUtil.h"
+	<string.h>
+	<iostream>
+
+1582173684 source:c:\github\cropmodels\rwofost\src\npk_stress.cpp
+	<math.h>
+	<vector>
+	"wofost.h"
+	"SimUtil.h"
+	<string.h>
+
+1582055302 source:c:\github\cropmodels\rwofost\src\npk_translocation.cpp
+	<math.h>
+	<vector>
+	"wofost.h"
+	"SimUtil.h"
+	<string.h>
+
+1582065098 source:c:\github\cropmodels\rwofost\src\penman.cpp
+	"SimUtil.h"
+	"wofost.h"
+
+1582055696 source:c:\github\cropmodels\rwofost\src\rootd.cpp
+	"wofost.h"
+	"SimUtil.h"
+	<iostream>
+
+1582055620 source:c:\github\cropmodels\rwofost\src\soil.cpp
+	<vector>
+	"SimUtil.h"
+	"wofost.h"
+
+1582173684 source:c:\github\cropmodels\rwofost\src\stday.cpp
+	"wofost.h"
+	"SimUtil.h"
+
+1582173684 source:c:\github\cropmodels\rwofost\src\subsol.cpp
+	<algorithm>
+	<cmath>
+	<vector>
+	"wofost.h"
+	"SimUtil.h"
+
+1582055250 source:c:\github\cropmodels\rwofost\src\totass.cpp
+	<math.h>
+	<vector>
+	"wofost.h"
+
+1582173684 source:c:\github\cropmodels\rwofost\src\watfd.cpp
+	<vector>
+	"SimUtil.h"
+	"wofost.h"
+	<math.h>
+
+1582173684 source:c:\github\cropmodels\rwofost\src\watgw.cpp
+	"wofost.h"
+	"SimUtil.h"
+	<math.h>
+
+1581996933 source:c:\github\cropmodels\rwofost\src\watpp.cpp
+	"wofost.h"
+	<iostream>
+
+1582177661 source:c:\github\cropmodels\rwofost\src\wofost.cpp
+	<vector>
+	"wofost.h"
+	"SimUtil.h"
+	<math.h>
+	<string.h>
+	<iostream>
+
+1582174853 source:c:\github\cropmodels\rwofost\c\main.cpp
+	<vector>
+	<fstream>
+	"wofost.h"
+	"date.h"
+	"files.h"
+
+1582090235 c:\github\cropmodels\rwofost\c\date.h
+	<iostream>
+
+1582090242 c:\github\cropmodels\rwofost\c\files.h
+	"date.h"
+
+1582090460 source:c:\github\cropmodels\rwofost\c\files.cpp
+	<iostream>
+	<string>
+	<vector>
+	<fstream>
+	<sstream>
+	<algorithm>
+	"files.h"
+	"date.h"
+
+1497069848 source:c:\github\cropmodels\rwofost\c\date.cpp
+	"date.h"
+	<vector>
+	<string>
+	<sstream>
+
+1582088335 c:\github\cropmodels\rwofost\src\simutil.h
+	<vector>
+	<algorithm>
+

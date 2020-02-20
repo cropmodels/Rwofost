@@ -34,25 +34,28 @@ Van Keulen, H. and J. Wolf, 1986. Modelling of agricultural production : weather
 
 \examples{
 # input data
-	library(Rwofost)
-	w <- example_weather()
-	w$srad <- w$srad * 1000
-	crop <- wofost_crop('barley')
-	soil <- wofost_soil('ec1')
-	contr <- wofost_control()
-	contr$modelstart <- as.Date("2012-02-06")
+library(Rwofost)
+w <- example_weather()
+w$srad <- w$srad * 1000
+crop <- wofost_crop('barley')
+soil <- wofost_soil('ec1')
+contr <- wofost_control()
+contr$modelstart <- as.Date("2012-02-06")
 
-	# run model
-	d <- wofost(crop, w, soil, contr)
+# run model
+d <- wofost(crop, w, soil, contr)
 
-	# output
-	head(d)
-	tail(d)
-	plot(d[,'step'], d[, 'LAI'])
+# output
+head(d)
+tail(d)
+plot(d[,'step'], d[, 'LAI'])
 
-	#or 
-	m <- wofost_model(crop, w, soil, contr)
-	run(m)
+# or 
+m <- wofost_model(crop, w, soil, contr)
+x <- run(m)
+plot(x[,'date'], d[, 'LAI'])
+
+
 
 
 ## compare with FORTRAN wofost
@@ -66,11 +69,14 @@ wth_n$date <- as.Date(wth_n$date)
 cont <- wofost_control()
 cont$IPRODL <- 0
 soil <- wofost_soil("soil_5")
-#wth_n <- wth_n[wth_n$date >= '1977-01-01', ]
 cont$modelstart <- as.Date('1977-01-01')
 cont$latitude <- 52.57
 
 rp <- wofost(crop, wth_n, soil, cont)
+
+#m <- wofost_model(crop, wth_n, soil, cont)
+#rp <- run(m)
+
 
 f <- system.file("test/1/wofost.out", package="Rwofost")
 d <- readWofostOutput(f)
