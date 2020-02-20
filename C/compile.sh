@@ -1,2 +1,3 @@
 #!/bin/bash
-g++ -std=c++11 wofostUtil.cpp assim.cpp astro.cpp cropsi.cpp date.cpp evtra.cpp files.cpp penman.cpp rootd.cpp soil.cpp stday.cpp subsol.cpp sweaf.cpp totass.cpp watfd.cpp watgw.cpp watpp.cpp  wofost.cpp wofost_C_interface.cpp -o WOFOST.exe
+#!/bin/bash
+g++  -std=c++11 -I ../src/ date.cpp files.cpp ../src/assim.cpp ../src/astro.cpp ../src/cropsi.cpp ../src/evtra.cpp ../src/penman.cpp ../src/rootd.cpp ../src/soil.cpp ../src/stday.cpp ../src/subsol.cpp ../src/totass.cpp ../src/npk_demand_uptake.cpp ../src/npk_dynamics.cpp ../src/npk_soil_dynamics.cpp ../src/npk_translocation.cpp ../src/npk_stress.cpp ../src/watfd.cpp ../src/watgw.cpp ../src/watpp.cpp  ../src/wofost.cpp main.cpp -o WOFOST.exe
