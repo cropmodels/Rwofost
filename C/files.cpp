@@ -207,7 +207,7 @@ double dFromINI(std::vector<std::vector<std::string> > ini, std::string name) {
 		out = strtod(ini[1][p].c_str(), NULL);
 	} else {
 		std::cout << "missing parameter: " << name << std::endl;
-        //exit(1);
+        exit(1);
 	}
 	return(out);
 }
@@ -220,7 +220,7 @@ std::vector<std::vector<double> > mFromINI(std::vector<std::vector<std::string> 
 		out = StrVecToMatrix(ini[1][p]);
 	} else {
 		std::cout << "missing parameter: " << name << std::endl;
-        //exit(1);
+        exit(1);
 	}
 	return(out);
 }
@@ -240,7 +240,7 @@ date dateFromINI(std::vector<std::vector<std::string> > ini, std::string name) {
 
 	} else {
 		std::cout << "missing parameter: " << name << std::endl;
-        //exit(1);
+        exit(1);
 	}
 	return(dates);
 }
@@ -257,7 +257,7 @@ bool bFromINI(std::vector<std::vector<std::string> > ini, std::string name) {
 			out = false;
 	} else {
 		std::cout << "missing parameter: " << name << std::endl;
-        //exit(1);
+        exit(1);
 	}
 	return(out);
 }
@@ -271,7 +271,7 @@ string sFromINI(std::vector<std::vector<std::string> > ini, std::string name) {
 		out = ini[1][p].c_str();
 	} else {
 		std::cout << "missing file name: " << name << std::endl;
-        //exit(1);
+        exit(1);
 	}
 	return(out);
 }
@@ -285,7 +285,7 @@ int iFromINI(std::vector<std::vector<std::string> > ini, std::string name) {
 		out = std::stoi( ini[1][p].c_str() );
 	} else {
 		std::cout << "missing parameter: " << name << std::endl;
-        //exit(1);
+        exit(1);
 	}
 	return(out);
 }
@@ -298,7 +298,8 @@ std::vector<double> dvFromINI(std::vector<std::vector<std::string> > ini, std::s
         out = StrVecToDVec(ini[1][p]);
     } else {
         std::cout << "missing parameter: " << name << std::endl;
-        //exit(1);
+        exit(1);
     }
     return(out);
 }
+

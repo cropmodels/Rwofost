@@ -4,9 +4,6 @@
 #include "date.h"
 #include "files.h"
 
-//std::vector<date> start;
-//std::vector<date> emergence;
-const char *controlFile;
 
 int date2int (date x) {
 	date s(1970, 1, 1);
@@ -16,7 +13,6 @@ int date2int (date x) {
 // crop parameters
 WofostCrop getCropParameters(const char *filename) {
 	std::vector<std::vector<std::string> > crop = readINI(filename);
-	std::vector<std::vector<std::string> > control = readINI(controlFile);
 
 	WofostCrop crp;
 
@@ -83,7 +79,6 @@ WofostCrop getCropParameters(const char *filename) {
 // soil parameters
 WofostSoil getSoilParameters(const char *filename) {
 	std::vector<std::vector<std::string> > soil = readINI(filename);
-	std::vector<std::vector<std::string> > control = readINI(controlFile);
 
 	WofostSoil sol;
 
@@ -125,7 +120,6 @@ WofostSoil getSoilParameters(const char *filename) {
 WofostWeather getWeatherParameters(const char *filename) {
 
 	std::vector< std::vector<std::string> > matrix = readCSV(filename);
-	std::vector<std::vector<std::string> > control = readINI(controlFile);
 
 	WofostWeather wth;
 	date dates;
@@ -153,7 +147,7 @@ WofostWeather getWeatherParameters(const char *filename) {
 // control parameters
 WofostControl getControlParameters(const char *filename) {
 	WofostControl tim;
-	std::vector<std::vector<std::string> > control = readINI(controlFile);
+	std::vector<std::vector<std::string> > control = readINI(filename);
 	date start = dateFromINI(control, "modelstart");
     tim.modelstart = date2int(start);
     tim.cropstart = iFromINI(control, "cropstart");
@@ -170,19 +164,15 @@ WofostControl getControlParameters(const char *filename) {
 
 WofostLocation getLocationParameters(const char *filename) {
 	WofostLocation loc;
-	std::vector<std::vector<std::string> > control = readINI(controlFile);
+	std::vector<std::vector<std::string> > control = readINI(filename);
 	loc.latitude  = dFromINI(control, "latitude");
 	loc.elevation = dFromINI(control, "elevation");
-	loc.CO2  = dFromINI(control, "latitude");
+	loc.CO2       = dFromINI(control, "CO2");
 	loc.AngstromA = dFromINI(control, "ANGSTA");
 	loc.AngstromB = dFromINI(control, "ANGSTB");
     return loc;
 }
 
-//	tim.INYRG = iFromINI(control, "INYRG");
-//	tim.IDLSOW = iFromINI(control, "IDLSOW");
-//	tim.ISTCHO = iFromINI(control, "ISTCHO");
-//	tim.IDESOW = iFromINI(control, "IDESOW");
 
 std::vector<std::string> getFiles(char *filename)  {
 	std::vector<std::vector<std::string> > ini = readINI(filename);
@@ -207,7 +197,7 @@ void writeOutput(const char *filename, WofostModel m) {
 	outfile << outnames << std::endl;
 
 	size_t nrow = (m.output.values.size() / nvar);
-	std::cout << "nrows: " <<  nrow << std::endl;
+	std::cout << nrow << " rows written to: " << filename << std::endl;
 	std::cout << outnames << std::endl;
     size_t k=0;
 	for (size_t i = 0; i < nrow; i++) {
@@ -218,7 +208,7 @@ void writeOutput(const char *filename, WofostModel m) {
 			k++;
 		}
 		outfile << s << std::endl;
-		if (i < 10)	std::cout << s << std::endl;
+		if (i < 5)	std::cout << s << std::endl;
 	}
 	outfile.close();
 }
@@ -226,8 +216,11 @@ void writeOutput(const char *filename, WofostModel m) {
 int main(int argc, char *argv[]) {
 
 	char *inputFile = argv[1];
-	if(argc != 2) {
-		std::cout << "Usage: ./WOFOST \"input.ini\"" << std::endl;
+	if(argc < 2) {
+	    std::string path = (std::string)argv[0];
+	    std::string basename = path.substr(path.find_last_of("/\\") + 1);
+        std::string usage = "Usage: " + basename + " input.ini";
+		std::cout << usage << std::endl;
 		return 1;
 	}
     //char *inputFile = (char *)"input.ini";
@@ -236,7 +229,7 @@ int main(int argc, char *argv[]) {
 	const char *cropFile = files[0].c_str();
 	const char *weatherFile = files[1].c_str();
 	const char *soilFile = files[2].c_str();
-	controlFile = files[3].c_str();
+	const char *controlFile = files[3].c_str();
 	const char *outputFile = files[4].c_str();
 
 	WofostCrop crp = getCropParameters(cropFile);
@@ -258,7 +251,6 @@ int main(int argc, char *argv[]) {
 //    m.wth$latitude <- 52.57
 
 	m.model_run();
-
     for (size_t i=0; i<m.messages.size(); i++) {
        std::cout << m.messages[i] << std::endl;
     }
