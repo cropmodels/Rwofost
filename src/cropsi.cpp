@@ -237,30 +237,32 @@ void WofostModel::crop_rates() {
 
    crop.TRANRF = crop.TRA/crop.TRAMX;   //commented previously
 
-   if (crop.TRANRF < crop.vn.NNI) {
-//          Water stress is more severe than nitrogen stress and the
-//          partitioning follows the original LINTUL2 assumptions
-//          Note: we use specifically nitrogen stress not nutrient stress!!!
+	if (control.npk_model){
 
-// RH: this seems wrong. FR is affected but this is not corrected for
-// sum of FR, FL, FS, FO shouldd remain 1.
-		double FRTMOD = std::max( 1., 1 / (crop.TRANRF + 0.5));
-		crop.FR = std::min(0.6, crop.FR * FRTMOD);
-		crop.FL = crop.FL;
-		crop.FS = crop.FS;
-		crop.FO = crop.FO;
-	} else {
-// Nitrogen stress is more severe than water stress resulting in
-// less partitioning to leaves and more to stems
-		double FLVMOD = exp(- crop.pn.NPART * (1.0 - crop.vn.NNI));
-		double FL = (crop.FL * FLVMOD);
-        crop.FS = crop.FS + crop.FL - FL;
-        crop.FL = FL;
+		if (crop.TRANRF < crop.vn.NNI) {
+	//          Water stress is more severe than nitrogen stress and the
+	//          partitioning follows the original LINTUL2 assumptions
+	//          Note: we use specifically nitrogen stress not nutrient stress!!!
+
+	// RH: this seems wrong. FR is affected but this is not corrected for
+	// sum of FR, FL, FS, FO shouldd remain 1.
+			double FRTMOD = std::max( 1., 1 / (crop.TRANRF + 0.5));
+			crop.FR = std::min(0.6, crop.FR * FRTMOD);
+			crop.FL = crop.FL;
+			crop.FS = crop.FS;
+			crop.FO = crop.FO;
+		} else {
+	// Nitrogen stress is more severe than water stress resulting in
+	// less partitioning to leaves and more to stems
+			double FLVMOD = exp(- crop.pn.NPART * (1.0 - crop.vn.NNI));
+			double FL = (crop.FL * FLVMOD);
+			crop.FS = crop.FS + crop.FL - FL;
+			crop.FL = FL;
+		}
 	}
 
-
-  double CVF = 1./((crop.FL/crop.p.CVL + crop.FS/crop.p.CVS + crop.FO/crop.p.CVO)*(1. - crop.FR) + crop.FR/crop.p.CVR);
-  double DMI = CVF * crop.ASRC;
+	double CVF = 1./((crop.FL/crop.p.CVL + crop.FS/crop.p.CVS + crop.FO/crop.p.CVO)*(1. - crop.FR) + crop.FR/crop.p.CVR);
+	double DMI = CVF * crop.ASRC;
     //test
     //cout << "p.CVL: " << crop.p.CVL << " p.CVS: " << crop.p.CVS << " p.CVO: " << crop.p.CVO << endl;
 

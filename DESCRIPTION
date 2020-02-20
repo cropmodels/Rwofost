@@ -1,8 +1,8 @@
 Package: Rwofost
 Type: Package
 Title: WOFOST Crop Growth Simulation Model
-Version: 0.4
-Date: 2020-02-18
+Version: 0.5
+Date: 2020-02-19
 LinkingTo: Rcpp
 Imports: meteor, methods (>= 0.2-2), Rcpp (>= 0.12.4)
 Depends: R (>= 3.5.0), testthat
