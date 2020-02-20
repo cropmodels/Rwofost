@@ -1,0 +1,5 @@
+"ID","name","country","longitude","latitude","elevation","angA","angB","start","end"
+1,"Wageningen","Netherlands",5.67,51.97,7,-0.18,-0.55,"1972-01-01","2008-12-31"
+2,"Swifterbant"," Netherlands",5.63,52.57,-4,-0.18,-0.55,"1974-01-01","1989-08-31"
+3,"De Kooy"," Netherlands",4.75,53,3,-0.18,-0.55,"1976-01-01","1985-12-31"
+4,"IRRI","Philippines",121.25,14.18,21,-0.25,-0.45,"1979-01-01","1991-12-31"
