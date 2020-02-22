@@ -34,7 +34,7 @@ Van Keulen, H. and J. Wolf, 1986. Modelling of agricultural production : weather
 
 
 \examples{
-# input data
+
 # weather data
 f <- system.file("extdata/18419.rds", package="meteor")
 w <- readRDS(f)
@@ -45,11 +45,12 @@ soil <- wofost_soil('ec1')
 
 contr <- wofost_control()
 contr$modelstart <- as.Date("2012-02-06")
-loc <- list(latitude=52.57, elevation=50, CO2=360)
+contr$latitude=52.57
+contr$elevation=50
 
 # There are two ways to run the model
 # A) direct way
-d <- wofost(crop, w, soil, contr, loc)
+d <- wofost(crop, w, soil, contr)
 
 # output
 head(d)
@@ -59,13 +60,14 @@ plot(d[,'step'], d[, 'LAI'])
 # B) indirect way, first create model and then run it
 # the advantage is that you can change single parameters of the model and run again
 
-m <- wofost_model(crop, w, soil, contr, loc)
+m <- wofost_model(crop, w, soil, contr)
 x <- run(m)
 plot(x[,'date'], x[, 'LAI'])
 
-m$control$modelstart = as.Date("2012-03-06")
-x <- run(m)
-lines(x[,'date'], x[, 'LAI'])
+m <- wofost_model(crop, w, soil, contr)
+m$control$modelstart = as.Date("2012-02-20")
+y <- run(m)
+lines(y[,'date'], y[, 'LAI'])
 
 
 ## Other examples
@@ -79,7 +81,7 @@ cont$IPRODL <- 0
 soil <- wofost_soil("soil_5")
 cont$modelstart <- as.Date('1977-01-01')
 
-rp <- wofost(crop, wth_n, soil, cont, loc)
+rp <- wofost(crop, wth_n, soil, cont)
 plot(rp[,'step'], rp[, 'LAI'])
 
 # yield
@@ -96,11 +98,12 @@ f <- system.file("extdata/Philippines_IRRI.csv", package="meteor")
 wth_n <- read.csv(f)
 wth_n$date <- as.Date(wth_n$date)
 soil <- wofost_soil("soil_5")
-loc$elevation <- 21
-loc$latitude <- 14.18
-loc$ANGSTA <- -0.25
-loc$ANGSTB <- -0.45
-rp <- wofost(crop, wth_n, soil, cont, loc)
+cont$elevation <- 21
+cont$latitude <- 14.18
+cont$ANGSTA <- -0.25
+cont$ANGSTB <- -0.45
+cont$usePENMAN <- TRUE
+rp <- wofost(crop, wth_n, soil, cont)
 
 plot(rp[,'step'], rp[, 'LAI'])
 

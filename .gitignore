@@ -1,5 +1,8 @@
 *~
 output.csv
+*yamltests/
+*ycrop
+
 
 # Object files
 *.o

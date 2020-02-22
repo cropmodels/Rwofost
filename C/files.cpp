@@ -7,12 +7,11 @@
 #include "files.h"
 #include "date.h"
 
-using namespace std;
 
 //Elizabeth Card
 // http://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c
-bool fileExists(string fileName) {
-	ifstream test;
+bool fileExists(std::string fileName) {
+	std::ifstream test;
 	test.open(fileName.c_str());
 	if (test.fail()) {
 		test.close();
@@ -25,7 +24,7 @@ bool fileExists(string fileName) {
 
 
 
-string getFileExtension(string filename) {
+std::string getFileExtension(std::string filename) {
 	int period = 0;
 	for (unsigned int i = 0; i < filename.length(); i++) {
 		if (filename[i] == '.') {
@@ -33,7 +32,7 @@ string getFileExtension(string filename) {
 		}
 	}
 
-	string extension;
+	std::string extension;
 
 	for (unsigned int i = period; i < filename.length(); i++) {
 		extension += filename[i];
@@ -198,7 +197,7 @@ std::vector<std::string> getINIvalues(const char* filename, std::vector<std::str
 	return(out);
 }
 
-double dFromINI(std::vector<std::vector<std::string> > ini, std::string name) {
+double dFromINI(std::vector<std::vector<std::string> > ini, std::string name, double def) {
 	double out;
 	int p = find(ini[0].begin(), ini[0].end(), name) - ini[0].begin();
 
@@ -206,8 +205,12 @@ double dFromINI(std::vector<std::vector<std::string> > ini, std::string name) {
 	if ( p < inisize) {
 		out = strtod(ini[1][p].c_str(), NULL);
 	} else {
-		std::cout << "missing parameter: " << name << std::endl;
-        exit(1);
+        if (!std::isnan(def)) {
+            out = def;
+        } else {
+            std::cout << "missing parameter: " << name << std::endl;
+            exit(1);
+        }
 	}
 	return(out);
 }
@@ -234,9 +237,9 @@ date dateFromINI(std::vector<std::vector<std::string> > ini, std::string name) {
 	int inisize = ini[0].size();
 	if ( p < inisize) {
 		ss = split(ini[1][p], '-');
-		dates.set_year( stoi(ss[0].c_str()) );
-		dates.set_month( stoi(ss[1].c_str()) );
-		dates.set_day( stoi(ss[2].c_str()) );
+		dates.set_year( std::stoi(ss[0].c_str()) );
+		dates.set_month( std::stoi(ss[1].c_str()) );
+		dates.set_day( std::stoi(ss[2].c_str()) );
 
 	} else {
 		std::cout << "missing parameter: " << name << std::endl;
@@ -262,16 +265,20 @@ bool bFromINI(std::vector<std::vector<std::string> > ini, std::string name) {
 	return(out);
 }
 
-string sFromINI(std::vector<std::vector<std::string> > ini, std::string name) {
-	string out;
+std::string sFromINI(std::vector<std::vector<std::string> > ini, std::string name, std::string def) {
+	std::string out;
 	int p = find(ini[0].begin(), ini[0].end(), name) - ini[0].begin();
 
 	int inisize = ini[0].size();
 	if ( p < inisize) {
 		out = ini[1][p].c_str();
 	} else {
-		std::cout << "missing file name: " << name << std::endl;
-        exit(1);
+	    if (def != "") {
+            out = def;
+	    } else {
+            std::cout << "missing paramter: " << name << std::endl;
+            exit(1);
+        }
 	}
 	return(out);
 }

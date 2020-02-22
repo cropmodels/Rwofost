@@ -40,9 +40,10 @@ soil <- wofost_soil("soil_5")
 #wth_n <- wth_n[wth_n$date >= '1977-01-01', ]
 cont$modelstart <- as.Date('1977-01-01')
 cont$latitude <- 52.57
-loc <- list(latitude=52.57, elevation=50, CO2=360)
+cont$elevation=50
+cont$CO2=360
 
-rp <- wofost(crop, wth_n, soil, cont, loc)
+rp <- wofost(crop, wth_n, soil, cont)
 
 f <- system.file("test/1/wofost.out", package="Rwofost")
 d <- readFortranOutput(f)
@@ -57,7 +58,7 @@ points(rp[, 1], rp[,'WSO'])
 ## 2
 # no photoperiod effect
 crop$IDSL <- 0
-rp <- wofost(crop, wth_n, soil, cont, loc)
+rp <- wofost(crop, wth_n, soil, cont)
 f <- system.file("test/2/wofost.out", package="Rwofost")
 d <- readFortranOutput(f)
 plot(d[,'DAY'], d[,'LAI'], type='l')
@@ -74,12 +75,13 @@ cont <- wofost_control()
 soil <- wofost_soil("soil_5")
 cont$modelstart <- as.Date('1985-01-01')
 cont$IPRODL <- 1
-loc$elevation <- 21
-loc$latitude <- 14.18
-loc$ANGSTA <- -0.25
-loc$ANGSTB <- -0.45
+cont$elevation <- 21
+cont$latitude <- 14.18
+cont$ANGSTA <- -0.25
+cont$ANGSTB <- -0.45
+cont$usePENMAN <- TRUE
 
-rp <- wofost(crop, wth_n, soil, cont, loc)
+rp <- wofost(crop, wth_n, soil, cont)
 
 f <- system.file("test/3/wofost.out", package="Rwofost")
 d <- readFortranOutput(f, TRUE)
@@ -87,12 +89,10 @@ plot(d[,'DAY'], d[,'LAI'], type='l')
 points(rp[,'step'], rp[, 'LAI'])
 
 
-
-
 ## 4 water limited with groundwater
 soil <- wofost_soil("ec1")
 cont$IZT <- 1
-rp <- wofost(crop, wth_n, soil, cont, loc)
+rp <- wofost(crop, wth_n, soil, cont)
 
 f <- system.file("test/4/wofost.out", package="Rwofost")
 d <- readFortranOutput(f, TRUE)
@@ -115,9 +115,11 @@ wth <- wth[wth$date >= "1976-01-01", ]
 cont$modelstart <- as.Date("1976-01-01")
 
 cont$npk_model <- 1
-loc <- list(latitude=51.58, elevation=50, CO2=360)
+cont$latitude=51.58
+cont$elevation=50
+cont$CO2=360
 
-rp <- wofost(crop, wth, soil, cont, loc)
+rp <- wofost(crop, wth, soil, cont)
 
 plot(c(1:nrow(d)), d[, 'LAI'], type = "l")
 points(rp[, 'step'], rp[, 'LAI'])

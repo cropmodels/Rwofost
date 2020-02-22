@@ -17,17 +17,12 @@ void setWeather(WofostModel* m, Rcpp::NumericVector date, Rcpp::NumericVector tm
 	wth.vapr = Rcpp::as<std::vector<double>>(vapr);
 	wth.prec = Rcpp::as<std::vector<double>>(prec);
 	wth.date = Rcpp::as<std::vector<long>>(date);
-//	wth.latitude  = latitude;
-//	wth.AngstromA = AngA;
-//	wth.AngstromB = AngB;
-//	wth.elevation = location[2];
 	m->wth = wth;
 }
 
 
 
 RCPP_EXPOSED_CLASS(WofostWeather)
-RCPP_EXPOSED_CLASS(WofostLocation)
 
 RCPP_EXPOSED_CLASS(WofostCrop)
 RCPP_EXPOSED_CLASS(WofostCropParameters)
@@ -48,7 +43,13 @@ RCPP_MODULE(wofost){
     class_<WofostControl>("WofostControl")
 		.field("modelstart", &WofostControl::modelstart) 
 		.field("cropstart", &WofostControl::cropstart)  
-		//.field("long_output", &WofostControl::long_output
+		.field("output", &WofostControl::output_option)
+		.field("latitude", &WofostControl::latitude) 
+		.field("elevation", &WofostControl::elevation) 
+		.field("CO2",  &WofostControl::CO2) 
+		.field("ANGSTA",  &WofostControl::ANGSTA) 
+		.field("ANGSTB",  &WofostControl::ANGSTB) 
+		.field("usePENMAN",  &WofostControl::usePENMAN) 
 		.field("IPRODL", &WofostControl::IPRODL)
 		.field("IOXWL", &WofostControl::IOXWL)
 		.field("ISTCHO", &WofostControl::ISTCHO) 
@@ -59,12 +60,6 @@ RCPP_MODULE(wofost){
 		.field("IDURMX", &WofostControl::IDURMX) 
 	;
 
-    class_<WofostLocation>("WofostLocation")
-		.constructor()
-		.field("latitude", &WofostLocation::latitude) 
-		.field("elevation", &WofostLocation::elevation) 
-		.field("CO2",  &WofostLocation::CO2) 
-	;
 	
     class_<WofostWeather>("WofostWeather")
 		.constructor()
@@ -191,12 +186,11 @@ RCPP_MODULE(wofost){
     class_<WofostModel>("WofostModel")
 		.constructor()
 		.method("run", &WofostModel::model_run, "run the model")		
-		.method("setWeather", &setWeather)
+		//.method("setWeather", &setWeather)
 		.field("crop", &WofostModel::crop, "crop")
 		.field("soil", &WofostModel::soil, "soil")
 		.field("control", &WofostModel::control, "control")
 		.field("weather", &WofostModel::wth, "weather")
-		.field("location", &WofostModel::loc, "location")
 		.field("output", &WofostModel::output, "output")
 	;			
 

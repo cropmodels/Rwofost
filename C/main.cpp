@@ -151,27 +151,22 @@ WofostControl getControlParameters(const char *filename) {
 	date start = dateFromINI(control, "modelstart");
     tim.modelstart = date2int(start);
     tim.cropstart = iFromINI(control, "cropstart");
-	tim.long_output = bFromINI(control, "long_output");
+    tim.output_option = sFromINI(control, "output", "default");
 	tim.IPRODL = iFromINI(control, "IPRODL");
 	tim.IOXWL  = iFromINI(control, "IOXWL");
 	tim.IENCHO = iFromINI(control, "IENCHO");
 	tim.IDAYEN = iFromINI(control, "IDAYEN");
 	tim.IDURMX = iFromINI(control, "IDURMX");
 //	date emergence = dateFromINI(control, "emergence") );
+	tim.latitude  = dFromINI(control, "latitude");
+	tim.elevation = dFromINI(control, "elevation");
+	tim.CO2       = dFromINI(control, "CO2");
+	tim.ANGSTA = dFromINI(control, "ANGSTA", -0.18);
+	tim.ANGSTB = dFromINI(control, "ANGSTB", -0.55);
+
 	return tim;
 }
 
-
-WofostLocation getLocationParameters(const char *filename) {
-	WofostLocation loc;
-	std::vector<std::vector<std::string> > control = readINI(filename);
-	loc.latitude  = dFromINI(control, "latitude");
-	loc.elevation = dFromINI(control, "elevation");
-	loc.CO2       = dFromINI(control, "CO2");
-	loc.AngstromA = dFromINI(control, "ANGSTA");
-	loc.AngstromB = dFromINI(control, "ANGSTB");
-    return loc;
-}
 
 
 std::vector<std::string> getFiles(char *filename)  {
@@ -215,16 +210,22 @@ void writeOutput(const char *filename, WofostModel m) {
 
 int main(int argc, char *argv[]) {
 
-	char *inputFile = argv[1];
-	if(argc < 2) {
-	    std::string path = (std::string)argv[0];
-	    std::string basename = path.substr(path.find_last_of("/\\") + 1);
-        std::string usage = "Usage: " + basename + " input.ini";
-		std::cout << usage << std::endl;
-		return 1;
-	}
-    //char *inputFile = (char *)"input.ini";
+//    bool interactive = true;
+    bool interactive = false;
 
+    char *inputFile;
+    if (interactive) {
+        inputFile = argv[1];
+        if(argc < 2) {
+            std::string path = (std::string)argv[0];
+            std::string basename = path.substr(path.find_last_of("/\\") + 1);
+            std::string usage = "Usage: " + basename + " input.ini";
+            std::cout << usage << std::endl;
+            return 1;
+        }
+    } else {
+        inputFile = (char *)"input.ini";
+    }
 	std::vector<std::string> files = getFiles(inputFile);
 	const char *cropFile = files[0].c_str();
 	const char *weatherFile = files[1].c_str();
@@ -236,7 +237,6 @@ int main(int argc, char *argv[]) {
 	WofostSoil sol = getSoilParameters(soilFile);
 	WofostControl tim = getControlParameters(controlFile);
 	WofostWeather wth = getWeatherParameters(weatherFile);
-	WofostLocation loc = getLocationParameters(controlFile);
 
 //	unsigned int nwth = wth.tmin.size();
 
@@ -247,9 +247,7 @@ int main(int argc, char *argv[]) {
     int start = date2int(date(1977, 1, 1));
 	m.control.modelstart = start;
 	m.wth = wth;
-	m.loc = loc;
 //    m.wth$latitude <- 52.57
-
 	m.model_run();
     for (size_t i=0; i<m.messages.size(); i++) {
        std::cout << m.messages[i] << std::endl;

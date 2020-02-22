@@ -65,7 +65,7 @@ void WofostModel::PENMAN() {
 
 //  barometric pressure (mbar)
 //  psychrometric constant (mbar/Celsius)
-	double PBAR  = 1013. * exp(-0.034 * loc.elevation / (TMPA+273.));
+	double PBAR  = 1013. * exp(-0.034 * control.elevation / (TMPA+273.));
 	double GAMMA = PSYCON * PBAR/1013.;
 
 
@@ -82,7 +82,7 @@ void WofostModel::PENMAN() {
 //  from the Angstrom formula: RI=RA(A+B.n/N) -> n/N=(RI/RA-A)/B,
 //  where RI/RA is the atmospheric transmission computed by ASTRO
 
-    double RELSSD = LIMIT(0.,1., (atm.ATMTR - std::abs(loc.AngstromA)) / std::abs(loc.AngstromB));
+    double RELSSD = LIMIT(0.,1., (atm.ATMTR - std::abs(control.ANGSTA)) / std::abs(control.ANGSTB));
 
 //  Terms in Penman formula, for water, soil and canopy
 //  net outgoing long-wave radiation (J/m2/d) acc. to Brunt (1932)
@@ -123,9 +123,8 @@ void WofostModel::PENMAN_MONTEITH() {
 
 /* 
     Calculates reference ET0 based on the Penman-Monteith model.
-
-     This routine calculates the potential evapotranspiration rate from
-     a reference crop canopy (ET0) in mm/d. For these calculations the
+    This routine calculates the potential evapotranspiration rate from
+    a reference crop canopy (ET0) in mm/d. For these calculations the
      analysis by FAO is followed as laid down in the FAO publication
      `Guidelines for computing crop water requirements - FAO Irrigation
      and drainage paper 56 <http://www.fao.org/docrep/X0490E/x0490e00.htm#Contents>`_
@@ -167,7 +166,7 @@ void WofostModel::PENMAN_MONTEITH() {
 
     // atmospheric pressure at standard temperature of 293K (kPa)
     double T = 293.0;
-    double PATM = 101.3 * pow((T - (0.0065 * loc.elevation))/T, 5.26);
+    double PATM = 101.3 * pow((T - (0.0065 * control.elevation))/T, 5.26);
 
     // psychrometric constant (kPa/Celsius)
     double GAMMA = PSYCON * PATM * 1.0E-3;
@@ -192,7 +191,7 @@ void WofostModel::PENMAN_MONTEITH() {
     double RNL_TMP = ((STB_TMAX + STB_TMIN) / 2.) * (0.34 - 0.14 * sqrt(VAP));
 
     // Clear Sky radiation [J/m2/DAY] from Angot TOA radiation
-    double CSKYRAD = (0.75 + (2e-05 * loc.elevation)) * atm.ANGOT;
+    double CSKYRAD = (0.75 + (2e-05 * control.elevation)) * atm.ANGOT;
 
     if (CSKYRAD > 0) {
         // Final net outgoing longwave radiation [J/m2/day]
@@ -223,11 +222,11 @@ void WofostModel::PENMAN_MONTEITH() {
 
 void WofostModel::ET() {
 	ASTRO();
-	//if ((loc.AngstromA > 0) & (loc.AngstromB > 0)) {
+	if (control.usePENMAN) {
 		PENMAN();
-	//} else {
-	//	PENMAN_MONTEITH();
-	//}
+	} else {
+		PENMAN_MONTEITH();
+	}
 }
 
 

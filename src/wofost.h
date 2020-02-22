@@ -10,14 +10,11 @@ License: GNU General Public License (GNU GPL) v. 2
 //#include "date.h"
 #include "SimUtil.h"
 
-//using namespace std;
+
 
 double TOTASS(double DAYL, double AMAX, double EFF, double LAI, double KDif, double AVRAD, double SINLD, double COSLD, double DSINBE, double DifPP);
 double ASSIM(double AMAX, double EFF, double LAI, double KDif, double SINB, double PARDIR, double PARDif);
 double SUBSOL (double PF, double D, std::vector<double> CONTAB);// flow is output
-
-//double SWEAF(double ET0, double CGNR);
-//std::vector<double> PENMAN (int DOY, double LAT, double ELEV, double ANGSTA, double ANGSTB, double TMIN, double TMAX, double AVRAD, double VAP, double WIND2, double ATMTR);
 
 class WofostWeather {
 public:
@@ -27,20 +24,20 @@ public:
 
 
 
-class WofostLocation {
-public:
-	double latitude, elevation;
-	double AngstromA = -0.18;
-	double AngstromB = -0.55;
-	double CO2 = 410;
-};
-
 
 struct WofostControl {
 	long modelstart;
 	unsigned cropstart; // sowing, emergence, ...;
-	bool long_output;
+	//bool long_output;
+	std::string output_option;
 	bool npk_model = false;  //if model is npk, default false
+
+	double latitude, elevation;
+	double CO2 = 410;
+	
+	bool usePENMAN = true;
+	double ANGSTA = -0.18;
+	double ANGSTB = -0.55;
 
 	unsigned IDESOW;
 	int INYRG, ISTCHO, IDLSOW, IENCHO, IDAYEN, IDURMX;
@@ -254,10 +251,9 @@ struct WofostModel {
 
 	WofostAtmosphere atm;
 	WofostWeather wth;
-	WofostLocation loc;
 	
 	WofostOutput output;
-
+	
 	void weather_step();
 
 	void crop_initialize();

@@ -36,12 +36,28 @@ void WofostModel::weather_step() {
 
 
 void WofostModel::model_output(){
-	output.values.insert(output.values.end(),
-		{double(step), crop.TSUM, crop.DVS, crop.LAI, 
-			crop.WRT, crop.WLV, crop.WST, crop.WSO 	
-		}
-	);
+	if (control.output_option == "ASTRO") {
+		output.values.insert(output.values.end(),
+			{double(step), atm.ANGOT, atm.ATMTR, atm.COSLD, atm.DAYL, 
+				atm.DAYLP, atm.DifPP, atm.DSINBE, atm.SINLD
+			}
+		);	
+	} else if (control.output_option == "WATLIM") {
+		output.values.insert(output.values.end(),
+			{double(step), crop.TSUM, crop.DVS, soil.EVS, crop.LAI, crop.RD, soil.SM,  
+				crop.TAGP, crop.TRA, crop.WRT, crop.WLV, crop.WST, crop.WSO,
+				crop.TWRT, crop.TWLV, crop.TWST, crop.TWSO
+			}
+		);
+	} else {
+		output.values.insert(output.values.end(),
+			{double(step), crop.TSUM, crop.DVS, crop.LAI,   
+				crop.WRT, crop.WLV, crop.WST, crop.WSO
+			}
+		);
+	}
 }
+
 
 
 void WofostModel::model_initialize() {
@@ -67,7 +83,7 @@ void WofostModel::model_initialize() {
 		ISTATE = 3;
 	} else if (control.ISTCHO == 1) { // model starts at sowing
 		ISTATE = 1;
-	} else if (control.ISTCHO == 2) { // model starts prior to earliest pop.SSIble sowing date
+	} else if (control.ISTCHO == 2) { // model starts prior to earliest possible sowing date
 		ISTATE = 0;
 		STDAY_initialize();
 	}
@@ -82,7 +98,16 @@ void WofostModel::model_initialize() {
 		IOX = control.IOXWL;   //for water-limited
 	}
 
-	output.names = {"step", "Tsum", "DVS", "LAI", "WRT", "WLV", "WST", "WSO"};
+	if (control.output_option == "ASTRO") {
+		output.names = {"step", "ANGOT", "ATMTR", "COSLD", "DAYL", 
+			"DAYLP", "DIFPP", "DSINBE", "SINLD"};
+	} else 	if (control.output_option == "WATLIM") {
+		output.names = {"step", "TSUM", "DVS", "EVS", "LAI", "RD", "SM",
+			"TAGP", "TRA", "WRT", "WLV", "WST", "WSO", "TWRT", "TWLV", "TWST", "TWSO"};
+	} else {
+		output.names = {"step", "TSUM", "DVS", "LAI", "WRT", "WLV", "WST", "WSO"};
+	}
+	
 	output.values.resize(0);
 	output.values.reserve(output.names.size() * 150);
 	
@@ -117,15 +142,15 @@ void WofostModel::model_initialize() {
 	crop.GRLV = 0;
 	
 	// adjusting for CO2 effects
-    double CO2AMAXadj = AFGEN(crop.p.CO2AMAXTB, loc.CO2);
+    double CO2AMAXadj = AFGEN(crop.p.CO2AMAXTB, control.CO2);
 	for(size_t i=1; i<crop.p.AMAXTB.size(); i=i+2) {
 		crop.p.AMAXTB[i] = crop.p.AMAXTB[i] * CO2AMAXadj;
 	}
-    double CO2EFFadj = AFGEN(crop.p.CO2EFFTB, loc.CO2);
+    double CO2EFFadj = AFGEN(crop.p.CO2EFFTB, control.CO2);
 	for(size_t i=1; i<crop.p.CO2EFFTB.size(); i=i+2) {
 		crop.p.CO2EFFTB[i] = crop.p.CO2EFFTB[i] * CO2EFFadj;
 	}
-	double CO2TRAadj = AFGEN(crop.p.CO2TRATB, loc.CO2);
+	double CO2TRAadj = AFGEN(crop.p.CO2TRATB, control.CO2);
 	for(size_t i=1; i<crop.p.CO2TRATB.size(); i=i+2) {
 		crop.p.CO2TRATB[i] = crop.p.CO2TRATB[i] * CO2TRAadj;
 	}
