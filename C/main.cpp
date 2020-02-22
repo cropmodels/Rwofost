@@ -210,21 +210,16 @@ void writeOutput(const char *filename, WofostModel m) {
 
 int main(int argc, char *argv[]) {
 
-//    bool interactive = true;
-    bool interactive = false;
-
     char *inputFile;
-    if (interactive) {
-        inputFile = argv[1];
-        if(argc < 2) {
-            std::string path = (std::string)argv[0];
-            std::string basename = path.substr(path.find_last_of("/\\") + 1);
-            std::string usage = "Usage: " + basename + " input.ini";
-            std::cout << usage << std::endl;
-            return 1;
-        }
-    } else {
+    if(argc < 2) {
         inputFile = (char *)"input.ini";
+            //std::string path = (std::string)argv[0];
+            //std::string basename = path.substr(path.find_last_of("/\\") + 1);
+            //std::string usage = "Usage: " + basename + " input.ini";
+            //std::cout << usage << std::endl;
+            //return 1;
+    } else {
+        inputFile = argv[1];
     }
 	std::vector<std::string> files = getFiles(inputFile);
 	const char *cropFile = files[0].c_str();
@@ -256,3 +251,4 @@ int main(int argc, char *argv[]) {
 
 	return 0;
 }
+

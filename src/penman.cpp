@@ -267,9 +267,9 @@ std::vector<double> PENMAN (int DOY, double LAT, double ELEV, double ANGSTA, dou
 
       VAP   = std::min(VAP,SVAP);
 
-//     the exprep.SSIon n/N (RELSSD) from the Penman formula is estimated
+//     the expression n/N (RELSSD) from the Penman formula is estimated
 //     from the Angstrom formula: RI=RA(A+B.n/N) -> n/N=(RI/RA-A)/B,
-//     where RI/RA is the atmospheric transmip.SSIon obtained by a
+//     where RI/RA is the atmospheric transmission obtained by a
 //     to ASTRO:
 
       //std::vector<double> astroResult = ASTRO(DOY, LAT, AVRAD);

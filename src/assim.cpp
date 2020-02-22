@@ -12,7 +12,7 @@ Copyright 1988, 2013 Alterra, Wageningen-UR, Licensed under the EUPL, Version 1.
 Author: D.W.G. van Kraalingen, 1986
 
 Chapter 13 in documentation WOFOST Version 4.1 (1988)
-This routine calculates the gross CO2 assimilation rate of  the whole crop, FGROS, by performing a Gaup.SSIan integration
+This routine calculates the gross CO2 assimilation rate of  the whole crop, FGROS, by performing a Gaussian integration
 over depth in the crop canopy. At three different depths in the canopy, i.e. for different values of LAI, the
 assimilation rate is computed for given fluxes of photosynthetically active radiation, whereafter integration over depth
 takes place. More information on this routine is given by Spitters et al. (1988). The input variables SINB, PARDIR
@@ -47,7 +47,7 @@ double ASSIM(double AMAX, double EFF, double LAI, double KDif, double SINB, doub
     double KDIRBL = (0.5 / SINB) * KDif / (0.8 * sqrt(1. - SCV));
     double KDIRT = KDIRBL * sqrt(1. - SCV);
 
-    //13.3 three-point Gaup.SSIan integration over LAI
+    //13.3 three-point Gaupssian integration over LAI
     double FGROS = 0.;
 
     double LAIC;

@@ -25,7 +25,7 @@ transmission, diffuse radiation etc.
  COSLD   R4  Amplitude of sine of solar height             -      O
  DifPP   R4  Diffuse irradiation perpendicular to direction of
              light                                      J m-2 s-1 O
- ATMTR   R4  Daily atmospheric transmip.SSIon                -      O
+ ATMTR   R4  Daily atmospheric transmission                -      O
  DSINBE  R4  Daily total of effective solar height         s      O
 */
 
@@ -81,7 +81,7 @@ void WofostModel::ASTRO() {
         atm.DAYLP = 12.0 * (1. + 2. * asin(AOB_CORR)/PI);
     }
 
-    //extraterrestrial radiation and atmospheric transmip.SSIon
+    //extraterrestrial radiation and atmospheric transmission
     atm.ANGOT  = SC * atm.DSINB;
     //Check for DAYL=0 as in that case the angot radiation is 0 as well
     if (atm.DAYL > 0.0)  {

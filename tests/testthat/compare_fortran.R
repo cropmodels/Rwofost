@@ -47,6 +47,8 @@ rp <- wofost(crop, wth_n, soil, cont)
 
 f <- system.file("test/1/wofost.out", package="Rwofost")
 d <- readFortranOutput(f)
+
+par(mfrow=c(1,2))
 plot(d[,'DAY'], d[,'LAI'], type='l')
 points(rp[,'step'], rp[, 'LAI'])
 

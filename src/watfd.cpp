@@ -14,49 +14,42 @@ Modifications by Tamme van der Wal (1997) and Hendrik Boogaard (1998)
 In routine WATFD the simulation of the soil water balance is performed for FREELY DRAINING soils
 in the water-limited production situation.  WATFD is derived from subroutine APPLE of WOFOST Version 4.1.
 
-The purpose of the soil water balance calculations is to estimate the daily value of the soil moisture content. The soil moisture content
-influences soil moisture uptake and crop transpiration. In the initial section soil physical data are read from file SOFILE,
-and all rates and sum totals are set at zero. The dynamic calculations are carried out in two sections, one for the
-calculation of rates of change per timestep (delt = 1 day) and one for the calculation of summation variables and state variables.
-The water balance is driven by rainfall, pop.SSIbly buffered as surface storage, and evapotranspiration.
-The processes considered are infiltration, soil water retention, percolation (here conceived as downward water flow from
-rooted zone to second layer), and the loss of water beyond the maximum root zone.
+The purpose of the soil water balance calculations is to estimate the daily value of the soil moisture content. The soil moisture content influences soil moisture uptake and crop transpiration. In the initial section soil physical data are read from file SOFILE, and all rates and sum totals are set at zero. The dynamic calculations are carried out in two sections, one for the calculation of rates of change per timestep (delt = 1 day) and one for the calculation of summation variables and state variables.
+The water balance is driven by rainfall, possibly buffered as surface storage, and evapotranspiration. The processes considered are infiltration, soil water retention, percolation (here conceived as downward water flow from rooted zone to second layer), and the loss of water beyond the maximum root zone.
 
-The textural profile of the soil is conceived as homogeneous. Initially the soil profile consists of two layers, the actually rooted
-soil and the soil immediately below the rooted zone until the maximum rooting depth (soil and crop dependent). The extension of the root zone
-from initial rooting depth to maximum rooting depth is described in subroutine ROOTD. Its effect on the soil moisture content is accounted
-for in this subroutine WATFD. From the moment that the maximum rooting depth is reached the soil profile is described as a one layer system.
+The textural profile of the soil is conceived as homogeneous. Initially the soil profile consists of two layers, the actually rooted soil and the soil immediately below the rooted zone until the maximum rooting depth (soil and crop dependent). The extension of the root zone
+from initial rooting depth to maximum rooting depth is described in subroutine ROOTD. Its effect on the soil moisture content is accounted for in this subroutine WATFD. From the moment that the maximum rooting depth is reached the soil profile is described as a one layer system.
 The dynamic output is written to file by subroutine PRIWFD.
 
 VARIABLE TYPE Description                                      Units   I/O
 DELT    R*4  time step = 1 day                                  d       I
-p.RDM     R*4  maximum rooting depth                              cm      I
+RDM     R*4  maximum rooting depth                              cm      I
 RD      R*4  rooting depth                                      cm      I
-p.IAIRDU  I*4  indicates presence(1) or absence(0) of airducts            I
+IAIRDU  I*4  indicates presence(1) or absence(0) of airducts            I
              in the roots. 1= can tolerate waterlogging
-p.IFUNRN  I*4  flag indicating the way to calculate the                   I
+IFUNRN  I*4  flag indicating the way to calculate the                   I
              non-infiltrating fraction of rainfall:
              0. fraction is fixed at p.NOTINF
              1. fraction depends on p.NOTINF and on daily rainfall
              as given by p.NINFTB.
-p.SSI     R*4  initial surface storage                            cm      I
-p.SMLIM   R*4  max. initial soil moisture in topsoil              cm      I
-p.SSMAX   R*4  maximum surface storage                            cm      I
-p.WAV     R*4  initial (at emergence) amount of water in excess of        I
+SSI     R*4  initial surface storage                            cm      I
+SMLIM   R*4  max. initial soil moisture in topsoil              cm      I
+SSMAX   R*4  maximum surface storage                            cm      I
+WAV     R*4  initial (at emergence) amount of water in excess of        I
              wilting point, but not exceeding field capacity    cm
-p.NOTINF  R*4  if FUNRAI=0 non-infiltrating fraction of rainfall          I
+NOTINF  R*4  if FUNRAI=0 non-infiltrating fraction of rainfall          I
              if FUNRAI=1 maximum non-infiltrating fraction
 
 EVWMX   R*4  maximum evaporation rate from shaded water surface cm d-1  I
 EVSMX   R*4  maximum evaporation rate from shaded soil surface  cm d-1  I
 TRA     R*4  actual transpiration rate                          cm d-1  I
              Note: TRA is calculated in EVTRA called by CROPSI
-p.SMW     R*4  soil moisture content at wilting point           cm3 cm-3  O
-p.CRAIRC  R*4  critical air content                             cm3 cm-3  O
+SMW     R*4  soil moisture content at wilting point           cm3 cm-3  O
+CRAIRC  R*4  critical air content                             cm3 cm-3  O
 SM      R*4  actual soil moisture content                     cm3 cm-3  O
 RAIN    R*4  daily rainfall                                     cm d-1  I  !!! RH note that unit!
-p.SM0     R*4  soil porosity                                    cm3 cm-3  O
-p.SMFCF   R*4  soil moisture content at field capacity          cm3 cm-3  O
+SM0     R*4  soil porosity                                    cm3 cm-3  O
+SMFCF   R*4  soil moisture content at field capacity          cm3 cm-3  O
 */
 
 

@@ -72,7 +72,7 @@ void WofostModel::EVTRA() {
         double RFWS = LIMIT(0.,1.,(soil.SM - soil.p.SMW)/(SMCR - soil.p.SMW));
         //cout << "RFWS: " << RFWS << " SM: " << soil.SM << " p.SMW: " << soil.p.SMW << endl;
         //reduction in transpiration in case of oxygen shortage
-        //for non-rice crops, and pop.SSIbly deficient land drainage
+        //for non-rice crops, and possibly deficient land drainage
         if (crop.p.IAIRDU == 0 && IOX == 1){
             //critical soil moisture content for aeration
             double SMAIR = soil.p.SM0 - soil.p.CRAIRC;

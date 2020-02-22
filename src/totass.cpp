@@ -9,9 +9,7 @@ Copyright 1988, 2013 Alterra, Wageningen-UR, Licensed under the EUPL, Version 1.
 
 Authors: Daniel van Kraalingen, April 1991
 
-Purpose: This routine calculates the daily total gross CO2 assimilation by performing a Gaup.SSIan integration over
-time. At three different times of the day, irradiance is computed and used to calculate the instantaneous canopy
-assimilation, whereafter integration takes place. More information on this routine is given by Spitters et al. (1988).
+Purpose: This routine calculates the daily total gross CO2 assimilation by performing a Gaussian integration over time. At three different times of the day, irradiance is computed and used to calculate the instantaneous canopy assimilation, whereafter integration takes place. More information on this routine is given by Spitters et al. (1988).
 
 FORMAL PARAMETERS:  (I=input,O=output)
 name   type meaning                                    units  class

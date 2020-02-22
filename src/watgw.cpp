@@ -1,44 +1,26 @@
-/*Copyright 1988, 2013 Alterra, Wageningen-UR
-Licensed under the EUPL, Version 1.1 or as soon they will be approved by the European Commip.SSIon - subsequent versions of the EUPL (the "Licence")
-You may not use this work except in compliance with the Licence.  You may obtain a copy of the Licence at: https://joinup.ec.europa.eu/software/page/eupl.
-Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the Licence for the specific language governing permip.SSIons and limitations under the Licence.
+/*
+C++ code by Huang Fang and Robert Hijmans
+Date: July 2016
 
-In routine WATGW the simulation of the soil water balance is performed for soils influenced by the presence of groundwater. Two
-situations are distinguished: with or without artificial drainage. The soil water balance is calculated for a cropped field in the
-water-limited production situation. WATGW is called by WOFSIM.
+License: GNU General Public License (GNU GPL) v. 2 
+
+Based on FORTRAN code WOFOST version 7.1.7, release September 2013
+Copyright 1988, 2013 Alterra, Wageningen-UR, Licensed under the EUPL, Version 1.1. 
+
+In routine WATGW the simulation of the soil water balance is performed for soils influenced by the presence of groundwater. Two situations are distinguished: with or without artificial drainage. The soil water balance is calculated for a cropped field in the water-limited production situation. WATGW is called by WOFSIM.
 
 Subroutine WATGW is derived from subroutine APPLE of WOFOST Version 4.1.
 
 Author: C.A. van Diepen, February 1989, revised July 1990
 
-The purpose of the calculations is to estimate the daily value of the
-mean soil moisture content. The soil moisture content influences soil
-moisture uptake and crop transpiration.
+The purpose of the calculations is to estimate the daily value of the mean soil moisture content. The soil moisture content influences soil moisture uptake and crop transpiration.
 
-The water balance is driven by rainfall, pop.SSIbly buffered as surface
-storage, and evapotranspiration.
-The processes considered are infiltration, soil water retention,
-the steady state flow between the rootzone and the groundwater table
-(upward flow is accounted for as capillary rise, downward flow as
-percolation), and drainage rate. An irrigation term is included but not
-used. The resulting groundwater depth, moisture and air contents in the
-root zone are calculated.
+The water balance is driven by rainfall, popssibly buffered as surface storage, and  evapotranspiration. The processes considered are infiltration, soil water retention, the steady state flow between the rootzone and the groundwater table (upward flow is accounted for as capillary rise, downward flow as percolation), and drainage rate. An irrigation term is included but not used. The resulting groundwater depth, moisture and air contents in the root zone are calculated.
 
-The textural profile of the soil is conceived as homogeneous.
-Three soil depth zones are distinguished: the rooted zone between
-soil surface and actual rooting depth, the zone between rooting
-depth and groundwater, and the zone below groundwater level to a
-reference depth of XDEF=16000 cm, which is used as a formal system
-boundary. Soil moisture between groundwater and root zone is assumed to
-be in equilibrium with groundwater (in fact a contradiction with
-capillary rise or percolation). A makeshift approach is applied when
-the groundwater table rises into the rooted zone. Then two zones are
-distinguished within the rooted zone, a saturated lower part and an
-unsaturated upper part.
-The extension of the root zone from initial rooting depth to maximum
-rooting depth (crop dependent) is described in subroutine ROOTD.
-The dynamic output is written to file by subroutine PRIWGW.
+The textural profile of the soil is conceived as homogeneous. Three soil depth zones are distinguished: the rooted zone between soil surface and actual rooting depth, the zone between rooting depth and groundwater, and the zone below groundwater level to a reference depth of XDEF=16000 cm, which is used as a formal system boundary. Soil moisture between groundwater and root zone is assumed to be in equilibrium with groundwater (in fact a contradiction with
+capillary rise or percolation). A makeshift approach is applied when the groundwater table rises into the rooted zone. Then two zones are distinguished within the rooted zone, a saturated lower part and an unsaturated upper part.
+
+The extension of the root zone from initial rooting depth to maximum rooting depth (crop dependent) is described in subroutine ROOTD. The dynamic output is written to file by subroutine PRIWGW.
 +-----------------------------------------------------------------+
 | Date:         24 July 1997                                      |
 | Author:       Tamme van der Wal                                 |
@@ -53,33 +35,33 @@ The dynamic output is written to file by subroutine PRIWGW.
 
 VARIABLE TYPE Description                                      Units   I/O
 DELT    R*4  time step (= 1 day)                                d       I
-p.IDRAIN  I*4  indicates presence (1) or absence (0) of drains            I
+IDRAIN  I*4  indicates presence (1) or absence (0) of drains            I
 RD      R*4  rooting depth                                      cm      I
-p.IAIRDU  I*4  indicates presence(1) or absence(0) of airducts            I
+IAIRDU  I*4  indicates presence(1) or absence(0) of airducts            I
              in the roots. 1= can tolerate waterlogging
-p.IFUNRN  I*4  flag indicating the way to calculate the                   I
+IFUNRN  I*4  flag indicating the way to calculate the                   I
              non-infiltrating fraction of rainfall:
              0. fraction is fixed at p.NOTINF
              1. fraction depends on p.NOTINF and on daily rainfall
              as given by p.NINFTB.
-p.SSI     R*4  initial surface storage                            cm      I
-p.SMLIM   R*4  max. initial soil moisture in topsoil              cm      I
-p.SSMAX   R*4  maximum surface storage                            cm      I
-p.ZTI     R*4  initial depth of groundwater table                 cm      I
-p.DD      R*4  effective depth of drains (drainage base)          cm      I
-p.NOTINF  R*4  if FUNRAI=0 non-infiltrating fraction of rainfall          I
+SSI     R*4  initial surface storage                            cm      I
+SMLIM   R*4  max. initial soil moisture in topsoil              cm      I
+SSMAX   R*4  maximum surface storage                            cm      I
+ZTI     R*4  initial depth of groundwater table                 cm      I
+DD      R*4  effective depth of drains (drainage base)          cm      I
+NOTINF  R*4  if FUNRAI=0 non-infiltrating fraction of rainfall          I
              if FUNRAI=1 maximum non-infiltrating fraction
 EVWMX   R*4  maximum evaporation rate from shaded water surface cm d-1  I
 EVSMX   R*4  maximum evaporation rate from shaded soil surface  cm d-1  I
 TRA     R*4  actual transpiration rate                          cm d-1  I
              Note: TRA is calculated in EVTRA called by CROPSI
-p.SMW     R*4  soil moisture content at wilting point           cm3 cm-3  O
-p.CRAIRC  R*4  critical air content                             cm3 cm-3  O
+SMW     R*4  soil moisture content at wilting point           cm3 cm-3  O
+CRAIRC  R*4  critical air content                             cm3 cm-3  O
 ZT      R*4  actual depth of groundwater table                   cm     O
 SM      R*4  actual soil moisture content                     cm3 cm-3  O
 RAIN    R*4  daily rainfall                                     cm d-1  I
-p.SM0     R*4  soil porosity                                    cm3 cm-3  O
-p.SMFCF   R*4  soil moisture content at field capacity          cm3 cm-3  O
+SM0     R*4  soil porosity                                    cm3 cm-3  O
+SMFCF   R*4  soil moisture content at field capacity          cm3 cm-3  O
 
 */
 

@@ -87,7 +87,7 @@ double SUBSOL(double PF, double D, std::vector<double> CONTAB) { // flow is outp
          IINT = IINT+1;
       }
 
-//15.4 preparation of three-point Gaup.SSIan integration
+//15.4 preparation of three-point Gaussian integration
 
 
 //15.5 setting upper and lower limit

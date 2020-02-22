@@ -24,25 +24,25 @@ class NPK_Soil_Dynamics(SimulationObject):
     ============  ============================================= =======  ==============
      Name          Description                                   Type     Unit
     ============  ============================================= =======  ==============
-    NSOILBASE     Base soil supply of N available through        p.SSI      |kg ha-1|
+    NSOILBASE     Base soil supply of N available through        ssi      |kg ha-1|
                   mineralisation
-    NSOILBASE_FR  Fraction of base soil N that comes available   p.SSI        -
+    NSOILBASE_FR  Fraction of base soil N that comes available   ssi        -
                   every day
-    PSOILBASE     Base soil supply of N available through        p.SSI      |kg ha-1|
+    PSOILBASE     Base soil supply of N available through        ssi      |kg ha-1|
                   mineralisation
     PSOILBASE_FR  Fraction of base soil N that comes available             -
                   every day
-    KSOILBASE     Base soil supply of N available through        p.SSI      |kg ha-1|
+    KSOILBASE     Base soil supply of N available through        ssi      |kg ha-1|
                   mineralisation
-    KSOILBASE_FR  Fraction of base soil N that comes available   p.SSI        -
+    KSOILBASE_FR  Fraction of base soil N that comes available   ssi        -
                   every day
     DVSNPK_STOP   Development stage after which no nutrients
                   are taken up from the soil by the crop.
-    BG_N_SUPPLY   Background supply of N through atmospheric     p.SSI      |kg ha-1 d-1|
+    BG_N_SUPPLY   Background supply of N through atmospheric     ssi      |kg ha-1 d-1|
                   deposition.
-    BG_P_SUPPLY   Background supply of P through atmospheric     p.SSI      |kg ha-1 d-1|
+    BG_P_SUPPLY   Background supply of P through atmospheric     ssi      |kg ha-1 d-1|
                   deposition.
-    BG_K_SUPPLY   Background supply of K through atmospheric     p.SSI      |kg ha-1 d-1|
+    BG_K_SUPPLY   Background supply of K through atmospheric     ssi      |kg ha-1 d-1|
                   deposition.
     ============  ============================================= =======  ==============
 
