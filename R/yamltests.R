@@ -42,7 +42,7 @@
 
 	if (ttype == "astro") {
 		pcrop <- dcrop
-		psoil <- psoil
+		psoil <- dsoil
 		tim$IDURMX <- nrow(w)
 		tim$cropstart <- nrow(w)-1
 	
@@ -50,7 +50,7 @@
 		
 		m <- y$AgroManagement
 		cal <- m[[1]][[1]]$CropCalendar
-		tim$modelstart <- as.Date(names(m[[1]])) + 1
+		tim$modelstart <- as.Date(names(m[[1]]))
 		tim$cropstart <- as.integer(tim$modelstart - as.Date(cal$crop_start_date))
 		tim$IPRODL <- 1
 		tim$IDURMX <- cal$max_duration
@@ -58,6 +58,11 @@
 	
 		p <- y$ModelParameters
 		np <- names(p)
+		skip <- FALSE
+		if ("VERNBASE" %in% np) { 
+			return(list(skip=TRUE))
+		}
+		
 		pcrop <- np %in% .crop_pars
 		psoil <- np %in% .soil_pars
 		pother <- p[!(pcrop | psoil)]
@@ -93,7 +98,7 @@
 		r[,1] <- as.Date(r[,1])
 		for (i in 2:ncol(r)) r[,i] <- as.numeric(r[,i])
 	}
-	list(R=x, P=r)
+	list(R=x, P=r, prec=prec, skip=skip)
 }
 
 
@@ -107,6 +112,7 @@
 	rmse <- sqrt(mean((x$P[[p]] - x$R[[r]])^2))
 	min(rmse / mean(x$P[[p]]), rmse / median(x$P[[p]]))
 }
+
 
 .test_astro <- function(path, tests=1:44) {
 	result <- matrix(nrow=length(tests), ncol=8)
@@ -129,14 +135,50 @@
 	result
 }
 
+
+.test_prec <- function(x, p, prec) {
+	dif <- abs(x[[paste0(p, ".x")]] - x[[paste0(p, ".y")]])
+	sum(dif > prec[[p]])
+}
+
+.test_phenology <- function(path, tests=1:44) {
+	params <- c("DVR", "DVS")
+	result <- matrix(nrow=length(tests), ncol=2)
+	colnames(result) <- params
+
+	j = 1;
+	for (i in tests) {
+		fname <- paste0("test_phenology_wofost71_", formatC(i, width=2, flag="0"), ".yaml")
+		yf <- file.path(path, fname)
+		x <- .yamltest(yf) 
+		if (!x$skip) {
+			cat(paste0(i, "-"))
+			m <- merge(x$P[, c("DAY", params)], x$R[, c("date", params)], by=1)
+			result[j,] <- sapply(params, function(v) .test_prec(m, v, x$prec) )
+		} else {
+			cat(paste0(i, "x"))
+		}
+		flush.console(); if (i ==24) cat("\n")
+		j <- j + 1;
+	}
+	cat("\n")
+	if (max(result, na.rm=TRUE) > 0) {
+		print("phenology error")
+	} else {
+		print(paste("phenology OK"))
+	}
+	result
+}
+
+
 #library(Rwofost)
+#ydir <- "C:/github/cropmodels/Rwofost/test_data/"
+#x <- Rwofost:::.test_astro(ydir)
+#x <- Rwofost:::.test_phenology(ydir)
+
 #.crop_pars = Rwofost:::.crop_pars
 #.soil_pars = Rwofost:::.soil_pars
-#yamd <- "C:/github/cropmodels/Rwofost/yamltests/"
-#x <- .test_astro(yamd)
-#tst <- .yamltest(file.path(yamd, "test_astro_wofost71_01.yaml")) 
+#f <- file.path(ydir, "test_astro_wofost71_01.yaml")
+#x <- .yamltest(f) 
 #par(ask=T)
-#for (v in colnames(tst$P)) .complot(tst, v)
-
-#yf <- file.path(yamd, "test_phenology_wofost71_01.yaml")
-#x <- .yamltest(yf) 
+#for (v in colnames(x$P)) .complot(x, v)

@@ -15,7 +15,7 @@ setMethod("run", signature("Rcpp_WofostModel"),
 		out <- matrix(x$output$values, ncol=length(x$output$names), byrow=TRUE)
 		colnames(out) <- x$output$names
 		out <- data.frame(out)
-		date <- as.Date(x$control$modelstart, origin="1970-01-01") + out$step
+		date <- as.Date(x$control$modelstart, origin="1970-01-01") + (out$step - 1)
 		out <- data.frame(date, out)
 #		out$Wtot <- out$WRT + out$WLV + out$WST + out$WSO
 		out

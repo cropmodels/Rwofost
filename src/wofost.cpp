@@ -127,8 +127,13 @@ void WofostModel::model_initialize() {
 		npk_demand_uptake_initialize();
 	}
 
-    crop.DVS = 0.;
-    crop.WRT = 0.;
+	if (ISTATE == 1) {
+		crop.DVS = -0.1;
+	} else {
+		crop.DVS = 0;
+    }
+	
+	crop.WRT = 0.;
     crop.TADW = 0.;
     crop.WST = 0.;
     crop.WSO = 0.;
@@ -188,36 +193,36 @@ void WofostModel::model_run() {
 			if (ISTATE == 0 ) { 	// find day of sowing
 				STDAY();
 			} else if (ISTATE == 1) {	// find day of emergence
+				crop.DVS = crop.DVS + crop.DVR;
 				crop.TSUME = crop.TSUME + crop.DTSUME * DELT;
 				if (crop.TSUME >= crop.p.TSUMEM) {
 					ISTATE = 3;
 					crop_emerged = true;
+					crop.DVS = 0;
+				} else {
+					crop.DTSUME = LIMIT(0., crop.p.TEFFMX - crop.p.TBASEM, atm.TEMP - crop.p.TBASEM);
+					crop.DVR = 0.1 * crop.DTSUME / crop.p.TSUMEM;
 				}
-				crop.DTSUME = LIMIT(0., crop.p.TEFFMX - crop.p.TBASEM, atm.TEMP - crop.p.TBASEM);
 			} else {
 				crop_emerged = true;
 			}
 		}
-		model_output();
-		if(control.npk_model){
-			npk_soil_dynamics_states();
-		} else {
-			soil_states();
-		}
-
 		if (fatalError) {
 			break;
 		}
-		time++;
-		step++;
+
+		if (!crop_emerged) {
+			model_output();
+			if(control.npk_model){
+				npk_soil_dynamics_states();
+			} else {
+				soil_states();
+			}
+			time++;
+			step++;
+		}
 	}
 	crop.emergence = step;
-	// remove one step/day as crop simulation should start
-	// on the day of emergence, not the next day
-	time--;
-	step--;
-	//out.pop_back();
-	output.values.erase(output.values.end()-output.names.size(), output.values.end());
 
 	unsigned maxdur;
 	if (control.IENCHO == 1) {
@@ -234,8 +239,6 @@ void WofostModel::model_run() {
 	crop_initialize();
 
 	while ((crop.alive) && (step < maxdur)) {
-
-//       std::cout << step << std::endl;
 
 		if (! weather_step()) break;
 		crop_rates();
@@ -257,7 +260,6 @@ void WofostModel::model_run() {
 		if (fatalError) {
 			break;
 		}
-
 	}
 	if (control.IENCHO == 1) {
 		// should continue until maxdur if water balance if IENCHO is 1
