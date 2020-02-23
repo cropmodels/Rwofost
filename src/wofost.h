@@ -1,6 +1,6 @@
 /*
-Authors: Robert Hijmans and Huang Fang
-Date July 2016
+Author: Robert Hijmans
+2016-2020
 
 License: GNU General Public License (GNU GPL) v. 2
 */
@@ -10,10 +10,6 @@ License: GNU General Public License (GNU GPL) v. 2
 //#include "date.h"
 #include "SimUtil.h"
 
-
-
-double TOTASS(double DAYL, double AMAX, double EFF, double LAI, double KDif, double AVRAD, double SINLD, double COSLD, double DSINBE, double DifPP);
-double ASSIM(double AMAX, double EFF, double LAI, double KDif, double SINB, double PARDIR, double PARDif);
 double SUBSOL (double PF, double D, std::vector<double> CONTAB);// flow is output
 
 class WofostWeather {
@@ -21,8 +17,6 @@ public:
 	std::vector<long> date;
 	std::vector<double> srad, tmin, tmax, prec, wind, vapr;
 };
-
-
 
 
 struct WofostControl {
@@ -97,6 +91,7 @@ struct WofostCrop {
 	//states s;
 	
 // variables
+	double EFF, AMAX;
 	double TRA, TRANRF;
 	double LASUM, KDif, SSA, TRAMX ;
 	std::vector<double> SLA = std::vector<double>(366), LV = std::vector<double>(366), LVAGE = std::vector<double>(366), TMNSAV = std::vector<double>(7);
@@ -200,7 +195,6 @@ struct WofostSoil {
 	
 // VARIABLES
 	int ILWPER, IDFWOR;
-
 	double EVWMX, EVSMX, EVST, EVWT, TSR, WDRT, TOTINF, TOTIRR, SUMSM, PERCT, LOSST;
 	double SPAC, SPOC, WEXC, CAPRMX, SEEP, COSUT; 	// STDAY
 	double RTDF, MH0, MH1, ZT, SUBAIR, WZ, WZI, WE, WEDTOT, CRT, DRAINT, PF;
@@ -311,7 +305,7 @@ struct WofostModel {
 	void PENMAN_MONTEITH();
 	void ET();
 	void EVTRA();
-
+	double TOTASS();
 
 	void model_initialize();
 	void model_run();

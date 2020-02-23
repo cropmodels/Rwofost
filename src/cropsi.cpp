@@ -57,11 +57,7 @@ p.RDMCR   R4  crop-dependent maximum rooting depth          cm     O
 */
 
 #include <math.h>
-#include <vector>
 #include "wofost.h"
-#include "SimUtil.h"
-#include <string.h>
-//#include <iostream>
 
 /*
 // used for npk
@@ -176,15 +172,12 @@ void WofostModel::crop_rates() {
   // 2.20   daily dry matter production
 
   //gross assimilation and correction for sub-optimum average day temperature
-  //?
-  double AMAX = AFGEN(crop.p.AMAXTB, crop.DVS);
 
-  AMAX = AMAX * AFGEN(crop.p.TMPFTB, atm.DTEMP);
-
+  crop.AMAX = AFGEN(crop.p.AMAXTB, crop.DVS) * AFGEN(crop.p.TMPFTB, atm.DTEMP);
   crop.KDif = AFGEN(crop.p.KDIFTB, crop.DVS);
-  double EFF = AFGEN(crop.p.EFFTB, atm.DTEMP);
+  crop.EFF = AFGEN(crop.p.EFFTB, atm.DTEMP);
 
-  double DTGA = TOTASS(atm.DAYL, AMAX, EFF, crop.LAI, crop.KDif, atm.AVRAD, atm.SINLD, atm.COSLD, atm.DSINBE, atm.DifPP);
+  double DTGA = TOTASS();
 
   //correction for low minimum temperature potential assimilation in kg CH2O per ha
   DTGA = DTGA * AFGEN(crop.p.TMNFTB, crop.TMINRA);
@@ -443,11 +436,6 @@ void WofostModel::crop_states() {
   if(control.npk_model){
     npk_crop_dynamics_states();
   }
-
-
-    //test
-    //cout << "cropsi LAI: LASUM = " << crop.LASUM << " SSA = " << crop.SSA << "WST = " << crop.WST << "p.SPA = " << crop.p.SPA << "WSO" << crop.WSO << endl;
-
 
   if(crop.DVS >= crop.p.DVSEND){
     crop.alive = false;
