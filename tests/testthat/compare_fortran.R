@@ -24,6 +24,7 @@ readFortranOutput <- function(f, wlim=FALSE) {
 	}
 }
 
+par(ask=TRUE)
 
 ## compare with FORTRAN wofost
 ## 1

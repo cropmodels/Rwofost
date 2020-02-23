@@ -34,17 +34,20 @@
 	tim$latitude <- as.numeric(x$LAT[1])
 	tim$elevation=10
 	tim$CO2=360
+	tim$output <- "TEST"
+
+	prec <- y$Precision
+	dsoil <- wofost_soil("soil_5")
+	dcrop <- wofost_crop('maize_1')
 
 	if (ttype == "astro") {
-		pcrop <- wofost_crop('barley')
-		psoil <- wofost_soil('ec1')	
-		tim$output <- "ASTRO"
+		pcrop <- dcrop
+		psoil <- psoil
 		tim$IDURMX <- nrow(w)
 		tim$cropstart <- nrow(w)-1
 	
-	} else if (ttype == "waterlimitedproduction") {
+	} else  {
 		
-		tim$output <- "WATLIM"
 		m <- y$AgroManagement
 		cal <- m[[1]][[1]]$CropCalendar
 		tim$modelstart <- as.Date(names(m[[1]])) + 1
@@ -61,24 +64,31 @@
 		pcrop <- p[pcrop]
 		psoil <- p[psoil]
 
-		
 		pcrop$CO2AMAXTB = c(40., 0.00, 360., 1.00, 720., 1.35, 1000., 1.50, 2000., 1.50)
 		pcrop$CO2EFFTB = c(40., 0.00, 360., 1.00, 720., 1.11, 1000., 1.11, 2000., 1.11)
 		pcrop$CO2TRATB = c(40., 0.00, 360., 1.00, 720., 0.9, 1000., 0.9, 2000., 0.9)
 		pcrop <- lapply(pcrop, .make_matrices)
 
 	   # parameters missing: 
-		s <- wofost_soil("soil_5")
-		s <- s[c("SMTAB", "CONTAB", "SPADS", "SPASS", "SPODS", "SPOSS", "DEFLIM", "IZT", "ZTI", "DD", "IDRAIN")]
-		psoil <- c(psoil, s)
+		nms <- names(dsoil)
+		nms <- nms[!(nms %in% names(pcrop))]
+		psoil <- c(psoil, dsoil[nms])
+		#s <- s[c("SMTAB", "CONTAB", "SPADS", "SPASS", "SPODS", "SPOSS", "DEFLIM", "IZT", "ZTI", "DD", "IDRAIN")]
+		#psoil <- c(psoil, s)
+
+		nms <- names(dcrop)
+		nms <- nms[!(nms %in% names(pcrop))]
+		pcrop <- c(pcrop, dcrop[nms])
 	}
+	
+	
 
 	m <- wofost_model(pcrop, w, psoil, tim)
 	x <- run(m)
 		
 	r <- y$ModelResults
 	r <- lapply(r, unlist)
-	r <- data.frame(t(do.call(cbind, r)))
+	r <- data.frame(t(do.call(cbind, r)), stringsAsFactors=FALSE)
 	if (colnames(r)[1] == "DAY") {
 		r[,1] <- as.Date(r[,1])
 		for (i in 2:ncol(r)) r[,i] <- as.numeric(r[,i])
@@ -119,9 +129,14 @@
 	result
 }
 
+#library(Rwofost)
+#.crop_pars = Rwofost:::.crop_pars
+#.soil_pars = Rwofost:::.soil_pars
 #yamd <- "C:/github/cropmodels/Rwofost/yamltests/"
 #x <- .test_astro(yamd)
-
 #tst <- .yamltest(file.path(yamd, "test_astro_wofost71_01.yaml")) 
 #par(ask=T)
 #for (v in colnames(tst$P)) .complot(tst, v)
+
+#yf <- file.path(yamd, "test_phenology_wofost71_01.yaml")
+#x <- .yamltest(yf) 

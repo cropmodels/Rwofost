@@ -29,6 +29,14 @@ bool WofostModel::weather_step() {
 		atm.VAP = wth.vapr[time] * 10;
 		atm.RAIN = wth.prec[time] / 10 ; // cm !
 
+/*
+		//seven day running average of minimum temperature
+		int start = time-7;
+		start = std::max(start, 0);
+		double n = time - start;
+		crop.TMINRA = accumulate(wth.tmin.begin() + start, wth.tmin.begin() + time, 0.0) / n;
+*/
+
 		DOY = doy_from_days(wth.date[time]);
 		ET();
 	}
@@ -36,21 +44,17 @@ bool WofostModel::weather_step() {
 }
 
 
-
 void WofostModel::model_output(){
-	if (control.output_option == "ASTRO") {
+	if (control.output_option == "TEST") {
 		output.values.insert(output.values.end(),
 			{double(step), atm.ANGOT, atm.ATMTR, atm.COSLD, atm.DAYL, 
-				atm.DAYLP, atm.DifPP, atm.DSINBE, atm.SINLD
-			}
-		);	
-	} else if (control.output_option == "WATLIM") {
-		output.values.insert(output.values.end(),
-			{double(step), crop.TSUM, crop.DVS, soil.EVS, crop.LAI, crop.RD, soil.SM,  
+				atm.DAYLP, atm.DifPP, atm.DSINBE, atm.SINLD, 
+				crop.TSUM, crop.DVR, crop.DVS,
+				soil.EVS, crop.LAI, crop.RD, soil.SM,  
 				crop.TAGP, crop.TRA, crop.WRT, crop.WLV, crop.WST, crop.WSO,
 				crop.TWRT, crop.TWLV, crop.TWST, crop.TWSO
 			}
-		);
+		);	
 	} else {
 		output.values.insert(output.values.end(),
 			{double(step), crop.TSUM, crop.DVS, crop.LAI,   
@@ -100,16 +104,14 @@ void WofostModel::model_initialize() {
 		IOX = control.IOXWL;   //for water-limited
 	}
 
-	if (control.output_option == "ASTRO") {
+	if (control.output_option == "TEST") {
 		output.names = {"step", "ANGOT", "ATMTR", "COSLD", "DAYL", 
-			"DAYLP", "DIFPP", "DSINBE", "SINLD"};
-	} else 	if (control.output_option == "WATLIM") {
-		output.names = {"step", "TSUM", "DVS", "EVS", "LAI", "RD", "SM",
-			"TAGP", "TRA", "WRT", "WLV", "WST", "WSO", "TWRT", "TWLV", "TWST", "TWSO"};
+			"DAYLP", "DIFPP", "DSINBE", "SINLD", "TSUM", "DVR", "DVS", "EVS", "LAI", "RD", "SM",
+		"TAGP", "TRA", "WRT", "WLV", "WST", "WSO", "TWRT", "TWLV", "TWST", "TWSO"};
 	} else {
 		output.names = {"step", "TSUM", "DVS", "LAI", "WRT", "WLV", "WST", "WSO"};
 	}
-	
+
 	output.values.resize(0);
 	output.values.reserve(output.names.size() * 150);
 	

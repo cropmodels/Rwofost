@@ -112,8 +112,9 @@ void WofostModel::crop_initialize() {
 
   crop.TMINRA = 0.;
   for(int i = 0; i < 7; i++){
-    crop.TMNSAV[i] = -99.;
+    crop.TMNSAV[i] = -99;
   }
+ crop.TMNSAV.reserve(7);
   if(control.npk_model){
     npk_crop_dynamics_initialize();
   }
@@ -125,18 +126,22 @@ void WofostModel::crop_initialize() {
 
 void WofostModel::crop_rates() {
 
-   //seven day running average of minimum temperature
-   //shift minimum temperatures to the left
-	for (int i = 0; i < 6; i++) {
-      crop.TMNSAV[i] = crop.TMNSAV[i + 1];
-    }
-    crop.TMNSAV[6] = atm.TMIN;
+/*
+	if (crop.TMNSAV.size() < 7) {
+		crop.TMNSAV.push_back(atm.TMIN);
+	} else {
+		std::move(crop.TMNSAV.begin()+1, crop.TMNSAV.end(), crop.TMNSAV.begin());
+		crop.TMNSAV[6] = atm.TMIN;
+	}
+	crop.TMINRA = accumulate(crop.TMNSAV.begin(), crop.TMNSAV.end(), 0.0) / crop.TMNSAV.size(); 
+*/
 
-    //calculate new average minimum temperature
+	std::move(crop.TMNSAV.begin()+1, crop.TMNSAV.end(), crop.TMNSAV.begin());
+    crop.TMNSAV[6] = atm.TMIN;
     crop.TMINRA = 0.;
     int j = 0;
-    for(int i = 0; i < 7; i++){
-      if(crop.TMNSAV[i] != -99){
+    for (int i = 0; i < 7; i++) {
+      if (crop.TMNSAV[i] != -99) {
         crop.TMINRA = crop.TMINRA + crop.TMNSAV[i];
         j++;
       }
@@ -144,16 +149,7 @@ void WofostModel::crop_rates() {
     crop.TMINRA = crop.TMINRA/double(j);
 
 
-
-    //emergence has taken place
-    //2.19      phenological development rate photoperiodic daylength
-    // ASTRO();  //
-      //test
-      //cout << "DAYL: " << atm.DAYL << " SINLD: " << atm.SINLD << endl;
-    //increase in temperature sum
-    double tmp = atm.TEMP;
-    double DTSUM = AFGEN(crop.p.DTSMTB, tmp);
-    crop.DTSUM = DTSUM;
+    crop.DTSUM = AFGEN(crop.p.DTSMTB, atm.TEMP);
     if(crop.DVS < 1.){
       //effects of daylength and temperature on development during vegetative phase
       double DVRED = 1.;

@@ -88,6 +88,8 @@ setMethod("control<-", signature("Rcpp_WofostModel", "list"),
 		if (!all(.req_ctr_pars %in% nms)) stop(paste("parameters missing:", paste(.req_ctr_pars[!(.req_ctr_pars %in% nms)], collapse=", ")))
 		value <- value[nms %in% c(.req_ctr_pars, .opt_ctr_pars)]
 		nms <- names(value)
+
+		# value <- sapply(value, function(v) ifelse(is.character(v), paste0("\'", v, "\'"), v))
 		if (!is.null(value$output)) value$output <- paste0("\'", value$output, "\'")
 
 		lapply(1:length(value), function(i) eval(parse(text = paste0("x$control$", nms[i], " <- ", value[i]))))
