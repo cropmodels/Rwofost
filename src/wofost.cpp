@@ -13,10 +13,11 @@ License: GNU General Public License (GNU GPL) v. 2
 //#include <iostream>
 
 
-void WofostModel::weather_step() {
+bool WofostModel::weather_step() {
 	if (time >= wth.tmin.size()) {
 		fatalError = true;
 		messages.push_back("reached end of weather data");
+		return false;
 	} else {
 		atm.TMIN = wth.tmin[time];
 		atm.TMAX = wth.tmax[time];
@@ -31,6 +32,7 @@ void WofostModel::weather_step() {
 		DOY = doy_from_days(wth.date[time]);
 		ET();
 	}
+	return true;
 }
 
 
@@ -233,7 +235,7 @@ void WofostModel::model_run() {
 
 //       std::cout << step << std::endl;
 
-		weather_step();
+		if (! weather_step()) break;
 		crop_rates();
 		if (control.npk_model){
 			npk_soil_dynamics_rates();

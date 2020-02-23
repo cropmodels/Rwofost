@@ -248,7 +248,7 @@ struct WofostModel {
 	
 	WofostOutput output;
 	
-	void weather_step();
+	bool weather_step();
 
 	void crop_initialize();
 	void crop_rates();
