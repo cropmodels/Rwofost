@@ -70,32 +70,25 @@ void WofostModel::maintanance_respiration() {
 */
 
 void WofostModel::crop_initialize() {
-//2.6    initial crop conditions at emergence or transplanting
-  crop.IDANTH = -99;
+// 2.6    initial crop conditions at emergence or transplanting
+	crop.IDANTH = -99;
 //  DOANTH = false;
-  crop.DVS = crop.p.DVSI;
-  crop.TSUM = 0.;
-  crop.FR = AFGEN(crop.p.FRTB, crop.DVS);
-  crop.FL = AFGEN(crop.p.FLTB, crop.DVS);
-  crop.FS = AFGEN(crop.p.FSTB, crop.DVS);
-  crop.FO = AFGEN(crop.p.FOTB, crop.DVS);
-  crop.SLA[0] = AFGEN(crop.p.SLATB, crop.DVS);
+	crop.DVS = crop.p.DVSI;
+	crop.TSUM = 0.;
+	crop.FR = AFGEN(crop.p.FRTB, crop.DVS);
+	crop.FL = AFGEN(crop.p.FLTB, crop.DVS);
+	crop.FS = AFGEN(crop.p.FSTB, crop.DVS);
+	crop.FO = AFGEN(crop.p.FOTB, crop.DVS);
+	crop.SLA[0] = AFGEN(crop.p.SLATB, crop.DVS);
 
-    //test
-    //cout << "SLA: " << crop.SLA[0] << " " << crop.SLA[1] <<endl;
+	crop.LVAGE[0] = 0.;
+	crop.ILVOLD = 1;
 
-  crop.LVAGE[0] = 0.;
-  crop.ILVOLD = 1;
-  //number of stress days
-  // RH : these can probably be removed
-  //crop.IDOST = 0;
-  //crop.IDWST = 0;
-
-  //2.6.2  initial state variables of the crop
-  crop.DWRT = 0;
-  crop.DWLV = 0;
-  crop.DWST = 0;
-  crop.DWSO = 0;
+	//2.6.2  initial state variables of the crop
+	crop.DWRT = 0;
+	crop.DWLV = 0;
+	crop.DWST = 0;
+	crop.DWSO = 0;
 
     //emergence
     crop.WRT = crop.FR * crop.p.TDWI;
@@ -308,30 +301,32 @@ void WofostModel::crop_rates() {
   crop.SLAT = AFGEN(crop.p.SLATB, crop.DVS);
 
   //leaf area not to exceed exponential growth curve
-  if (crop.LAIEXP > 6) {
-    double DTEFF = std::max(0., atm.TEMP - crop.p.TBASE);
-    crop.GLAIEX = crop.LAIEXP * crop.p.RGRLAI * DTEFF;
+	if (crop.LAIEXP > 6) {
+		double DTEFF = std::max(0., atm.TEMP - crop.p.TBASE);
+		crop.GLAIEX = crop.LAIEXP * crop.p.RGRLAI * DTEFF;
     //source-limited increase in leaf area
-    double GLASOL = crop.GRLV * crop.SLAT;
+		double GLASOL = crop.GRLV * crop.SLAT;
     //sink-limited increase in leaf area
-    double GLA = std::min(crop.GLAIEX, GLASOL);
+		double GLA = std::min(crop.GLAIEX, GLASOL);
     //adjustment of specific leaf area of youngest leaf class
-    if (crop.GRLV > 0.) {
-      crop.SLAT = GLA / crop.GRLV;
-    }
-  }
-  //growth rate stems
-  double GRST = crop.FS * ADMI;
-  crop.DRST = AFGEN(crop.p.RDRSTB, crop.DVS) * crop.WST;
-  crop.GWST = GRST - crop.DRST;
+		if (crop.GRLV > 0.) {
+			crop.SLAT = GLA / crop.GRLV;
+		}
+	}
+	//growth rate stems
+	double GRST = crop.FS * ADMI;
+	crop.DRST = AFGEN(crop.p.RDRSTB, crop.DVS) * crop.WST;
+	crop.GWST = GRST - crop.DRST;
 
   //growth rate storage organs
-  crop.GWSO = crop.FO * ADMI;
-  crop.DRSO = 0.;
+	crop.GWSO = crop.FO * ADMI;
+	crop.DRSO = 0.;
 
-  if(control.nutrient_limited){
-    npk_crop_dynamics_rates();
-  }
+	if(control.nutrient_limited){
+		npk_crop_dynamics_rates();
+	}
+
+	ROOTD_rates();
 
 }
 
@@ -422,22 +417,25 @@ void WofostModel::crop_states() {
   crop.TWSO = crop.WSO + crop.DWSO;
   crop.TAGP = crop.TWLV + crop.TWST + crop.TWSO;
 
-  //total gross assimilation and maintenance respiration
-  //leaf area index
-  crop.SSA = AFGEN(crop.p.SSATB, crop.DVS);
+	//total gross assimilation and maintenance respiration
+	//leaf area index
+	crop.SSA = AFGEN(crop.p.SSATB, crop.DVS);
     //test
 
-  crop.LAI = crop.LASUM + crop.SSA * crop.WST + crop.p.SPA * crop.WSO;
+	crop.LAI = crop.LASUM + crop.SSA * crop.WST + crop.p.SPA * crop.WSO;
 
-  if(control.nutrient_limited){
-    npk_crop_dynamics_states();
-  }
+	if(control.nutrient_limited){
+		npk_crop_dynamics_states();
+	}
 
-  if(crop.DVS >= crop.p.DVSEND){
-    crop.alive = false;
-  } else if(crop.LAI <= 0.002 && crop.DVS > 0.5) {
-      messages.push_back("no living leaves (anymore)");
- 	    crop.alive = false;
-  }
+	ROOTD_states();
+
+	if(crop.DVS >= crop.p.DVSEND){
+		crop.alive = false;
+	} 	else if(crop.LAI <= 0.002 && crop.DVS > 0.5) {
+		messages.push_back("no living leaves (anymore)");
+		crop.alive = false;
+	}
+
 
 }

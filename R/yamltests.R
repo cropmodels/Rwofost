@@ -43,7 +43,7 @@
 		tim$water_limited <- TRUE
 	} else {
 		tim$water_limited <- FALSE
-	}
+	} 
 
 	if (ttype == "astro") {
 		pcrop <- dcrop
@@ -177,9 +177,26 @@
 }
 
 
-
+#ydir <- "C:/github/cropmodels/Rwofost/test_data/"
 #xa <- Rwofost:::.test(ydir, "astro", 1:4)
 #xy <- Rwofost:::.test(ydir, "phenology", 1:4)
 #xp <- Rwofost:::.test(ydir, "potentialproduction", 1:4)
 #xw <- Rwofost:::.test(ydir, "waterlimitedproduction", 1:4)
 
+
+
+#library(Rwofost)
+#ydir <- "C:/github/cropmodels/Rwofost/test_data/"
+#.crop_pars = Rwofost:::.crop_pars
+#.soil_pars = Rwofost:::.soil_pars
+#yf <- file.path(ydir, "test_waterlimitedproduction_wofost71_11.yaml")
+#x <- Rwofost:::.yamltest(yf)
+#p <- x$P
+#r <- x$R
+#cn <- colnames(r)[colnames(r) %in% colnames(p)]
+#r <- r[, c("date", cn)]
+#p <- p[, c("DAY", cn)]
+#p <- p[1:nrow(r), ]
+#x$P <- p
+#par(ask=T)
+#for (v in colnames(p)) Rwofost:::.complot(x, v)

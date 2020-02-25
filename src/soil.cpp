@@ -29,7 +29,6 @@ void WofostModel::soil_initialize() {
 
 
 void WofostModel::soil_rates() {
-	ROOTD_rates();
 	if (control.water_limited) {
 		if (soil.p.IZT == 0) {
 			WATFD_rates();
@@ -42,7 +41,6 @@ void WofostModel::soil_rates() {
 }
 
 void WofostModel::soil_states() {
-	ROOTD_states();
 	if (control.water_limited) {
 		if (soil.p.IZT == 0) {
 			WATFD_states();
