@@ -251,7 +251,7 @@ void WofostModel::model_run() {
 		crop_states();
 		if(control.nutrient_limited){
 			npk_soil_dynamics_states();
-		} else{
+		} else {
 			soil_states();
 		}
 		time++;

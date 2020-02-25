@@ -84,7 +84,8 @@ struct WofostCrop {
 	//struct states {
 		double RD, RDOLD, GRLV;
 		double DWRT, DWLV, DWST, DWSO;
-		double DVS, LAI, LAIEXP;
+		double DVS, LAI;
+		double LAIEXP=0;
 		double WRT, WLV, WST, WSO;
 		double TWRT, TWLV, TWST, TWSO, TAGP;
 		double TSUM, TSUME;

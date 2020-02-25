@@ -103,14 +103,15 @@ void WofostModel::crop_initialize() {
     crop.SSA = AFGEN(crop.p.SSATB, crop.DVS);
     crop.LAI = crop.LASUM + crop.SSA * crop.WST + crop.p.SPA * crop.WSO;
 
-  crop.TMINRA = 0.;
-  for(int i = 0; i < 7; i++){
-    crop.TMNSAV[i] = -99;
-  }
- crop.TMNSAV.reserve(7);
-  if(control.nutrient_limited){
-    npk_crop_dynamics_initialize();
-  }
+	crop.TMINRA = 0.;
+	for(int i = 0; i < 7; i++){
+		crop.TMNSAV[i] = -99;
+	}
+	
+	crop.TMNSAV.reserve(7);
+	if (control.nutrient_limited){
+		npk_crop_dynamics_initialize();
+	}
 
 }
 
@@ -206,7 +207,7 @@ void WofostModel::crop_rates() {
 	crop.FO = AFGEN(crop.p.FOTB, crop.DVS);
 
 
-   crop.TRANRF = crop.TRA/crop.TRAMX;   //commented previously
+	crop.TRANRF = crop.TRA/crop.TRAMX;   //commented previously
 
 	if (control.nutrient_limited){
 
@@ -239,66 +240,67 @@ void WofostModel::crop_rates() {
 
 
   //check on partitioning
-  double FCHECK = crop.FR+(crop.FL + crop.FS + crop.FO)*(1.-crop.FR) - 1.;
+	double FCHECK = crop.FR+(crop.FL + crop.FS + crop.FO)*(1.-crop.FR) - 1.;
     //test
     //cout << "Fcheck: " << FCHECK << endl;
-  if(fabs(FCHECK) > 0.0001){
+	if (fabs(FCHECK) > 0.0001){
 		std::string m = "Error in partitioning functions on doy " + std::to_string(DOY) + "FCHECK = " + std::to_string(FCHECK) + " FR = "
                 + std::to_string(crop.FR) +" FL = " + std::to_string(crop.FL) + " FS = " + std::to_string(crop.FS) + " FO = " + std::to_string(crop.FO);
-	    messages.push_back(m);
-	    fatalError = true;
-  }
+		messages.push_back(m);
+		fatalError = true;
+	}
   //check on carbon balance
-  double CCHECK = (crop.GASS - crop.MRES - (crop.FR + (crop.FL + crop.FS + crop.FO)*(1. - crop.FR)) * DMI/CVF)/ std::max(0.0001, crop.GASS);
-  if(fabs(CCHECK) > 0.0001){
-    std::string m = "Carbon balance leak (CCHECK in cropsi)";
-    messages.push_back(m);
-    fatalError = true;
-  }
+	double CCHECK = (crop.GASS - crop.MRES - (crop.FR + (crop.FL + crop.FS + crop.FO)*(1. - crop.FR)) * DMI/CVF)/ std::max(0.0001, crop.GASS);
+  
+	if (fabs(CCHECK) > 0.0001){
+		std::string m = "Carbon balance leak (CCHECK in cropsi)";
+		messages.push_back(m);
+		fatalError = true;
+	}
 
   //growth rate by plant organ
   //growth rate roots and aerial parts
-  double ADMI = (1. - crop.FR) * DMI;
-  double GRRT = crop.FR * DMI;
-  crop.DRRT = crop.WRT * AFGEN(crop.p.RDRRTB, crop.DVS);
-  crop.GWRT = GRRT - crop.DRRT;
+	double ADMI = (1. - crop.FR) * DMI;
+	double GRRT = crop.FR * DMI;
+	crop.DRRT = crop.WRT * AFGEN(crop.p.RDRRTB, crop.DVS);
+	crop.GWRT = GRRT - crop.DRRT;
 
   //growth rate leaves
   //weight of new leaves
-  crop.GRLV = crop.FL * ADMI;
+	crop.GRLV = crop.FL * ADMI;
 
   //death of leaves due to water stress or high LAI
-  double DSLV1 = crop.WLV * (1. - crop.TRA/crop.TRAMX) * crop.p.PERDL;
-  double LAICR = 3.2 / crop.KDif;
-  double DSLV2 = crop.WLV * LIMIT(0., 0.03, 0.03*(crop.LAI - LAICR)/LAICR);
-  crop.DSLV = std::max(DSLV1, DSLV2);
+	double DSLV1 = crop.WLV * (1. - crop.TRA/crop.TRAMX) * crop.p.PERDL;
+	double LAICR = 3.2 / crop.KDif;
+	double DSLV2 = crop.WLV * LIMIT(0., 0.03, 0.03*(crop.LAI - LAICR)/LAICR);
+	crop.DSLV = std::max(DSLV1, DSLV2);
 
   //determine extra death due to exceeding of life p.SPAN of leaves leaf death is imposed on array until no more leaves have to die or all leaves are gone
-  double REST = crop.DSLV * DELT;
-  int i1 = crop.ILVOLD;
-  while(REST > crop.LV[i1 - 1] && i1 >= 1){
-    REST = REST - crop.LV[i1 - 1];
-    i1--;
-  }
+	double REST = crop.DSLV * DELT;
+	int i1 = crop.ILVOLD;
+	while(REST > crop.LV[i1 - 1] && i1 >= 1){
+		REST = REST - crop.LV[i1 - 1];
+		i1--;
+	}
 
   //check if some of the remaining leaves are older than p.SPAN, sum their weights
-  double DALV = 0.;
-  if(crop.LVAGE[i1 - 1] > crop.p.SPAN && REST > 0. && i1 >= 1){
-    DALV = crop.LV[i1 - 1] - REST;
-    REST = 0.;
-    i1--;
-  }
-  while(i1 >= 1 && crop.LVAGE[i1 - 1] > crop.p.SPAN){
-    DALV = DALV + crop.LV[i1 - 1];
-    i1--;
-  }
-  DALV = DALV / DELT;
+	double DALV = 0.;
+	if (crop.LVAGE[i1 - 1] > crop.p.SPAN && REST > 0. && i1 >= 1){
+		DALV = crop.LV[i1 - 1] - REST;
+		REST = 0.;
+		i1--;
+	}
+	while(i1 >= 1 && crop.LVAGE[i1 - 1] > crop.p.SPAN){
+		DALV = DALV + crop.LV[i1 - 1];
+		i1--;
+	}
+	DALV = DALV / DELT;
   //death rate leaves and growth rate living leaves
-  crop.DRLV = crop.DSLV + DALV;
+	crop.DRLV = crop.DSLV + DALV;
 
   //physiologic ageing of leaves per time step
-  crop.FYSDEL = std::max(0., (atm.TEMP - crop.p.TBASE)/(35. - crop.p.TBASE));
-  crop.SLAT = AFGEN(crop.p.SLATB, crop.DVS);
+	crop.FYSDEL = std::max(0., (atm.TEMP - crop.p.TBASE)/(35. - crop.p.TBASE));
+	crop.SLAT = AFGEN(crop.p.SLATB, crop.DVS);
 
   //leaf area not to exceed exponential growth curve
 	if (crop.LAIEXP > 6) {
@@ -339,83 +341,82 @@ void WofostModel::crop_states() {
 //  }
 
   //phenological development stage and temperature sum
-  crop.DVS = crop.DVS + crop.DVR * DELT;
-  crop.TSUM = crop.TSUM + crop.DTSUM * DELT;
+	crop.DVS = crop.DVS + crop.DVR * DELT;
+	crop.TSUM = crop.TSUM + crop.DTSUM * DELT;
   //save date of anthesis, adjust development stage
-  if( crop.DVS >= 1. && crop.IDANTH < 0 ){
-    crop.IDANTH = int( step ) - crop.emergence;
+	if( crop.DVS >= 1. && crop.IDANTH < 0 ){
+		crop.IDANTH = int( step ) - crop.emergence;
 
 /* RH: DVS is above 1 for the first time and set back
      to exactly 1. That seems to be a strange fudge.
      figure out why this is, or remove?	*/
-    crop.DVS = 1.;
+		crop.DVS = 1.;
 //    DOANTH = true;
-  }
+	}
 
 
   //leaf death is imposed on array until no more leaves have to die or all leaves are gone
-  double DSLVT = crop.DSLV * DELT;
-  int i1 = crop.ILVOLD;
-  while(DSLVT > 0. && i1 >= 1){
-    if(DSLVT >= crop.LV[i1 - 1]){
-      DSLVT = DSLVT - crop.LV[i1 - 1];
-      crop.LV[i1 - 1] = 0.;
-      i1--;
-    } else{
-      crop.LV[i1 - 1] = crop.LV[i1 - 1] - DSLVT;
-      DSLVT = 0.;
-    }
-  }
+	double DSLVT = crop.DSLV * DELT;
+	int i1 = crop.ILVOLD;
+	while(DSLVT > 0. && i1 >= 1){
+		if (DSLVT >= crop.LV[i1 - 1]){
+			DSLVT = DSLVT - crop.LV[i1 - 1];
+			crop.LV[i1 - 1] = 0.;
+			i1--;
+		} else {
+			crop.LV[i1 - 1] = crop.LV[i1 - 1] - DSLVT;
+			DSLVT = 0.;
+		}
+	}
 
-  while(crop.LVAGE[i1 - 1] >= crop.p.SPAN && i1 >= 1){
-    crop.LV[i1 - 1] = 0.;
-    i1--;
-  }
+	while(crop.LVAGE[i1 - 1] >= crop.p.SPAN && i1 >= 1){
+		crop.LV[i1 - 1] = 0.;
+		i1--;
+	}
 
-  crop.ILVOLD = i1;
+	crop.ILVOLD = i1;
   //shifting of contents, integration of physiological age
 
-  for(int j = crop.ILVOLD; j >= 1; j--){
-    crop.LV[j] = crop.LV[j - 1];
-    crop.SLA[j] = crop.SLA[j - 1];
-    crop.LVAGE[j] = crop.LVAGE[j - 1] + crop.FYSDEL * DELT;
-  }
-  crop.ILVOLD++;
+	for(int j = crop.ILVOLD; j >= 1; j--){
+		crop.LV[j] = crop.LV[j - 1];
+		crop.SLA[j] = crop.SLA[j - 1];
+		crop.LVAGE[j] = crop.LVAGE[j - 1] + crop.FYSDEL * DELT;
+	}
+	crop.ILVOLD++;
 
   //new leaves in class 1
-  crop.LV[0] = crop.GRLV * DELT;
-    //test
-  crop.SLA[0] = crop.SLAT;
-  crop.LVAGE[0] = 0.;
+	crop.LV[0] = crop.GRLV * DELT;
+	crop.SLA[0] = crop.SLAT;
+	crop.LVAGE[0] = 0.;
   //calculation of new leaf area and weight
-  crop.LASUM = 0.;
-  crop.WLV = 0.;
+	crop.LASUM = 0.;
+	crop.WLV = 0.;
 
 
-  for(int j = 0; j < crop.ILVOLD; j++){
-    crop.LASUM = crop.LASUM + crop.LV[j] * crop.SLA[j];
-    crop.WLV = crop.WLV + crop.LV[j];
-  }
+	for(int j = 0; j < crop.ILVOLD; j++){
+		crop.LASUM = crop.LASUM + crop.LV[j] * crop.SLA[j];
+		crop.WLV = crop.WLV + crop.LV[j];
+	}
 
-  crop.LAIEXP = crop.LAIEXP + crop.GLAIEX * DELT;
+	crop.LAIEXP = crop.LAIEXP + crop.GLAIEX * DELT;
   //dry weight of living plant organs and total above ground biomass
-  crop.WRT = crop.WRT + crop.GWRT * DELT;
-  crop.WST = crop.WST + crop.GWST * DELT;
-  crop.WSO = crop.WSO + crop.GWSO * DELT;
-  crop.TADW = crop.WLV + crop.WST + crop.WSO;
+	crop.WRT = crop.WRT + crop.GWRT * DELT;
+	crop.WST = crop.WST + crop.GWST * DELT;
+	crop.WSO = crop.WSO + crop.GWSO * DELT;
+	crop.TADW = crop.WLV + crop.WST + crop.WSO;
 
   //dry weight of dead plant organs
-  crop.DWRT = crop.DWRT + crop.DRRT * DELT;
-  crop.DWLV = crop.DWLV + crop.DRLV * DELT;
-  crop.DWST = crop.DWST + crop.DRST * DELT;
-  crop.DWSO = crop.DWSO + crop.DRSO * DELT;
+	crop.DWRT = crop.DWRT + crop.DRRT * DELT;
+	crop.DWLV = crop.DWLV + crop.DRLV * DELT;
+	crop.DWST = crop.DWST + crop.DRST * DELT;
+	crop.DWSO = crop.DWSO + crop.DRSO * DELT;
 
   //dry weight of dead and living plant organs
-  crop.TWRT = crop.WRT + crop.DWRT;
-  crop.TWLV = crop.WLV + crop.DWLV;
-  crop.TWST = crop.WST + crop.DWST;
-  crop.TWSO = crop.WSO + crop.DWSO;
-  crop.TAGP = crop.TWLV + crop.TWST + crop.TWSO;
+	crop.TWRT = crop.WRT + crop.DWRT;
+	crop.TWLV = crop.WLV + crop.DWLV;
+	crop.TWST = crop.WST + crop.DWST;
+	crop.TWSO = crop.WSO + crop.DWSO;
+	crop.TAGP = crop.TWLV + crop.TWST + crop.TWSO;
 
 	//total gross assimilation and maintenance respiration
 	//leaf area index
@@ -436,6 +437,4 @@ void WofostModel::crop_states() {
 		messages.push_back("no living leaves (anymore)");
 		crop.alive = false;
 	}
-
-
 }
