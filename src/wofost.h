@@ -59,7 +59,8 @@ struct WofostCropParametersNPK {
 struct WofostCropParameters {
     int IAIRDU, IDSL;
 	double DLO, DLC, TSUM1, TSUM2, DVSI, DVSEND, TDWI, RGRLAI, SPA, SPAN, TBASE, PGASS;
-	double CVL, CVO, CVR, CVS, Q10, RML, RMO, RMR, RMS, PERDL, CFET, DEPNR, RDMCR, RRI, RDI, LAIEM;
+	double CVL, CVO, CVR, CVS, Q10, RML, RMO, RMR, RMS, PERDL, CFET, DEPNR, RDMCR, RRI, RDI;
+	double LAIEM=0;
 	//emergence parameters
 	double TBASEM, TEFFMX, TSUMEM;
 	//tables
@@ -74,10 +75,10 @@ struct WofostCrop {
 	
 // rates
 	//struct rates {
-		double GASS, GWST, GWSO;
-		double DRST, DRLV, DRRT, DRSO; // dead rates
-		double DVR; // developement rate
-		double DTSUME, DTSUM, GWRT, GLAIEX, MRES;
+	double GASS, GWST, GWSO;
+	double DRST, DRLV, DRRT, DRSO; // dead rates
+	double DVR; // developement rate
+	double DTSUME, DTSUM, GWRT, GLAIEX, MRES;
 	//}
 	//rates r;
 	
