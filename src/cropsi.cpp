@@ -115,7 +115,7 @@ void WofostModel::crop_initialize() {
     crop.TMNSAV[i] = -99;
   }
  crop.TMNSAV.reserve(7);
-  if(control.npk_model){
+  if(control.nutrient_limited){
     npk_crop_dynamics_initialize();
   }
 
@@ -169,34 +169,34 @@ void WofostModel::crop_rates() {
 
   //gross assimilation and correction for sub-optimum average day temperature
 
-  crop.AMAX = AFGEN(crop.p.AMAXTB, crop.DVS) * AFGEN(crop.p.TMPFTB, atm.DTEMP);
-  crop.KDif = AFGEN(crop.p.KDIFTB, crop.DVS);
-  crop.EFF = AFGEN(crop.p.EFFTB, atm.DTEMP);
+	crop.AMAX = AFGEN(crop.p.AMAXTB, crop.DVS) * AFGEN(crop.p.TMPFTB, atm.DTEMP);
+	crop.KDif = AFGEN(crop.p.KDIFTB, crop.DVS);
+	crop.EFF = AFGEN(crop.p.EFFTB, atm.DTEMP);
 
-  double DTGA = TOTASS();
+	double DTGA = TOTASS();
 
   //correction for low minimum temperature potential assimilation in kg CH2O per ha
-  DTGA = DTGA * AFGEN(crop.p.TMNFTB, crop.TMINRA);
-  crop.p.PGASS = DTGA * 30./44.;
+	DTGA = DTGA * AFGEN(crop.p.TMNFTB, crop.TMINRA);
+	crop.p.PGASS = DTGA * 30./44.;
 
   //(evapo)transpiration rates
-  EVTRA();
+	EVTRA();
   //water stress reduction
 
   //  crop.GASS = crop.p.PGASS * crop.TRA / crop.TRAMX;
   // nutrient status and reduction factor
-  double reduction;
-  if (control.npk_model) {
-    npk_stress();
-    reduction = std::min(crop.vn.NPKREF, crop.TRA / crop.TRAMX);
-  }  else {
-    reduction = crop.TRA / crop.TRAMX;
-  }
+	double reduction;
+	if (control.nutrient_limited) {
+		npk_stress();
+		reduction = std::min(crop.vn.NPKREF, crop.TRA / crop.TRAMX);
+	}  else {
+		reduction = crop.TRA / crop.TRAMX;
+	}
     // water stress reduction
     // Select minimum of nutrient and water stress
   //double reduction = min(crop.vn.NPKREF, crop.TRA / crop.TRAMX);
 
-  crop.GASS = crop.p.PGASS * reduction;
+	crop.GASS = crop.p.PGASS * reduction;
   //crop.GASS = crop.p.PGASS * crop.TRA / crop.TRAMX;
 
   //respiration and partitioning of carbohydrates between growth and maintenance respiration
@@ -215,7 +215,7 @@ void WofostModel::crop_rates() {
 
    crop.TRANRF = crop.TRA/crop.TRAMX;   //commented previously
 
-	if (control.npk_model){
+	if (control.nutrient_limited){
 
 		if (crop.TRANRF < crop.vn.NNI) {
 	//          Water stress is more severe than nitrogen stress and the
@@ -329,7 +329,7 @@ void WofostModel::crop_rates() {
   crop.GWSO = crop.FO * ADMI;
   crop.DRSO = 0.;
 
-  if(control.npk_model){
+  if(control.nutrient_limited){
     npk_crop_dynamics_rates();
   }
 
@@ -429,7 +429,7 @@ void WofostModel::crop_states() {
 
   crop.LAI = crop.LASUM + crop.SSA * crop.WST + crop.p.SPA * crop.WSO;
 
-  if(control.npk_model){
+  if(control.nutrient_limited){
     npk_crop_dynamics_states();
   }
 

@@ -53,14 +53,8 @@ void WofostModel::EVTRA() {
     crop.TRAMX = std::max(0.0001, atm.ET0*(1. - EKL));
 
     //actual transpiration rate
-
-    //double TRA, IDOS, IDWS;
-    //double SWDEP, SMCR, RFWS, SMAIR, RFOSMX, RFOS;
-
-    if (control.IWB == 0) {
+    if (! control.water_limited) {
         crop.TRA  = crop.TRAMX;
-        //IDOS = 0;
-        //IDWS = 0;
     } else {
         //calculation critical soil moisture content
         //call function SWEAF
@@ -104,6 +98,4 @@ void WofostModel::EVTRA() {
         //if (RFWS < 1.) {IDWS = 1;}
     }
 
-//    vector<double> result = {EVWMX, EVSMX, TRAMX, TRA, IDOS, IDWS};
-//    return result;
 }

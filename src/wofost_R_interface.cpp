@@ -95,7 +95,8 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 		cntr.ANGSTB = valueFromListDefault<double>(control, "ANGSTB", -0.55);
 	}
 	
-	cntr.IPRODL = valueFromList<int>(control, "IPRODL"); // translate IPRDL to IWB
+	cntr.water_limited = valueFromListDefault<bool>(control, "water_limited", false); 
+	cntr.nutrient_limited = valueFromListDefault<bool>(control, "nutrient_limited", false); 
 	cntr.IOXWL = valueFromList<int>(control, "IOXWL");
 
 	cntr.ISTCHO = valueFromList<int>(control, "ISTCHO");

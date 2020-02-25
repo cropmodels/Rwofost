@@ -86,7 +86,7 @@ void WofostModel::WATFD_initialize() {
 // amount of moisture between rooted zone and max.rooting depth
   //!!  p.SMLIM replaced by p.SMFCF TvdW 24-jul-97
   //!!  WLOW  = LIMIT (0., p.SMLIM*(p.RDM-RD), p.WAV+p.RDM*p.SMW-W)
-  soil.WLOW  = LIMIT (0., soil.p.SM0 * (soil.p.RDM - crop.RD), soil.p.WAV + soil.p.RDM * soil.p.SMW - soil.W);
+  soil.WLOW  = LIMIT (0., soil.p.SM0 * (soil.RDM - crop.RD), soil.p.WAV + soil.RDM * soil.p.SMW - soil.W);
   soil.WLOWI =soil.WLOW;
   soil.WWLOW = soil.W + soil.WLOW;
 
@@ -175,13 +175,13 @@ void WofostModel::WATFD_rates() {
   double PERC1 =  LIMIT (0., soil.p.SOPE, (soil.W - WE)/DELT - crop.TRA - soil.EVS);
 
 // loss of water at the lower end of the maximum root zone equilibrium amount of soil moisture below rooted zone
-  double WELOW = soil.p.SMFCF * (soil.p.RDM - crop.RD);
+  double WELOW = soil.p.SMFCF * (soil.RDM - crop.RD);
   soil.LOSS  = LIMIT (0., soil.p.KSUB, (soil.WLOW - WELOW)/DELT + PERC1 );
 // for rice water losses are limited to p.K0/20
   if (crop.p.IAIRDU == 1) soil.LOSS = std::min (soil.LOSS, 0.05 * soil.p.K0);
 
 // percolation not to exceed uptake capacity of subsoil
-   double PERC2 = ((soil.p.RDM - crop.RD) * soil.p.SM0 - soil.WLOW) / DELT + soil.LOSS;
+   double PERC2 = ((soil.RDM - crop.RD) * soil.p.SM0 - soil.WLOW) / DELT + soil.LOSS;
    soil.PERC  = std::min (PERC1, PERC2);
 
 // adjustment of infiltration rate
@@ -242,8 +242,8 @@ void WofostModel::WATFD_states() {
    if (crop.RD - crop.RDOLD > 0.001)  {
 // water added to root zone by root growth, in cm
        //cout << "WLOW: " << soil.WLOW << endl;
-       //cout << "p.RDM: " << soil.p.RDM << endl;
-      double WDR  = soil.WLOW*(crop.RD - crop.RDOLD)/(soil.p.RDM - crop.RDOLD);
+       //cout << "p.RDM: " << soil.RDM << endl;
+      double WDR  = soil.WLOW*(crop.RD - crop.RDOLD)/(soil.RDM - crop.RDOLD);
        //cout << "WDR: " << WDR << endl;
       
 

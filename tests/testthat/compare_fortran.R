@@ -77,7 +77,7 @@ wth_n$date <- as.Date(wth_n$date)
 cont <- wofost_control()
 soil <- wofost_soil("soil_5")
 cont$modelstart <- as.Date('1985-01-01')
-cont$IPRODL <- 1
+cont$water_limited <- TRUE
 cont$elevation <- 21
 cont$latitude <- 14.18
 cont$ANGSTA <- -0.25

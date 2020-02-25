@@ -30,7 +30,6 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="../src/SimUtil.h" />
-		<Unit filename="../src/assim.cpp" />
 		<Unit filename="../src/astro.cpp" />
 		<Unit filename="../src/cropsi.cpp" />
 		<Unit filename="../src/evtra.cpp" />

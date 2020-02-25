@@ -6,7 +6,7 @@
 		d <- diff(x[1,])
 		i <- which(d < 0)
 		if (length(i > 0)) {
-			if (d[i+1] == 0) {
+			if (x[1,i+1] == 0) {
 				x <- x[, 1:i]
 			}
 		}
@@ -39,6 +39,11 @@
 	prec <- y$Precision
 	dsoil <- wofost_soil("soil_5")
 	dcrop <- wofost_crop('maize_1')
+	if (ttype == "waterlimitedproduction") {
+		tim$water_limited <- TRUE
+	} else {
+		tim$water_limited <- FALSE
+	}
 
 	if (ttype == "astro") {
 		pcrop <- dcrop
@@ -114,47 +119,46 @@
 }
 
 
-.test_astro <- function(path, tests=1:44) {
-	result <- matrix(nrow=length(tests), ncol=8)
-	j = 1;
-	for (i in tests) {
-		cat(paste0(i, "-")); flush.console(); if (i ==24) cat("\n")
-		fname <- paste0("test_astro_wofost71_", formatC(i, width=2, flag="0"), ".yaml")
-		yf <- file.path(path, fname)
-		tst <- .yamltest(yf) 
-		result[j,] <- sapply(colnames(tst$P), function(v) .error(tst, v) )
-		j = j + 1;
-	}
-	cat("\n")
-	if (max(result) > 1e-04) {
-		print("ASTRO error")
+.test_precision <- function(x, p) {
+	dif <- abs(x$P[[p]] - x$R[[p]])
+	sum( dif > x$prec[[p]]) / nrow(x$P)
+}
+
+
+.test <- function(path, group, tests=1:44) {
+
+	if (group == "potentialproduction") {
+		nc <- 9
+	} else if (group == "waterlimitedproduction") {
+		nc <- 11
+	} else if (group == "phenology"){
+		nc <- 2
+	} else if (group == "astro"){
+		nc <- 8
+		aprec <- list(ANGOT=1000, ATMTR=0.004, COSLD=0.005, DAYL=0.1, DAYLP=0.1, DIFPP=1.5, DSINBE=250, SINLD=0.0005)
 	} else {
-		print(paste("astro OK:", round(max(result), 10)))
+		stop("unknown group")
 	}
-	colnames(result) <- colnames(tst$P)
-	result
-}
+	
+	bf <- paste0("test_", group, "_wofost71_")
 
-
-.test_prec <- function(x, p, prec) {
-	dif <- abs(x[[paste0(p, ".x")]] - x[[paste0(p, ".y")]])
-	sum(dif > prec[[p]])
-}
-
-.test_phenology <- function(path, tests=1:44) {
-	params <- c("DVR", "DVS")
-	result <- matrix(nrow=length(tests), ncol=2)
-	colnames(result) <- params
-
+	result <- matrix(nrow=length(tests), ncol=nc)
 	j = 1;
 	for (i in tests) {
-		fname <- paste0("test_phenology_wofost71_", formatC(i, width=2, flag="0"), ".yaml")
+		
+		fname <- paste0(bf, formatC(i, width=2, flag="0"), ".yaml")
+		
 		yf <- file.path(path, fname)
 		x <- .yamltest(yf) 
+		if (group == "astro"){
+			x$prec <- aprec
+		}
 		if (!x$skip) {
-			cat(paste0(i, "-"))
-			m <- merge(x$P[, c("DAY", params)], x$R[, c("date", params)], by=1)
-			result[j,] <- sapply(params, function(v) .test_prec(m, v, x$prec) )
+			stopifnot(x$P$DAY[1] == x$R$date[1])
+			x$P <- x$P[1:nrow(x$R), ]
+			x$P <- x$P[, colnames(x$P)[colnames(x$P) %in% colnames(x$R)]]
+			result[j,] <- sapply(colnames(x$P), function(v) .test_precision(x, v) )
+			if (max(result[j,] > 0) > 0) cat(paste0(i, "-")) else cat(paste0(i, "+"))
 		} else {
 			cat(paste0(i, "x"))
 		}
@@ -163,22 +167,19 @@
 	}
 	cat("\n")
 	if (max(result, na.rm=TRUE) > 0) {
-		print("phenology error")
+		cat(" errors detected\n")
 	} else {
-		print(paste("phenology OK"))
+		cat(paste(" OK\n"))
 	}
+	cn <- colnames(x$P)[colnames(x$P) %in% colnames(x$R)]
+	colnames(result) <- cn
 	result
 }
 
 
-#library(Rwofost)
-#ydir <- "C:/github/cropmodels/Rwofost/test_data/"
-#x <- Rwofost:::.test_astro(ydir)
-#x <- Rwofost:::.test_phenology(ydir)
 
-#.crop_pars = Rwofost:::.crop_pars
-#.soil_pars = Rwofost:::.soil_pars
-#f <- file.path(ydir, "test_astro_wofost71_01.yaml")
-#x <- .yamltest(f) 
-#par(ask=T)
-#for (v in colnames(x$P)) .complot(x, v)
+#xa <- Rwofost:::.test(ydir, "astro", 1:4)
+#xy <- Rwofost:::.test(ydir, "phenology", 1:4)
+#xp <- Rwofost:::.test(ydir, "potentialproduction", 1:4)
+#xw <- Rwofost:::.test(ydir, "waterlimitedproduction", 1:4)
+

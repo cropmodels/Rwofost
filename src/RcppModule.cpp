@@ -47,10 +47,8 @@ RCPP_MODULE(wofost){
 		.field("latitude", &WofostControl::latitude) 
 		.field("elevation", &WofostControl::elevation) 
 		.field("CO2",  &WofostControl::CO2) 
-		.field("ANGSTA",  &WofostControl::ANGSTA) 
-		.field("ANGSTB",  &WofostControl::ANGSTB) 
-		.field("usePENMAN",  &WofostControl::usePENMAN) 
-		.field("IPRODL", &WofostControl::IPRODL)
+		.field("water_limited", &WofostControl::water_limited)
+		.field("nutrient_limited", &WofostControl::nutrient_limited)
 		.field("IOXWL", &WofostControl::IOXWL)
 		.field("ISTCHO", &WofostControl::ISTCHO) 
 		.field("IDESOW", &WofostControl::IDESOW) 
@@ -58,6 +56,9 @@ RCPP_MODULE(wofost){
 		.field("IENCHO", &WofostControl::IENCHO) 
 		.field("IDAYEN", &WofostControl::IDAYEN) 
 		.field("IDURMX", &WofostControl::IDURMX) 
+		.field("ANGSTA",  &WofostControl::ANGSTA) 
+		.field("ANGSTB",  &WofostControl::ANGSTB) 
+		.field("usePENMAN",  &WofostControl::usePENMAN) 
 	;
 
 	

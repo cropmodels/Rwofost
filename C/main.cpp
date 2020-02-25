@@ -152,7 +152,7 @@ WofostControl getControlParameters(const char *filename) {
     tim.modelstart = date2int(start);
     tim.cropstart = iFromINI(control, "cropstart");
     tim.output_option = sFromINI(control, "output", "default");
-	tim.IPRODL = iFromINI(control, "IPRODL");
+	tim.water_limited = bFromINI(control, "water_limited");
 	tim.IOXWL  = iFromINI(control, "IOXWL");
 	tim.IENCHO = iFromINI(control, "IENCHO");
 	tim.IDAYEN = iFromINI(control, "IDAYEN");

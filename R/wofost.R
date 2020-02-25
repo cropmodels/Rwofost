@@ -79,7 +79,7 @@ setMethod("weather<-", signature("Rcpp_WofostModel", "data.frame"),
 
 
 
-.req_ctr_pars <- c("modelstart", "cropstart", "IPRODL", "IOXWL", "ISTCHO", "IDESOW", "IDLSOW", "IENCHO", "IDAYEN", "IDURMX", "latitude", "CO2", "elevation")
+.req_ctr_pars <- c("modelstart", "cropstart", "water_limited", "nutrient_limited", "IOXWL", "ISTCHO", "IDESOW", "IDLSOW", "IENCHO", "IDAYEN", "IDURMX", "latitude", "CO2", "elevation")
 .opt_ctr_pars <- c("output", "ANGSTA", "AMAXTB")
 
 setMethod("control<-", signature("Rcpp_WofostModel", "list"), 

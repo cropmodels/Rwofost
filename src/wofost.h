@@ -36,7 +36,8 @@ struct WofostControl {
 	unsigned IDESOW;
 	int INYRG, ISTCHO, IDLSOW, IENCHO, IDAYEN, IDURMX;
 	int IOXWL;   //IOX for water limited
-	int	IPRODL, IWB; // water limited (1) or potential (0)
+	//int	IPRODL, IWB; // water limited (1) or potential (0)
+	bool water_limited = false, nutrient_limited = false;
 	std::vector<double> N_amount, P_amount, K_amount;
 	std::vector<long> NPKdates;
 };
@@ -165,7 +166,7 @@ struct WofostSoilParameters {
 	int IZT, IFUNRN;
 	int NOTINF; // fraction not inflitrating rainfall
 	int IDRAIN; // presence of drains
-	double RDM, SM0, SMFCF, SMW, SOPE, KSUB, CRAIRC, K0, SMLIM, SSI;
+	double SM0, SMFCF, SMW, SOPE, KSUB, CRAIRC, K0, SMLIM, SSI;
 	double SSMAX; // max surface storage
 
 	//STDAY
@@ -187,13 +188,13 @@ struct WofostSoil {
 // RATES
 	double EVS, EVW, CR, DMAX, DZ;
 	double RIN, RIRR, DW, PERC, LOSS, DWLOW;
-
 	
 // STATES
 	double SM, SS, W, WI, DSLR, WLOW, WLOWI, WWLOW;
 
 	
 // VARIABLES
+	double RDM;
 	int ILWPER, IDFWOR;
 	double EVWMX, EVSMX, EVST, EVWT, TSR, WDRT, TOTINF, TOTIRR, SUMSM, PERCT, LOSST;
 	double SPAC, SPOC, WEXC, CAPRMX, SEEP, COSUT; 	// STDAY

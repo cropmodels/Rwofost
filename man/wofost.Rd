@@ -35,6 +35,7 @@ Van Keulen, H. and J. Wolf, 1986. Modelling of agricultural production : weather
 
 \examples{
 
+library(Rwofost)
 # weather data
 f <- system.file("extdata/18419.rds", package="meteor")
 w <- readRDS(f)
@@ -90,7 +91,7 @@ plot(rp[, 1], rp[,'WSO'])
 
 ## water limited
 cont <- wofost_control()
-cont$IPRODL <- 1
+cont$water_limited <- TRUE
 cont$modelstart <- as.Date('1985-01-01')
 
 crop <- wofost_crop("maize_1")

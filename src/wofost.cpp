@@ -97,11 +97,11 @@ void WofostModel::model_initialize() {
 	DELT = 1.;
 //	ISTATE = 3;
 
-	control.IWB = control.IPRODL;
-	if (control.IWB == 0) {
-		IOX = 0;
+//	control.IWB = control.IPRODL;
+	if (control.water_limited) {
+		IOX = control.IOXWL;  
 	} else {
-		IOX = control.IOXWL;   //for water-limited
+		IOX = 0;
 	}
 
 	if (control.output_option == "TEST") {
@@ -121,7 +121,7 @@ void WofostModel::model_initialize() {
 	fatalError = false;
 
 	soil_initialize();
-	if(control.npk_model){
+	if(control.nutrient_limited){
 		npk_soil_dynamics_initialize();
 		npk_translocation_initialize();
 		npk_demand_uptake_initialize();
@@ -182,7 +182,7 @@ void WofostModel::model_run() {
 	while (! crop_emerged) {
 
 		weather_step();
-		if(control.npk_model){
+		if(control.nutrient_limited){
 			npk_soil_dynamics_rates();
 		} else{
 			soil_rates();
@@ -213,7 +213,7 @@ void WofostModel::model_run() {
 
 		if (!crop_emerged) {
 			model_output();
-			if(control.npk_model){
+			if(control.nutrient_limited){
 				npk_soil_dynamics_states();
 			} else {
 				soil_states();
@@ -242,14 +242,14 @@ void WofostModel::model_run() {
 
 		if (! weather_step()) break;
 		crop_rates();
-		if (control.npk_model){
+		if (control.nutrient_limited){
 			npk_soil_dynamics_rates();
 		} else {
 			soil_rates();
 		}
 		model_output();
 		crop_states();
-		if(control.npk_model){
+		if(control.nutrient_limited){
 			npk_soil_dynamics_states();
 		} else{
 			soil_states();

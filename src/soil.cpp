@@ -15,41 +15,41 @@ Copyright 1988, 2013 Alterra, Wageningen-UR, Licensed under the EUPL, Version 1.
 
 
 void WofostModel::soil_initialize() {
-	if (control.IWB == 0) {
-		WATPP_initialize();
-	} else {
-		ROOTD_initialize();
+	ROOTD_initialize();
+	if (control.water_limited) {
 		if (soil.p.IZT == 0) {
 			WATFD_initialize();
 		} else {
 			WATGW_initialize();
 		}
-	}
+	} else {
+		WATPP_initialize();
+	}	
 }
 
 
 void WofostModel::soil_rates() {
-	if (control.IWB == 0) {
-		WATPP_rates();
-	} else {
-		ROOTD_rates();
+	ROOTD_rates();
+	if (control.water_limited) {
 		if (soil.p.IZT == 0) {
 			WATFD_rates();
 		} else {
 			WATGW_rates();
 		}
+	} else {
+		WATPP_rates();
 	}
 }
 
 void WofostModel::soil_states() {
-	if (control.IWB == 0) {
-		WATPP_states();
-	} else {
-		ROOTD_states();
+	ROOTD_states();
+	if (control.water_limited) {
 		if (soil.p.IZT == 0) {
 			WATFD_states();
 		} else {
 			WATGW_states();
 		}
+	} else {
+		WATPP_states();
 	}
 }
