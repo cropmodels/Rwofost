@@ -102,13 +102,18 @@ if (!isGeneric("force<-")) { setGeneric("force<-", function(x, value) standardGe
 
 setMethod("force<-", signature("Rcpp_WofostModel", "data.frame"), 
 	function(x, value) {
-		for (field in c("DVS", "LAI")) {
+		count <- 0
+		fs <- ""
+		for (field in c("DVS", "LAI", "SM", "WLV", "WRT", "WSO", "WST")) {
 			if (!is.null(value[[field]])) {
 				eval(parse(text = paste0("x$forcer$force_", field, " <- TRUE")))				
 				eval(parse(text = paste0("x$forcer$", field, " <- value$", field)))
+				count <- count + 1
 			}
 		}
-		x$control$useForce <- TRUE
+		if (count > 0) {
+			x$control$useForce <- TRUE
+		}
 		return(x)
 	}
 )

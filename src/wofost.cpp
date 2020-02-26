@@ -49,8 +49,9 @@ void WofostModel::model_output(){
 		output.values.insert(output.values.end(),
 			{double(step), atm.ANGOT, atm.ATMTR, atm.COSLD, atm.DAYL, 
 				atm.DAYLP, atm.DifPP, atm.DSINBE, atm.SINLD, 
-				crop.TSUM, crop.DVR, crop.DVS, crop.FR,
+				crop.TSUM, crop.DVR, crop.DVS, 
 				soil.EVS, crop.LAI, crop.PGASS, crop.RD, soil.SM,  
+				crop.FL, crop.FO, crop.FR, crop.FS,
 				crop.TAGP, crop.TRA, crop.WRT, crop.WLV, crop.WST, crop.WSO,
 				crop.TWRT, crop.TWLV, crop.TWST, crop.TWSO
 			}
@@ -105,8 +106,9 @@ void WofostModel::model_initialize() {
 
 	if (control.output_option == "TEST") {
 		output.names = {"step", "ANGOT", "ATMTR", "COSLD", "DAYL", "DAYLP", "DIFPP",
-			"DSINBE", "SINLD", "TSUM", "DVR", "DVS", "FR", "EVS", "LAI", "PGASS", "RD",
-			"SM", "TAGP", "TRA", "WRT", "WLV", "WST", "WSO", "TWRT", "TWLV", "TWST", "TWSO"};
+			"DSINBE", "SINLD", "TSUM", "DVR", "DVS", "EVS", "LAI", "PGASS", "RD",
+			"SM", "FL", "FO", "FR", "FS", "TAGP", "TRA", "WRT", "WLV", "WST", "WSO", 
+			"TWRT", "TWLV", "TWST", "TWSO"};
 	} else {
 		output.names = {"step", "TSUM", "DVS", "LAI", "WRT", "WLV", "WST", "WSO"};
 	}
@@ -178,12 +180,20 @@ void WofostModel::model_run() {
 // model can start long before crop and run the soil water balance
 	bool crop_emerged = false;
 
+// moved here for comparison with pcse
+	crop_initialize();
+	if (ISTATE == 1) {
+		crop.DVS = -0.1;
+	}
+//
+	
 	while (! crop_emerged) {
+
 		if (control.useForce) {
-			if (forcer.force_DVS) crop.DVS = forcer.DVS[time];
+			if (forcer.force_SM)  soil.SM  = forcer.SM[time];
 			if (forcer.force_LAI) crop.LAI = forcer.LAI[time];
 		}
-
+		
 		weather_step();
 		if(control.nutrient_limited){
 			npk_soil_dynamics_rates();
@@ -195,9 +205,14 @@ void WofostModel::model_run() {
 		if (step >= cropstart_step) {
 			if (ISTATE == 0 ) { // find day of sowing
 				STDAY();
-			} else if (ISTATE == 1) { // find day of emergence
-				crop.DVS = crop.DVS + crop.DVR;
-				
+			} else if (ISTATE == 1) { // find day of emergence				
+				//ugly
+				if (control.useForce & forcer.force_DVS) {
+					crop.DVS = forcer.DVS[time];
+				} else {
+					crop.DVS = crop.DVS + crop.DVR;
+				}
+			
 				crop.TSUME = crop.TSUME + crop.DTSUME * DELT;
 				if (crop.DVS >= 0) {
 					ISTATE = 3;
@@ -240,12 +255,13 @@ void WofostModel::model_run() {
 		maxdur = step + 365;
 	}
 
-	crop_initialize();
+//	crop_initialize();
 
 	while ((crop.alive) && (step < maxdur)) {
 		if (control.useForce) {
 			if (forcer.force_DVS) crop.DVS = forcer.DVS[time];
 			if (forcer.force_LAI) crop.LAI = forcer.LAI[time];
+			if (forcer.force_SM)  soil.SM  = forcer.SM[time];
 		}
 		if (! weather_step()) break;
 		crop_rates();

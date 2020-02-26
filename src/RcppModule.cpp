@@ -189,8 +189,18 @@ RCPP_MODULE(wofost){
     class_<WofostForcer>("WofostForcer")
 		.field("force_DVS", &WofostForcer::force_DVS, "force_DVS")
 		.field("force_LAI", &WofostForcer::force_LAI, "force_LAI")
+		.field("force_SM" , &WofostForcer::force_SM , "force_SM")
+		//.field("force_WRT", &WofostForcer::force_WRT, "force_WRT")
+		//.field("force_WLV", &WofostForcer::force_WLV, "force_WLV")
+		//.field("force_WST", &WofostForcer::force_WST, "force_WST")
+		//.field("force_WSO", &WofostForcer::force_WSO, "force_WSO")
 		.field("DVS", &WofostForcer::DVS, "DVS")
 		.field("LAI", &WofostForcer::LAI, "LAI")
+		.field("SM", &WofostForcer::SM, "SM")
+		//.field("WRT", &WofostForcer::WRT, "WRT")
+		//.field("WLV", &WofostForcer::WLV, "WLV")
+		//.field("WST", &WofostForcer::WST, "WST")
+		//.field("WSO", &WofostForcer::WSO, "WSO")
 	;
 
     class_<WofostModel>("WofostModel")

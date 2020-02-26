@@ -54,10 +54,10 @@ inline double LIMIT(double min, double max, double v) {
 
 inline double AFGEN(std::vector<double> xy, double x) {
 	int n = xy.size();
-	double y = -1;
-	if (x < xy[0]) {
+	double y = -99;
+	if (x <= xy[0]) {
 		y = xy[1];
-	} else if (x > xy[n-2]) {
+	} else if (x >= xy[n-2]) {
 		y = xy[n-1];
 	} else {
 		for(int i=2; i<n; i=i+2) {

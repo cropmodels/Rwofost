@@ -96,6 +96,12 @@ void WofostModel::crop_initialize() {
     crop.WST = crop.FS * crop.TADW;
     crop.WSO  = crop.FO * crop.TADW;
     crop.WLV  = crop.FL * crop.TADW;
+	
+	crop.TWRT = crop.WRT;
+	crop.TWLV = crop.WLV;
+	crop.TWST = crop.WST;
+	crop.TWSO = crop.WSO;
+	
     crop.p.LAIEM = crop.WLV * crop.SLA[0];
     crop.LV[0] = crop.WLV;
     crop.LASUM = crop.p.LAIEM;
@@ -156,11 +162,7 @@ void WofostModel::crop_rates() {
 		crop.DVR = crop.DTSUM / crop.p.TSUM2;
     }
 
-    //test
-    //cout << "DVR: " << crop.DVR << endl;
-
   // 2.20   daily dry matter production
-
   //gross assimilation and correction for sub-optimum average day temperature
 
 	crop.AMAX = AFGEN(crop.p.AMAXTB, crop.DVS) * AFGEN(crop.p.TMPFTB, atm.DTEMP);

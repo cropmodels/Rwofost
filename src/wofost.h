@@ -226,8 +226,9 @@ struct WofostAtmosphere {
 
 
 struct WofostForcer {
-	bool force_DVS, force_LAI;
-	std::vector<double> DVS, LAI;
+	bool force_DVS=false, force_LAI=false, force_SM=false; 
+	//force_WRT, force_WLV, force_WSO, force_WST;
+	std::vector<double> DVS, LAI, SM; //, WRT, WLV, WSO, WST;
 };
 
 

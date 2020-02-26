@@ -45,6 +45,7 @@
 	} else {
 		tim$water_limited <- FALSE
 	} 
+	skip <- FALSE
 
 	if (ttype == "astro") {
 		pcrop <- dcrop
@@ -64,7 +65,6 @@
 	
 		p <- y$ModelParameters
 		np <- names(p)
-		skip <- FALSE
 		if ("VERNBASE" %in% np) { 
 			return(list(skip=TRUE))
 		}
@@ -78,7 +78,7 @@
 		pcrop$CO2AMAXTB = c(40., 0.00, 360., 1.00, 720., 1.35, 1000., 1.50, 2000., 1.50)
 		pcrop$CO2EFFTB = c(40., 0.00, 360., 1.00, 720., 1.11, 1000., 1.11, 2000., 1.11)
 		pcrop$CO2TRATB = c(40., 0.00, 360., 1.00, 720., 0.9, 1000., 0.9, 2000., 0.9)
-		pcrop <- lapply(pcrop, .make_matrices)
+		pcrop <- lapply(pcrop, Rwofost:::.make_matrices)
 
 	   # parameters missing: 
 		nms <- names(dsoil)
@@ -139,24 +139,14 @@
 
 .test <- function(path, group, tests=1:44) {
 
-	if (group == "potentialproduction") {
-		nc <- 9
-	} else if (group == "waterlimitedproduction") {
-		nc <- 11
-	} else if (group == "phenology"){
-		nc <- 2
-	} else if (group == "assimilation"){
-		nc <- 1
-	} else if (group == "astro"){
+	if (group == "astro"){
 		nc <- 8
 		aprec <- list(ANGOT=1000, ATMTR=0.004, COSLD=0.005, DAYL=0.1, DAYLP=0.1, DIFPP=1.5, DSINBE=250, SINLD=0.0005)
-	} else {
-		stop("unknown group")
 	}
 	
 	bf <- paste0("test_", group, "_wofost71_")
 
-	result <- matrix(nrow=length(tests), ncol=nc)
+	first <- TRUE
 	j = 1;
 	for (i in tests) {
 		fname <- paste0(bf, formatC(i, width=2, flag="0"), ".yaml")
@@ -170,8 +160,13 @@
 			stopifnot(x$P$DAY[1] == x$R$date[1])
 			x$P <- x$P[1:nrow(x$R), ]
 			x$P <- x$P[, colnames(x$P)[colnames(x$P) %in% colnames(x$R)], drop=FALSE]
-			result[j,] <- sapply(colnames(x$P), function(v) .test_precision(x, v) )
-			if (max(result[j,] > 0) > 0) cat(paste0(i, "-")) else cat(paste0(i, "+"))
+			test <- sapply(colnames(x$P), function(v) .test_precision(x, v) )
+			if (first) {
+				result <- matrix(nrow=length(tests), ncol=length(test))
+				first <- FALSE
+			}
+			result[j,] <- test
+			if (max(test > 0) > 0) cat(paste0(i, "-")) else cat(paste0(i, "+"))
 		} else {
 			cat(paste0(i, "x"))
 		}
@@ -190,13 +185,15 @@
 }
 
 #ydir <- "C:/github/cropmodels/Rwofost/test_data/"
-#xs <- Rwofost:::.test(ydir, "astro", 1:4)
-#xy <- Rwofost:::.test(ydir, "phenology", 1:4)
-#xa <- Rwofost:::.test(ydir, "assimilation", 1:4)
-# assim32 has negative PGASS in day 1
+#xs <- Rwofost:::.test(ydir, "astro") #OK
+#xy <- Rwofost:::.test(ydir, "phenology") #OK (skipping vernalization)
+#xp <- Rwofost:::.test(ydir, "partitioning") #OK
+#xa <- Rwofost:::.test(ydir, "assimilation") #OK
 
+#xr <- Rwofost:::.test(ydir, "rootdynamics", 1:4)
 #xp <- Rwofost:::.test(ydir, "potentialproduction", 1:4)
 #xw <- Rwofost:::.test(ydir, "waterlimitedproduction", 1:4)
+
 
 #library(Rwofost)
 #ydir <- "C:/github/cropmodels/Rwofost/test_data/"
