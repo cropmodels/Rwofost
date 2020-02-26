@@ -40,6 +40,7 @@ struct WofostControl {
 	bool water_limited = false, nutrient_limited = false;
 	std::vector<double> N_amount, P_amount, K_amount;
 	std::vector<long> NPKdates;
+	bool useForce;
 };
 
 
@@ -58,9 +59,9 @@ struct WofostCropParametersNPK {
 
 struct WofostCropParameters {
     int IAIRDU, IDSL;
-	double DLO, DLC, TSUM1, TSUM2, DVSI, DVSEND, TDWI, RGRLAI, SPA, SPAN, TBASE, PGASS;
+	double DLO, DLC, TSUM1, TSUM2, DVSI, DVSEND, TDWI, RGRLAI, SPA, SPAN, TBASE;
 	double CVL, CVO, CVR, CVS, Q10, RML, RMO, RMR, RMS, PERDL, CFET, DEPNR, RDMCR, RRI, RDI;
-	double LAIEM=0;
+	double LAIEM;
 	//emergence parameters
 	double TBASEM, TEFFMX, TSUMEM;
 	//tables
@@ -74,19 +75,15 @@ struct WofostCrop {
 	WofostCropParameters p;
 	
 // rates
-	//struct rates {
 	double GASS, GWST, GWSO;
 	double DRST, DRLV, DRRT, DRSO; // dead rates
 	double DVR; // developement rate
 	double DTSUME, DTSUM, GWRT, GLAIEX, MRES;
-	//}
-	//rates r;
 	
 	//struct states {
 		double RD, RDOLD, GRLV;
 		double DWRT, DWLV, DWST, DWSO;
-		double DVS, LAI;
-		double LAIEXP=0;
+		double DVS, LAI, LAIEXP;
 		double WRT, WLV, WST, WSO;
 		double TWRT, TWLV, TWST, TWSO, TAGP;
 		double TSUM, TSUME;
@@ -94,7 +91,7 @@ struct WofostCrop {
 	//states s;
 	
 // variables
-	double EFF, AMAX;
+	double EFF, AMAX, PGASS;
 	double TRA, TRANRF;
 	double LASUM, KDif, SSA, TRAMX ;
 	std::vector<double> SLA = std::vector<double>(366), LV = std::vector<double>(366), LVAGE = std::vector<double>(366), TMNSAV = std::vector<double>(7);
@@ -227,10 +224,18 @@ struct WofostAtmosphere {
 	double ATMTR, ANGOT;
 };
 
+
+struct WofostForcer {
+	bool force_DVS, force_LAI;
+	std::vector<double> DVS, LAI;
+};
+
+
 struct WofostOutput {
 	std::vector<std::string> names;
 	std::vector<double> values;
 };
+
 
 
 struct WofostModel {
@@ -249,6 +254,7 @@ struct WofostModel {
 	WofostAtmosphere atm;
 	WofostWeather wth;
 	
+	WofostForcer forcer;
 	WofostOutput output;
 	
 	bool weather_step();

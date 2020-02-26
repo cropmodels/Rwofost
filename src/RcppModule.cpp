@@ -35,6 +35,7 @@ RCPP_EXPOSED_CLASS(WofostSoilParametersNPK)
 RCPP_EXPOSED_CLASS(WofostControl)
 RCPP_EXPOSED_CLASS(WofostModel)
 RCPP_EXPOSED_CLASS(WofostOutput)
+RCPP_EXPOSED_CLASS(WofostForcer)
 
 
 RCPP_MODULE(wofost){
@@ -59,6 +60,7 @@ RCPP_MODULE(wofost){
 		.field("ANGSTA",  &WofostControl::ANGSTA) 
 		.field("ANGSTB",  &WofostControl::ANGSTB) 
 		.field("usePENMAN",  &WofostControl::usePENMAN) 
+		.field("useForce",  &WofostControl::useForce) 
 	;
 
 	
@@ -184,6 +186,13 @@ RCPP_MODULE(wofost){
 		.field("values", &WofostOutput::values, "values")
 	;
 
+    class_<WofostForcer>("WofostForcer")
+		.field("force_DVS", &WofostForcer::force_DVS, "force_DVS")
+		.field("force_LAI", &WofostForcer::force_LAI, "force_LAI")
+		.field("DVS", &WofostForcer::DVS, "DVS")
+		.field("LAI", &WofostForcer::LAI, "LAI")
+	;
+
     class_<WofostModel>("WofostModel")
 		.constructor()
 		.method("run", &WofostModel::model_run, "run the model")		
@@ -193,6 +202,7 @@ RCPP_MODULE(wofost){
 		.field("control", &WofostModel::control, "control")
 		.field("weather", &WofostModel::wth, "weather")
 		.field("output", &WofostModel::output, "output")
+		.field("forcer", &WofostModel::forcer, "forcer")
 	;			
 
 };

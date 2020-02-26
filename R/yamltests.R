@@ -14,6 +14,7 @@
 	x
 }
 
+
 .yamltest <- function(yf) {
 
 	ttype <- strsplit(basename(yf), "_")[[1]][2]
@@ -94,6 +95,17 @@
 	
 
 	m <- wofost_model(pcrop, w, psoil, tim)
+
+	frc <- y$ExternalStates
+	if (!is.null(frc)) {
+		f <- lapply(frc, unlist)
+		f <- data.frame(t(do.call(cbind, f)), stringsAsFactors=FALSE)
+		f[,1] <- as.Date(f[,1])
+		for (i in 2:ncol(f)) f[,i] <- as.numeric(f[,i])
+
+		force(m) <- f
+	}
+	
 	x <- run(m)
 		
 	r <- y$ModelResults
@@ -133,6 +145,8 @@
 		nc <- 11
 	} else if (group == "phenology"){
 		nc <- 2
+	} else if (group == "assimilation"){
+		nc <- 1
 	} else if (group == "astro"){
 		nc <- 8
 		aprec <- list(ANGOT=1000, ATMTR=0.004, COSLD=0.005, DAYL=0.1, DAYLP=0.1, DIFPP=1.5, DSINBE=250, SINLD=0.0005)
@@ -145,7 +159,6 @@
 	result <- matrix(nrow=length(tests), ncol=nc)
 	j = 1;
 	for (i in tests) {
-		
 		fname <- paste0(bf, formatC(i, width=2, flag="0"), ".yaml")
 		
 		yf <- file.path(path, fname)
@@ -156,7 +169,7 @@
 		if (!x$skip) {
 			stopifnot(x$P$DAY[1] == x$R$date[1])
 			x$P <- x$P[1:nrow(x$R), ]
-			x$P <- x$P[, colnames(x$P)[colnames(x$P) %in% colnames(x$R)]]
+			x$P <- x$P[, colnames(x$P)[colnames(x$P) %in% colnames(x$R)], drop=FALSE]
 			result[j,] <- sapply(colnames(x$P), function(v) .test_precision(x, v) )
 			if (max(result[j,] > 0) > 0) cat(paste0(i, "-")) else cat(paste0(i, "+"))
 		} else {
@@ -176,14 +189,14 @@
 	result
 }
 
-
 #ydir <- "C:/github/cropmodels/Rwofost/test_data/"
-#xa <- Rwofost:::.test(ydir, "astro", 1:4)
+#xs <- Rwofost:::.test(ydir, "astro", 1:4)
 #xy <- Rwofost:::.test(ydir, "phenology", 1:4)
+#xa <- Rwofost:::.test(ydir, "assimilation", 1:4)
+# assim32 has negative PGASS in day 1
+
 #xp <- Rwofost:::.test(ydir, "potentialproduction", 1:4)
 #xw <- Rwofost:::.test(ydir, "waterlimitedproduction", 1:4)
-
-
 
 #library(Rwofost)
 #ydir <- "C:/github/cropmodels/Rwofost/test_data/"

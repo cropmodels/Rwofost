@@ -98,3 +98,18 @@ setMethod("control<-", signature("Rcpp_WofostModel", "list"),
 )
 
 
+if (!isGeneric("force<-")) { setGeneric("force<-", function(x, value) standardGeneric("force<-")) }	
+
+setMethod("force<-", signature("Rcpp_WofostModel", "data.frame"), 
+	function(x, value) {
+		for (field in c("DVS", "LAI")) {
+			if (!is.null(value[[field]])) {
+				eval(parse(text = paste0("x$forcer$force_", field, " <- TRUE")))				
+				eval(parse(text = paste0("x$forcer$", field, " <- value$", field)))
+			}
+		}
+		x$control$useForce <- TRUE
+		return(x)
+	}
+)
+

@@ -1,29 +1,5 @@
 
 
-readFortranOutput <- function(f, wlim=FALSE) {
-
-	.trim2 <- function(x) return(gsub("^ *|(?<= ) | *$", "", x, perl=TRUE))
-
-	r <- .trim2(readLines(f));
-	hdr <- grep("YEAR DAY", r)
-	i <- substr(r,1,4) %in% 1970:2016
-	x <- r[i]
-	x <- strsplit(x, ' ')
-	n <- length(x) / 2
-
-	if (!wlim) {
-		pot <- t(sapply(x[1:n], rbind))
-		pot <- matrix(as.numeric(pot), ncol=ncol(pot))
-		colnames(pot) <- unlist(strsplit(r[hdr[1]], ' '))
-		return(pot)
-	} else {
-		wlm <- t(sapply(x[(n+1):length(x)], rbind))
-		wlm <- matrix(as.numeric(wlm), ncol=ncol(wlm))
-		colnames(wlm) <- unlist(strsplit(r[hdr[2]], ' '))
-		return(wlm)
-	}
-}
-
 par(ask=TRUE)
 
 ## compare with FORTRAN wofost
@@ -47,7 +23,7 @@ cont$CO2=360
 rp <- wofost(crop, wth_n, soil, cont)
 
 f <- system.file("test/1/wofost.out", package="Rwofost")
-d <- readFortranOutput(f)
+d <- Rwofost:::.readFortranOutput(f)
 
 par(mfrow=c(1,2))
 plot(d[,'DAY'], d[,'LAI'], type='l')
@@ -63,7 +39,7 @@ points(rp[, 1], rp[,'WSO'])
 crop$IDSL <- 0
 rp <- wofost(crop, wth_n, soil, cont)
 f <- system.file("test/2/wofost.out", package="Rwofost")
-d <- readFortranOutput(f)
+d <- Rwofost:::.readFortranOutput(f)
 plot(d[,'DAY'], d[,'LAI'], type='l')
 points(rp[,'step'], rp[, 'LAI'])
 
@@ -87,7 +63,7 @@ cont$usePENMAN <- TRUE
 rp <- wofost(crop, wth_n, soil, cont)
 
 f <- system.file("test/3/wofost.out", package="Rwofost")
-d <- readFortranOutput(f, TRUE)
+d <- Rwofost:::.readFortranOutput(f, TRUE)
 plot(d[,'DAY'], d[,'LAI'], type='l')
 points(rp[,'step'], rp[, 'LAI'])
 
@@ -98,10 +74,9 @@ cont$IZT <- 1
 rp <- wofost(crop, wth_n, soil, cont)
 
 f <- system.file("test/4/wofost.out", package="Rwofost")
-d <- readFortranOutput(f, TRUE)
+d <- Rwofost:::.readFortranOutput(f, TRUE)
 plot(d[,'DAY'], d[,'LAI'], type='l')
 points(rp[,'step'], rp[, 'LAI'])
-
 
 
 ## 5 npk mode

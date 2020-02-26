@@ -146,14 +146,14 @@ void WofostModel::crop_rates() {
     crop.DTSUM = AFGEN(crop.p.DTSMTB, atm.TEMP);
     if(crop.DVS < 1.){
       //effects of daylength and temperature on development during vegetative phase
-      double DVRED = 1.;
-      if (crop.p.IDSL >= 1) {
-        DVRED = LIMIT(0.,1.,(atm.DAYLP- crop.p.DLC)/(crop.p.DLO - crop.p.DLC));
-      }
-      crop.DVR = DVRED * crop.DTSUM / crop.p.TSUM1;
+		crop.DVR = crop.DTSUM / crop.p.TSUM1;
+		if (crop.p.IDSL >= 1) {
+			double DVRED = LIMIT(0.,1.,(atm.DAYLP- crop.p.DLC)/(crop.p.DLO - crop.p.DLC));
+			crop.DVR = crop.DVR * DVRED;
+		}
 
     } else { //development during generative phase
-      crop.DVR = crop.DTSUM / crop.p.TSUM2;
+		crop.DVR = crop.DTSUM / crop.p.TSUM2;
     }
 
     //test
@@ -171,13 +171,13 @@ void WofostModel::crop_rates() {
 
   //correction for low minimum temperature potential assimilation in kg CH2O per ha
 	DTGA = DTGA * AFGEN(crop.p.TMNFTB, crop.TMINRA);
-	crop.p.PGASS = DTGA * 30./44.;
+	crop.PGASS = DTGA * 30./44.;
 
   //(evapo)transpiration rates
 	EVTRA();
   //water stress reduction
 
-  //  crop.GASS = crop.p.PGASS * crop.TRA / crop.TRAMX;
+  //  crop.GASS = crop.PGASS * crop.TRA / crop.TRAMX;
   // nutrient status and reduction factor
 	double reduction;
 	if (control.nutrient_limited) {
@@ -190,8 +190,8 @@ void WofostModel::crop_rates() {
     // Select minimum of nutrient and water stress
   //double reduction = min(crop.vn.NPKREF, crop.TRA / crop.TRAMX);
 
-	crop.GASS = crop.p.PGASS * reduction;
-  //crop.GASS = crop.p.PGASS * crop.TRA / crop.TRAMX;
+	crop.GASS = crop.PGASS * reduction;
+  //crop.GASS = crop.PGASS * crop.TRA / crop.TRAMX;
 
   //respiration and partitioning of carbohydrates between growth and maintenance respiration
 	double RMRES = (crop.p.RMR * crop.WRT + crop.p.RML * crop.WLV + crop.p.RMS * crop.WST + crop.p.RMO * crop.WSO);
@@ -391,8 +391,6 @@ void WofostModel::crop_states() {
   //calculation of new leaf area and weight
 	crop.LASUM = 0.;
 	crop.WLV = 0.;
-
-
 	for(int j = 0; j < crop.ILVOLD; j++){
 		crop.LASUM = crop.LASUM + crop.LV[j] * crop.SLA[j];
 		crop.WLV = crop.WLV + crop.LV[j];
@@ -421,7 +419,6 @@ void WofostModel::crop_states() {
 	//total gross assimilation and maintenance respiration
 	//leaf area index
 	crop.SSA = AFGEN(crop.p.SSATB, crop.DVS);
-    //test
 
 	crop.LAI = crop.LASUM + crop.SSA * crop.WST + crop.p.SPA * crop.WSO;
 
