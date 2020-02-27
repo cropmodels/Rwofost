@@ -189,8 +189,8 @@
 #xy <- Rwofost:::.test(ydir, "phenology") #OK (skipping vernalization)
 #xp <- Rwofost:::.test(ydir, "partitioning") #OK
 #xa <- Rwofost:::.test(ydir, "assimilation") #OK
+#xr <- Rwofost:::.test(ydir, "rootdynamics", 1:4) # cannot run
 
-#xr <- Rwofost:::.test(ydir, "rootdynamics", 1:4)
 #xp <- Rwofost:::.test(ydir, "potentialproduction", 1:4)
 #xw <- Rwofost:::.test(ydir, "waterlimitedproduction", 1:4)
 

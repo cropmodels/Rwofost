@@ -118,7 +118,7 @@ if (!isGeneric("force<-")) { setGeneric("force<-", function(x, value) standardGe
 
 setMethod("force<-", signature("Rcpp_WofostModel", "data.frame"), 
 	function(x, value) {
-		fields <- colnames(value)
+		fields <- colnames(value)[-1]
 		for (field in fields) {
 			if (!is.null(x$forcer[[field]])) {
 				eval(parse(text = paste0("x$forcer$force_", field, " <- TRUE")))				
