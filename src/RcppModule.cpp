@@ -190,6 +190,8 @@ RCPP_MODULE(wofost){
 		.field("force_DVS", &WofostForcer::force_DVS, "force_DVS")
 		.field("force_LAI", &WofostForcer::force_LAI, "force_LAI")
 		.field("force_SM" , &WofostForcer::force_SM , "force_SM")
+		//.field("force_DMI", &WofostForcer::force_DMI, "force_DMI")
+		.field("force_FR" , &WofostForcer::force_FR , "force_FR")
 		//.field("force_WRT", &WofostForcer::force_WRT, "force_WRT")
 		//.field("force_WLV", &WofostForcer::force_WLV, "force_WLV")
 		//.field("force_WST", &WofostForcer::force_WST, "force_WST")
@@ -197,6 +199,8 @@ RCPP_MODULE(wofost){
 		.field("DVS", &WofostForcer::DVS, "DVS")
 		.field("LAI", &WofostForcer::LAI, "LAI")
 		.field("SM", &WofostForcer::SM, "SM")
+		//.field("DMI", &WofostForcer::DMI, "DMI")
+		.field("FR", &WofostForcer::FR, "FR")
 		//.field("WRT", &WofostForcer::WRT, "WRT")
 		//.field("WLV", &WofostForcer::WLV, "WLV")
 		//.field("WST", &WofostForcer::WST, "WST")
@@ -213,6 +217,8 @@ RCPP_MODULE(wofost){
 		.field("weather", &WofostModel::wth, "weather")
 		.field("output", &WofostModel::output, "output")
 		.field("forcer", &WofostModel::forcer, "forcer")
+		.field("messages", &WofostModel::messages, "messages")
+		.field("fatalError", &WofostModel::fatalError, "fatalError")
 	;			
 
 };

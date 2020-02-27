@@ -9,9 +9,25 @@ wofost_model <- function(crop, weather, soil, control, location) {
 	return(m)
 }
 
+
 setMethod("run", signature("Rcpp_WofostModel"), 
-	function(x, ...) {
+	function(x, stopError=TRUE, ...) {
 		x$run()
+		msgs <- x$messages
+		nm <- length(msgs)
+		if (nm > 0) {
+			x$messages <- ""[0]
+			if (x$fatalError) {
+				x$fatalError <- FALSE
+				errm <- msgs[nm]
+				if (nm > 1) {
+					warning(paste(msgs[-nm], collapse="\n"))
+				} 
+				if (stopError) stop(errm) else warning(paste("Error :", errm))
+			} else {
+				warning(paste(msgs, collapse="\n"))			
+			}
+		}
 		out <- matrix(x$output$values, ncol=length(x$output$names), byrow=TRUE)
 		colnames(out) <- x$output$names
 		out <- data.frame(out)
@@ -102,17 +118,15 @@ if (!isGeneric("force<-")) { setGeneric("force<-", function(x, value) standardGe
 
 setMethod("force<-", signature("Rcpp_WofostModel", "data.frame"), 
 	function(x, value) {
-		count <- 0
-		fs <- ""
-		for (field in c("DVS", "LAI", "SM", "WLV", "WRT", "WSO", "WST")) {
-			if (!is.null(value[[field]])) {
+		fields <- colnames(value)
+		for (field in fields) {
+			if (!is.null(x$forcer[[field]])) {
 				eval(parse(text = paste0("x$forcer$force_", field, " <- TRUE")))				
 				eval(parse(text = paste0("x$forcer$", field, " <- value$", field)))
-				count <- count + 1
+				x$control$useForce <- TRUE
+			} else {
+				warning("skipped: ", field)
 			}
-		}
-		if (count > 0) {
-			x$control$useForce <- TRUE
 		}
 		return(x)
 	}

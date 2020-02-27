@@ -236,18 +236,19 @@ void WofostModel::crop_rates() {
 	}
 
 	double CVF = 1./((crop.FL/crop.p.CVL + crop.FS/crop.p.CVS + crop.FO/crop.p.CVO)*(1. - crop.FR) + crop.FR/crop.p.CVR);
-	double DMI = CVF * crop.ASRC;
-    //test
-    //cout << "p.CVL: " << crop.p.CVL << " p.CVS: " << crop.p.CVS << " p.CVO: " << crop.p.CVO << endl;
-
-
+	double DMI;
+//	if (control.useForce & forcer.force_DMI) {
+//		DMI = forcer.DMI[time];
+//	} else {
+		DMI = CVF * crop.ASRC;
+//	}
   //check on partitioning
 	double FCHECK = crop.FR+(crop.FL + crop.FS + crop.FO)*(1.-crop.FR) - 1.;
     //test
-    //cout << "Fcheck: " << FCHECK << endl;
 	if (fabs(FCHECK) > 0.0001){
-		std::string m = "Error in partitioning functions on doy " + std::to_string(DOY) + "FCHECK = " + std::to_string(FCHECK) + " FR = "
-                + std::to_string(crop.FR) +" FL = " + std::to_string(crop.FL) + " FS = " + std::to_string(crop.FS) + " FO = " + std::to_string(crop.FO);
+		std::string m = "Error in partitioning functions on step " + std::to_string(step) + "FCHECK = " + std::to_string(FCHECK) + " FR = " + std::to_string(crop.FR) 
+		+ " FL = " + std::to_string(crop.FL) + " FS = " + std::to_string(crop.FS)
+		+ " FO = " + std::to_string(crop.FO);
 		messages.push_back(m);
 		fatalError = true;
 	}
@@ -255,7 +256,7 @@ void WofostModel::crop_rates() {
 	double CCHECK = (crop.GASS - crop.MRES - (crop.FR + (crop.FL + crop.FS + crop.FO)*(1. - crop.FR)) * DMI/CVF)/ std::max(0.0001, crop.GASS);
   
 	if (fabs(CCHECK) > 0.0001){
-		std::string m = "Carbon balance leak (CCHECK in cropsi)";
+		std::string m = "Carbon balance leak (CCHECK in cropsi) on step " + std::to_string(step);
 		messages.push_back(m);
 		fatalError = true;
 	}

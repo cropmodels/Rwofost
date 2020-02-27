@@ -77,7 +77,7 @@ struct WofostCrop {
 // rates
 	double GASS, GWST, GWSO;
 	double DRST, DRLV, DRRT, DRSO; // dead rates
-	double DVR; // developement rate
+	double DVR;
 	double DTSUME, DTSUM, GWRT, GLAIEX, MRES;
 	
 	//struct states {
@@ -226,9 +226,10 @@ struct WofostAtmosphere {
 
 
 struct WofostForcer {
-	bool force_DVS=false, force_LAI=false, force_SM=false; 
-	//force_WRT, force_WLV, force_WSO, force_WST;
-	std::vector<double> DVS, LAI, SM; //, WRT, WLV, WSO, WST;
+	bool force_DVS=false, force_LAI=false, force_SM=false, force_FR=false; 
+	// force_DMI=false 
+	// force_WRT, force_WLV, force_WSO, force_WST;
+	std::vector<double> DVS, LAI, SM, FR; //, WRT, WLV, WSO, WST, DMI;
 };
 
 
