@@ -10,8 +10,6 @@ License: GNU General Public License (GNU GPL) v. 2
 //#include "date.h"
 #include "SimUtil.h"
 
-double SUBSOL (double PF, double D, std::vector<double> CONTAB);// flow is output
-
 class WofostWeather {
 public:
 	std::vector<long> date;
@@ -76,35 +74,27 @@ struct WofostCrop {
 	
 // rates
 	double GASS, GWST, GWSO;
-	double DRST, DRLV, DRRT, DRSO; // dead rates
-	double DVR;
-	double DTSUME, DTSUM, GWRT, GLAIEX;
+	double DRST, DRLV, DRRT, GWRT, DRSO; // dead rates
+	double DVR, DTSUME, DTSUM, GLAIEX;
+	double RR, FYSDEL;
 	
 	//struct states {
-		double RD, RDOLD, GRLV;
-		double DWRT, DWLV, DWST, DWSO;
-		double DVS, LAI, LAIEXP;
-		double WRT, WLV, WST, WSO;
-		double TWRT, TWLV, TWST, TWSO, TAGP;
-		double TSUM, TSUME;
+	double RD, RDOLD, GRLV, DWRT, DWLV, DWST, DWSO;
+	double DVS, LAI, LAIEXP, WRT, WLV, WST, WSO;
+	double TWRT, TWLV, TWST, TWSO, TAGP, TSUM, TSUME;
+	double TADW; 
 	//}
 	//states s;
 	
 // variables
-	double EFF, AMAX, PGASS;
-	double TRA, TRANRF;
-	double LASUM, KDif, SSA, TRAMX ;
-	std::vector<double> SLA = std::vector<double>(366), LV = std::vector<double>(366), LVAGE = std::vector<double>(366), TMNSAV = std::vector<double>(7);
-	double FR, FL, FS, FO;
 	bool alive;
-	int emergence;
-
-// ???
-	int ILDTSM, ILVOLD, IDANTH, IDWS;
-	double FYSDEL, SLAT, TADW, DSLV, TMINRA;
-
-	//ROOTD
-	double RR; //RDMO,
+	int emergence, ILVOLD, IDANTH;
+	double EFF, AMAX, PGASS, TRA, TRANRF;
+	double LASUM, KDif, SSA, TRAMX ;
+	double FR, FL, FS, FO;
+	double TMINRA, DSLV, SLAT;
+	
+	std::vector<double> SLA = std::vector<double>(366), LV = std::vector<double>(366), LVAGE = std::vector<double>(366), TMNSAV = std::vector<double>(7);
 
 	
 //04/2017 npk

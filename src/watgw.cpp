@@ -65,8 +65,10 @@ SMFCF   R*4  soil moisture content at field capacity          cm3 cm-3  O
 */
 
 #include "wofost.h"
+#include "subsol.h"
 #include "SimUtil.h"
 #include <math.h>
+
 
 void WofostModel::WATGW_initialize() {
     //!!!      DATA XDEF/16000./
