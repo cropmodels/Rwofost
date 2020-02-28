@@ -40,6 +40,13 @@
 	prec <- y$Precision
 	dsoil <- wofost_soil("soil_5")
 	dcrop <- wofost_crop('maize_1')
+	#dcrop <- wofost_crop('sugarbeet_601')
+
+	if (ttype == "rootdynamics") {
+		yy <- yaml::read_yaml(gsub("rootdynamics", "potentialproduction", yf))
+		dcrop$FRTB <- Rwofost:::.make_matrices(yy$ModelParameters$FRTB)
+	} 
+
 	if (ttype == "waterlimitedproduction") {
 		tim$water_limited <- TRUE
 	} else {
@@ -50,8 +57,9 @@
 	if (ttype == "astro") {
 		pcrop <- dcrop
 		psoil <- dsoil
-		tim$IDURMX <- nrow(w)
-		tim$cropstart <- nrow(w)-1
+		tim$IDURMX <- 10
+		tim$cropstart <- nrow(w) - 10
+		tim$modelstart <- as.integer(w$date[1])
 	
 	} else  {
 		
@@ -106,7 +114,7 @@
 		force(m) <- f
 	}
 	
-	x <- run(m)
+	x <- run(m, FALSE)
 		
 	r <- y$ModelResults
 	r <- lapply(r, unlist)
@@ -140,7 +148,6 @@
 .test <- function(path, group, tests=1:44) {
 
 	if (group == "astro"){
-		nc <- 8
 		aprec <- list(ANGOT=1000, ATMTR=0.004, COSLD=0.005, DAYL=0.1, DAYLP=0.1, DIFPP=1.5, DSINBE=250, SINLD=0.0005)
 	}
 	
@@ -189,24 +196,8 @@
 #xy <- Rwofost:::.test(ydir, "phenology") #OK (skipping vernalization)
 #xp <- Rwofost:::.test(ydir, "partitioning") #OK
 #xa <- Rwofost:::.test(ydir, "assimilation") #OK
-#xr <- Rwofost:::.test(ydir, "rootdynamics", 1:4) # cannot run
+#xr <- Rwofost:::.test(ydir, "rootdynamics") # OK
 
 #xp <- Rwofost:::.test(ydir, "potentialproduction", 1:4)
 #xw <- Rwofost:::.test(ydir, "waterlimitedproduction", 1:4)
 
-
-#library(Rwofost)
-#ydir <- "C:/github/cropmodels/Rwofost/test_data/"
-#.crop_pars = Rwofost:::.crop_pars
-#.soil_pars = Rwofost:::.soil_pars
-#yf <- file.path(ydir, "test_waterlimitedproduction_wofost71_11.yaml")
-#x <- Rwofost:::.yamltest(yf)
-#p <- x$P
-#r <- x$R
-#cn <- colnames(r)[colnames(r) %in% colnames(p)]
-#r <- r[, c("date", cn)]
-#p <- p[, c("DAY", cn)]
-#p <- p[1:nrow(r), ]
-#x$P <- p
-#par(ask=T)
-#for (v in colnames(p)) Rwofost:::.complot(x, v)

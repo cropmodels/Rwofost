@@ -241,20 +241,16 @@ void WofostModel::WATFD_states() {
 
    if (crop.RD - crop.RDOLD > 0.001)  {
 // water added to root zone by root growth, in cm
-       //cout << "WLOW: " << soil.WLOW << endl;
-       //cout << "p.RDM: " << soil.RDM << endl;
       double WDR  = soil.WLOW*(crop.RD - crop.RDOLD)/(soil.RDM - crop.RDOLD);
-       //cout << "WDR: " << WDR << endl;
       
 
 // total water addition to rootzone by root growth
       soil.WDRT = soil.WDRT + WDR;
-  //           amount of soil moisture in extended rootzone
+// amount of soil moisture in extended rootzone
       soil.W = soil.W + WDR;
-       //cout << "soil.W: " << soil.W << endl;
    }
 
-  //        mean soil moisture content in rooted zone
+// mean soil moisture content in rooted zone
    soil.SM = soil.W / crop.RD;
   //        calculating mean soil moisture content over growing period
    soil.SUMSM = soil.SUMSM + soil.SM * DELT;

@@ -18,13 +18,7 @@ Compute the depth of the root zone is calculated for each day of the crop cycle
 
 void WofostModel::ROOTD_initialize() {
     crop.RD = crop.p.RDI;
-    if(control.water_limited){
-        //soil.RDM = std::max(crop.p.RDI, std::min(std::min(soil.p.RDMSOL, crop.p.RDMO), crop.p.RDMCR));
-		soil.RDM = std::max(crop.p.RDI, std::min(soil.p.RDMSOL, crop.p.RDMCR));
-    } else { // if(control.IWB == 1){
-        soil.RDM = std::max(crop.p.RDI, crop.p.RDMCR);
-        //crop.p.RDMO = 0.;
-    }
+	soil.RDM = std::max(crop.p.RDI, std::min(soil.p.RDMSOL, crop.p.RDMCR));
     if (soil.p.IZT == 0) { 
 		soil.ZT = 999.; 
 	} else { //   if (soil.p.IZT == 1) 
@@ -34,19 +28,19 @@ void WofostModel::ROOTD_initialize() {
 
 
 void WofostModel::ROOTD_rates() {
-// root growth RR in cm (is not considered a rate!)
-    crop.RR = std::min(soil.RDM - crop.RD, crop.p.RRI * DELT);
-    if (crop.FR <= 0) { 
+// root growth RR in cm 
+   if (crop.FR > 0 ) { 
+		// with groundwater, root growth zero nearby groundwater
+		if (!(crop.p.IAIRDU == 0 && soil.ZT - crop.RD < 10)) { 
+			crop.RR = std::min(soil.RDM - crop.RD, crop.p.RRI * DELT);
+		}
+	} else {
 		crop.RR = 0; 
-	}
-// with groundwater, root growth zero nearby groundwater
-    if(crop.p.IAIRDU == 0 && soil.ZT - crop.RD < 10) { 
-		crop.RR = 0; 
-	}	
+ 	}
 }
 
 void WofostModel::ROOTD_states() {
-    crop.RD = crop.RD + crop.RR;
+    crop.RD += crop.RR;
 }
 
 
