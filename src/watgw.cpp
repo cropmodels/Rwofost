@@ -34,7 +34,6 @@ The extension of the root zone from initial rooting depth to maximum rooting dep
 
 
 VARIABLE TYPE Description                                      Units   I/O
-DELT    R*4  time step (= 1 day)                                d       I
 IDRAIN  I*4  indicates presence (1) or absence (0) of drains            I
 RD      R*4  rooting depth                                      cm      I
 IAIRDU  I*4  indicates presence(1) or absence(0) of airducts            I
@@ -153,15 +152,13 @@ void WofostModel::WATGW_initialize() {
     if(soil.ZT < crop.RD + 100.){
         //           groundwater in or close to rootzone
         soil.W = soil.WE;
-        //cout << "init W: " << soil.W << endl;
     } else{
-        //           groundwater well below rootzone
+    // groundwater well below rootzone
         soil.W = soil.p.SMFCF * crop.RD;
     }
-    //cout << "RD: " << crop.RD << endl;
     soil.SM = soil.W/crop.RD;
     soil.WI = soil.W;
-    //        soil evaporation, days since last rain
+    // soil evaporation, days since last rain
     soil.DSLR = 1.;
     if(soil.SM <= AFGEN(soil.p.SMTAB, 3.0)){
         soil.DSLR = 5.;
@@ -228,14 +225,14 @@ void WofostModel::WATGW_rates() {
     if(soil.SS > 0.1){
         //           with surface storage, infiltration limited by p.SOPE
         //!!         Next line replaced TvdW 24-jul-97
-        //!!            AVAIL  = SS+(RAIN+RIRR-EVW)*DELT
-        double AVAIL = soil.SS + (atm.RAIN * (1. - soil.p.NOTINF) + soil.RIRR - soil.EVW) * DELT;
-        RINPRE = std::min(soil.p.SOPE * DELT, AVAIL) / DELT;
+        //!!            AVAIL  = SS+(RAIN+RIRR-EVW)`
+        double AVAIL = soil.SS + (atm.RAIN * (1. - soil.p.NOTINF) + soil.RIRR - soil.EVW);
+        RINPRE = std::min(soil.p.SOPE, AVAIL);
     } else {
         if(soil.p.IFUNRN == 0) { 
-			RINPRE = (1. - soil.p.NOTINF) * atm.RAIN + soil.RIRR + soil.SS/DELT; 
+			RINPRE = (1. - soil.p.NOTINF) * atm.RAIN + soil.RIRR + soil.SS; 
 		} else { // if(soil.p.IFUNRN == 1){
-            RINPRE = (1. - soil.p.NOTINF * AFGEN(soil.p.NINFTB, atm.RAIN)) * atm.RAIN + soil.RIRR + soil.SS/DELT;
+            RINPRE = (1. - soil.p.NOTINF * AFGEN(soil.p.NINFTB, atm.RAIN)) * atm.RAIN + soil.RIRR + soil.SS;
         }
     }
     //        indicator for groundwater table within (-) or below (+) rootzone
@@ -256,10 +253,10 @@ void WofostModel::WATGW_rates() {
         double FLOW = SUBSOL(soil.PF, ZTMRD, soil.p.CONTAB);
         //           flow is accounted for as capillary rise or percolation
         if(FLOW >= 0.){
-            soil.CR = std::min(FLOW, std::max(soil.WE - soil.W, 0.) / DELT);
+            soil.CR = std::min(FLOW, std::max(soil.WE - soil.W, 0.));
         }
         if(FLOW <= 0.){
-            soil.PERC = -1. * std::max(FLOW, std::min(soil.WE - soil.W, 0.) / DELT);
+            soil.PERC = -1. * std::max(FLOW, std::min(soil.WE - soil.W, 0.));
         }
         //           hypothesis : for rice percolation is limited to p.K0/20
         if(crop.p.IAIRDU == 1){
@@ -273,7 +270,7 @@ void WofostModel::WATGW_rates() {
         double DR2;
         if(ZTMRD <= 0.){
             //              ground water above drains and within rootzone
-            DR2 = std::max(0., soil.W + std::max(0., soil.p.DD - crop.RD) * soil.p.SM0 - soil.WEDTOT) / DELT;
+            DR2 = std::max(0., soil.W + std::max(0., soil.p.DD - crop.RD) * soil.p.SM0 - soil.WEDTOT);
             soil.DMAX = std::min(DR1, DR2);
         } else{
             //              groundwater above drains and below root zone ; available
@@ -281,7 +278,7 @@ void WofostModel::WATGW_rates() {
             //              and equilibrium water above groundwater level (both until
             //              root zone).
 
-            DR2 = (AFGEN(soil.SDEFTB, soil.p.DD - crop.RD) - soil.SUBAIR) / DELT;
+            DR2 = (AFGEN(soil.SDEFTB, soil.p.DD - crop.RD) - soil.SUBAIR);
             soil.DMAX = std::min(DR1, DR2);
         }
 
@@ -303,30 +300,30 @@ void WofostModel::WATGW_rates() {
 		}
         //           infiltration rate not to exceed available soil air volume
         soil.PERC = soil.DMAX;
-        soil.RIN = std::min(RINPRE, AIRC * soil.ZT / DELT + crop.TRA + soil.EVS + soil.PERC);
+        soil.RIN = std::min(RINPRE, AIRC * soil.ZT + crop.TRA + soil.EVS + soil.PERC);
         soil.DZ = (crop.TRA + soil.EVS + soil.PERC - soil.RIN) / AIRC;
         //           check if groundwater table stays within rooted zone
-        if (soil.DZ * DELT > crop.RD - soil.ZT) {
+        if (soil.DZ > crop.RD - soil.ZT) {
             //              groundwater table will drop below rooted zone;
             //              in order to maintain a stable moisture content in the rooted
             //              zone during this transition, water is recovered from the subsoil.
             //              In the water balance of the rooted zone this amount of water is
             //              accounted for as CR (capillary rise).
-            soil.CR = (soil.DZ * DELT - (crop.RD - soil.ZT)) * AIRC / DELT;
+            soil.CR = (soil.DZ - (crop.RD - soil.ZT)) * AIRC;
             //              new equilibrium groundwater depth, based on the soil water
             //              deficit
-            soil.DZ = (AFGEN(soil.DEFDTB, soil.CR * DELT) + crop.RD - soil.ZT) / DELT;
+            soil.DZ = (AFGEN(soil.DEFDTB, soil.CR) + crop.RD - soil.ZT);
         }
     }else{
         //           groundwater table below rootzone
-        double DEF1 = soil.SUBAIR + (soil.DMAX + soil.CR + soil.PERC) * DELT;
+        double DEF1 = soil.SUBAIR + (soil.DMAX + soil.CR + soil.PERC);
         //           groundwater not to exceed RD in current time step
         if(DEF1 < 0.){
-            soil.PERC = soil.PERC + DEF1/DELT;
+            soil.PERC = soil.PERC + DEF1;
         }
-        soil.DZ = (AFGEN(soil.DEFDTB, DEF1) + crop.RD - soil.ZT) / DELT;
+        soil.DZ = (AFGEN(soil.DEFDTB, DEF1) + crop.RD - soil.ZT);
         //           infiltration rate not to exceed available soil air volume
-        soil.RIN = std::min(RINPRE, (soil.p.SM0 - soil.SM - 0.0004) * crop.RD / DELT + crop.TRA + soil.EVS + soil.PERC - soil.CR);
+        soil.RIN = std::min(RINPRE, (soil.p.SM0 - soil.SM - 0.0004) * crop.RD + crop.TRA + soil.EVS + soil.PERC - soil.CR);
     }
         //        rate of change in amount of moisture in the root zone
     soil.DW = crop.TRA - soil.EVS - soil.PERC + soil.CR + soil.RIN;
@@ -351,26 +348,26 @@ void WofostModel::WATGW_states(){
 
 //        transpiration
     //        total evaporation from surface water layer and/or soil
-    soil.EVWT = soil.EVWT + soil.EVW * DELT;
-    soil.EVST = soil.EVST + soil.EVS * DELT;
+    soil.EVWT = soil.EVWT + soil.EVW;
+    soil.EVST = soil.EVST + soil.EVS;
     //        totals for rainfall, irrigation and infiltration
-    atm.RAINT = atm.RAINT + atm.RAIN * DELT;
-    soil.TOTINF = soil.TOTINF + soil.RIN * DELT;
-    soil.TOTIRR = soil.TOTIRR + soil.RIRR * DELT;
+    atm.RAINT = atm.RAINT + atm.RAIN;
+    soil.TOTINF = soil.TOTINF + soil.RIN;
+    soil.TOTIRR = soil.TOTIRR + soil.RIRR;
     //        surface storage and runoff
-    double SSPRE = soil.SS + (atm.RAIN + soil.RIRR - soil.EVW - soil.RIN) * DELT;
+    double SSPRE = soil.SS + (atm.RAIN + soil.RIRR - soil.EVW - soil.RIN);
     soil.SS = std::min(SSPRE, soil.p.SSMAX);
     soil.TSR = soil.TSR + (SSPRE - soil.SS);
     //        amount of water in rooted zone
-    soil.W = soil.W + soil.DW * DELT;
+    soil.W = soil.W + soil.DW;
 
     //        total capillary rise or percolation
-    soil.CRT = soil.CRT + soil.CR * DELT;
-    soil.PERCT = soil.PERCT + soil.PERC * DELT;
+    soil.CRT = soil.CRT + soil.CR;
+    soil.PERCT = soil.PERCT + soil.PERC;
     //        total drainage
-    soil.DRAINT = soil.DRAINT + soil.DMAX * DELT;
+    soil.DRAINT = soil.DRAINT + soil.DMAX;
     //        groundwater depth
-    soil.ZT = soil.ZT + soil.DZ * DELT;
+    soil.ZT = soil.ZT + soil.DZ;
     //        amount of air and water below rooted zone
     soil.SUBAIR = AFGEN(soil.SDEFTB, soil.ZT - crop.RDOLD);
     double XDEF = 1000.;
@@ -394,7 +391,7 @@ void WofostModel::WATGW_states(){
     //        mean soil moisture content in rooted zone
     soil.SM = soil.W / crop.RD;
     //        calculating mean soil moisture content over growing period
-    soil.SUMSM = soil.SUMSM + soil.SM * DELT;
+    soil.SUMSM = soil.SUMSM + soil.SM;
     //        save rooting depth
     crop.RDOLD = crop.RD;
     //------------------------------

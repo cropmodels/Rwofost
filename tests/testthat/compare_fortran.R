@@ -1,5 +1,4 @@
 
-
 par(ask=TRUE)
 
 ## compare with FORTRAN wofost

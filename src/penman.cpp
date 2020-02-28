@@ -262,8 +262,6 @@ std::vector<double> PENMAN (int DOY, double LAT, double ELEV, double ANGSTA, dou
 
       double SVAP  = 6.10588 * exp (17.32491*TMPA/(TMPA+238.102));
       double DELTA = 238.102 * 17.32491 * SVAP / pow((TMPA+238.102), 2);
-    //test
-    //cout << "SVAP, VAP: " << SVAP << " " << VAP << endl;
 
       VAP   = std::min(VAP,SVAP);
 
@@ -286,8 +284,6 @@ std::vector<double> PENMAN (int DOY, double LAT, double ELEV, double ANGSTA, dou
       double RNW = (AVRAD*(1.-REFCFW)-RB)/LHVAP;
       double RNS = (AVRAD*(1.-REFCFS)-RB)/LHVAP;
       double RNC = (AVRAD*(1.-REFCFC)-RB)/LHVAP;
-    //test
-    //cout << "AVR: " << RB << endl;
 
 //     evaporative demand of the atmosphere (mm/d)
       double EA  = 0.26 * std::max(0.,(SVAP-VAP)) * (0.5+BU*WIND2);
@@ -295,31 +291,19 @@ std::vector<double> PENMAN (int DOY, double LAT, double ELEV, double ANGSTA, dou
     
 //     Penman formula (1948)
       double E0  = (DELTA*RNW+GAMMA*EA)/(DELTA+GAMMA);
-    //test
-    //cout << DELTA << " " << RNW << " " << GAMMA << " " << EA << endl;
     
       double ES0 = (DELTA*RNS+GAMMA*EA)/(DELTA+GAMMA);
       double ET0 = (DELTA*RNC+GAMMA*EAC)/(DELTA+GAMMA);
-    //test
-    
-
+   
 //     Ensure reference evaporation >= 0.
       E0  = std::max(0., E0);
       ES0 = std::max(0., ES0);
       ET0 = std::max(0., ET0);
-    
-    //cout << "ET0: " << ET0 << " EAC: " << EAC << " RNC: " << RNC << endl;
-    //test
-    //cout << "ES0: " << ES0 << endl;
 
       E0   = E0 /10.;
       ES0  = ES0/10.;
       ET0  = ET0/10.;
-    
-    
-
       std::vector<double> result = {E0, ES0, ET0};
-
       return result;
 }
 */

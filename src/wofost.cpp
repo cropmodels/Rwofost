@@ -94,7 +94,6 @@ void WofostModel::model_initialize() {
 		STDAY_initialize();
 	}
 
-	DELT = 1.;
 //	ISTATE = 3;
 
 //	control.IWB = control.IPRODL;
@@ -213,7 +212,7 @@ void WofostModel::model_run() {
 					crop.DVS = crop.DVS + crop.DVR;
 				}
 			
-				crop.TSUME = crop.TSUME + crop.DTSUME * DELT;
+				crop.TSUME = crop.TSUME + crop.DTSUME;
 				if (crop.DVS >= 0) {
 					ISTATE = 3;
 					crop_emerged = true;

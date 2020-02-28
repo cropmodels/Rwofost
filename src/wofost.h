@@ -241,7 +241,6 @@ struct WofostModel {
 
 	unsigned step, time, DOY, npk_step;
 	int IDHALT, ISTATE, IOX;
-	double DELT;
 
 	std::vector<std::string>  messages;
 	bool fatalError;

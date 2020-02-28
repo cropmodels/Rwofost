@@ -23,7 +23,6 @@ KDif, EFF and SSA which are now functions of DVS or DTEMP
 FORMAL PARAMETERS:  (I=input,O=output,C=control,IN=init,T=time)
 name   type meaning                                    units  class
 ----   ---- -------                                    -----  -----
-DELT    R4  Time step of integration (default 1 day)      d      I
 IDEM    I4  Day of emergence                                     I/O
 //DOANTH  R4  Day of anthesis                                      O
 IDHALT  I4  Day that simulation is halted                        I/O
@@ -280,7 +279,7 @@ void WofostModel::crop_rates() {
 	crop.DSLV = std::max(DSLV1, DSLV2);
 
   //determine extra death due to exceeding of life p.SPAN of leaves leaf death is imposed on array until no more leaves have to die or all leaves are gone
-	double REST = crop.DSLV * DELT;
+	double REST = crop.DSLV;
 	int i1 = crop.ILVOLD;
 	while(REST > crop.LV[i1 - 1] && i1 >= 1){
 		REST = REST - crop.LV[i1 - 1];
@@ -298,7 +297,7 @@ void WofostModel::crop_rates() {
 		DALV = DALV + crop.LV[i1 - 1];
 		i1--;
 	}
-	DALV = DALV / DELT;
+	DALV = DALV;
   //death rate leaves and growth rate living leaves
 	crop.DRLV = crop.DSLV + DALV;
 
@@ -345,8 +344,8 @@ void WofostModel::crop_states() {
 //  }
 
   //phenological development stage and temperature sum
-	crop.DVS = crop.DVS + crop.DVR * DELT;
-	crop.TSUM = crop.TSUM + crop.DTSUM * DELT;
+	crop.DVS = crop.DVS + crop.DVR;
+	crop.TSUM = crop.TSUM + crop.DTSUM;
   //save date of anthesis, adjust development stage
 	if( crop.DVS >= 1. && crop.IDANTH < 0 ){
 		crop.IDANTH = int( step ) - crop.emergence;
@@ -360,7 +359,7 @@ void WofostModel::crop_states() {
 
 
   //leaf death is imposed on array until no more leaves have to die or all leaves are gone
-	double DSLVT = crop.DSLV * DELT;
+	double DSLVT = crop.DSLV;
 	int i1 = crop.ILVOLD;
 	while(DSLVT > 0. && i1 >= 1){
 		if (DSLVT >= crop.LV[i1 - 1]){
@@ -384,12 +383,12 @@ void WofostModel::crop_states() {
 	for(int j = crop.ILVOLD; j >= 1; j--){
 		crop.LV[j] = crop.LV[j - 1];
 		crop.SLA[j] = crop.SLA[j - 1];
-		crop.LVAGE[j] = crop.LVAGE[j - 1] + crop.FYSDEL * DELT;
+		crop.LVAGE[j] = crop.LVAGE[j - 1] + crop.FYSDEL;
 	}
 	crop.ILVOLD++;
 
   //new leaves in class 1
-	crop.LV[0] = crop.GRLV * DELT;
+	crop.LV[0] = crop.GRLV;
 	crop.SLA[0] = crop.SLAT;
 	crop.LVAGE[0] = 0.;
   //calculation of new leaf area and weight
@@ -400,18 +399,18 @@ void WofostModel::crop_states() {
 		crop.WLV = crop.WLV + crop.LV[j];
 	}
 
-	crop.LAIEXP = crop.LAIEXP + crop.GLAIEX * DELT;
+	crop.LAIEXP = crop.LAIEXP + crop.GLAIEX;
   //dry weight of living plant organs and total above ground biomass
-	crop.WRT = crop.WRT + crop.GWRT * DELT;
-	crop.WST = crop.WST + crop.GWST * DELT;
-	crop.WSO = crop.WSO + crop.GWSO * DELT;
+	crop.WRT = crop.WRT + crop.GWRT;
+	crop.WST = crop.WST + crop.GWST;
+	crop.WSO = crop.WSO + crop.GWSO;
 	crop.TADW = crop.WLV + crop.WST + crop.WSO;
 
   //dry weight of dead plant organs
-	crop.DWRT = crop.DWRT + crop.DRRT * DELT;
-	crop.DWLV = crop.DWLV + crop.DRLV * DELT;
-	crop.DWST = crop.DWST + crop.DRST * DELT;
-	crop.DWSO = crop.DWSO + crop.DRSO * DELT;
+	crop.DWRT = crop.DWRT + crop.DRRT;
+	crop.DWLV = crop.DWLV + crop.DRLV;
+	crop.DWST = crop.DWST + crop.DRST;
+	crop.DWSO = crop.DWSO + crop.DRSO;
 
   //dry weight of dead and living plant organs
 	crop.TWRT = crop.WRT + crop.DWRT;
