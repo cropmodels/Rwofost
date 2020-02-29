@@ -82,18 +82,18 @@ struct WofostCrop {
 	double RD, RDOLD, GRLV, DWRT, DWLV, DWST, DWSO;
 	double DVS, LAI, LAIEXP, WRT, WLV, WST, WSO;
 	double TWRT, TWLV, TWST, TWSO, TAGP, TSUM, TSUME;
-	double TADW; 
+	double TADW, SAI, PAI; 
 	//}
 	//states s;
 	
 // variables
 	bool alive;
 	int emergence, ILVOLD, IDANTH;
-	double EFF, AMAX, PGASS, TRA, TRANRF;
-	double LASUM, KDif, SSA, TRAMX ;
+	double EFF, AMAX, PGASS, TRA, RFTRA, TRANRF;
+	double LASUM, KDif, TRAMX;
 	double FR, FL, FS, FO;
 	double TMINRA, DSLV, SLAT;
-	
+	double PMRES;
 	std::vector<double> SLA = std::vector<double>(366), LV = std::vector<double>(366), LVAGE = std::vector<double>(366), TMNSAV = std::vector<double>(7);
 
 	
@@ -213,10 +213,9 @@ struct WofostAtmosphere {
 
 
 struct WofostForcer {
-	bool force_DVS=false, force_LAI=false, force_SM=false, force_FR=false, force_DMI=false;
-	// force_WRT, force_WLV, force_WSO, force_WST;
-	std::vector<double> DVS, LAI, SM, FR, DMI;
-	//, WRT, WLV, WSO, WST, 
+	bool force_DVS=false, force_LAI=false, force_SM=false, force_FR=false, force_DMI=false, force_ADMI=false, force_FL=false, force_PAI=false, force_RFTRA=false, force_SAI=false,
+	force_WRT=false, force_WLV=false, force_WSO=false, force_WST=false;
+	std::vector<double> DVS, LAI, SM, FR, DMI, ADMI, FL, PAI, RFTRA, SAI, WRT, WLV, WSO, WST;
 };
 
 
@@ -243,6 +242,8 @@ struct WofostModel {
 	WofostWeather wth;
 	
 	WofostForcer forcer;
+	void force_states();
+	
 	WofostOutput output;
 	
 	bool weather_step();

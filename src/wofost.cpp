@@ -49,11 +49,10 @@ void WofostModel::model_output(){
 		output.values.insert(output.values.end(),
 			{double(step), atm.ANGOT, atm.ATMTR, atm.COSLD, atm.DAYL, 
 				atm.DAYLP, atm.DifPP, atm.DSINBE, atm.SINLD, 
-				crop.TSUM, crop.DVR, crop.DVS, 
-				soil.EVS, crop.LAI, crop.PGASS, crop.RD, soil.SM,  
-				crop.FL, crop.FO, crop.FR, crop.FS,
-				crop.TAGP, crop.TRA, crop.WRT, crop.WLV, crop.WST, crop.WSO,
-				crop.TWRT, crop.TWLV, crop.TWST, crop.TWSO
+				crop.TSUM, crop.DVR, crop.DVS, soil.EVS, crop.LAI, crop.LASUM, 
+				crop.SAI, crop.PGASS, crop.RD, soil.SM,  crop.FL, crop.FO, crop.FR, crop.FS,
+				crop.PMRES,	crop.TAGP, crop.TRA, crop.WRT, crop.WLV, crop.WST, crop.WSO,
+				crop.TWRT, crop.TWLV, crop.TWST, crop.TWSO, crop.GRLV, crop.SLAT
 			}
 		);	
 	} else {
@@ -105,9 +104,7 @@ void WofostModel::model_initialize() {
 
 	if (control.output_option == "TEST") {
 		output.names = {"step", "ANGOT", "ATMTR", "COSLD", "DAYL", "DAYLP", "DIFPP",
-			"DSINBE", "SINLD", "TSUM", "DVR", "DVS", "EVS", "LAI", "PGASS", "RD",
-			"SM", "FL", "FO", "FR", "FS", "TAGP", "TRA", "WRT", "WLV", "WST", "WSO", 
-			"TWRT", "TWLV", "TWST", "TWSO"};
+			"DSINBE", "SINLD", "TSUM", "DVR", "DVS", "EVS", "LAI", "LASUM", "SAI", "PGASS", "RD", "SM", "FL", "FO", "FR", "FS", "PMRES", "TAGP", "TRA", "WRT", "WLV", "WST", "WSO", "TWRT", "TWLV", "TWST", "TWSO", "GRLV", "SLAT"};
 	} else {
 		output.names = {"step", "TSUM", "DVS", "LAI", "WRT", "WLV", "WST", "WSO"};
 	}
@@ -142,11 +139,14 @@ void WofostModel::model_initialize() {
     crop.LASUM = 0.;
     crop.LAIEXP = 0.;
     crop.LAI = 0.;
+    crop.SAI = 0.;
+    crop.PAI = 0.;
     crop.RD = crop.p.RDI;
 	crop.TSUM = 0;
 	crop.TSUME = 0.;
 	crop.DTSUME = 0.;
     crop.TRA = 0.;
+    crop.RFTRA = 0.;
 	crop.GASS = 0.;
 	crop.GRLV = 0;
 	
@@ -166,6 +166,22 @@ void WofostModel::model_initialize() {
 
 }
 
+void WofostModel::force_states() {
+	if (control.useForce) {
+		if (forcer.force_DVS)  crop.DVS = forcer.DVS[time];
+		if (forcer.force_LAI)  crop.LAI = forcer.LAI[time];
+		if (forcer.force_SAI)  crop.SAI = forcer.SAI[time];
+		if (forcer.force_PAI)  crop.PAI = forcer.PAI[time];
+		if (forcer.force_SM )  soil.SM  = forcer.SM[time];
+		if (forcer.force_WLV)  crop.WLV = forcer.WLV[time];
+		if (forcer.force_WRT)  crop.WRT = forcer.WRT[time];
+		if (forcer.force_WSO)  crop.WSO = forcer.WSO[time];
+		if (forcer.force_WST)  crop.WST = forcer.WST[time];
+		if (forcer.force_RFTRA) crop.RFTRA = forcer.RFTRA[time];
+		if (forcer.force_FR)   crop.FR = forcer.FR[time];
+		if (forcer.force_FL)   crop.FL = forcer.FL[time];
+	}
+}
 
 
 void WofostModel::model_run() {
@@ -181,18 +197,16 @@ void WofostModel::model_run() {
 
 // moved here for comparison with pcse
 	crop_initialize();
+	force_states();
+	
 	if (ISTATE == 1) {
 		crop.DVS = -0.1;
 	}
 //
 	
 	while (! crop_emerged) {
-
-		if (control.useForce) {
-			if (forcer.force_SM)  soil.SM  = forcer.SM[time];
-			if (forcer.force_LAI) crop.LAI = forcer.LAI[time];
-		}
-		
+		force_states();
+	
 		weather_step();
 		if(control.nutrient_limited){
 			npk_soil_dynamics_rates();
@@ -206,10 +220,9 @@ void WofostModel::model_run() {
 				STDAY();
 			} else if (ISTATE == 1) { // find day of emergence				
 				//ugly
+				crop.DVS = crop.DVS + crop.DVR;
 				if (control.useForce & forcer.force_DVS) {
 					crop.DVS = forcer.DVS[time];
-				} else {
-					crop.DVS = crop.DVS + crop.DVR;
 				}
 			
 				crop.TSUME = crop.TSUME + crop.DTSUME;
@@ -257,11 +270,9 @@ void WofostModel::model_run() {
 //	crop_initialize();
 
 	while ((crop.alive) && (step < maxdur)) {
-		if (control.useForce) {
-			if (forcer.force_DVS) crop.DVS = forcer.DVS[time];
-			if (forcer.force_LAI) crop.LAI = forcer.LAI[time];
-			if (forcer.force_SM)  soil.SM  = forcer.SM[time];
-		}
+		
+		force_states();
+		
 		if (! weather_step()) break;
 		crop_rates();
 		if (control.nutrient_limited){

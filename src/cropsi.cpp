@@ -20,6 +20,8 @@ Tamme van der Wal (25-July-1997)
 2) KDIFTB, EFFTB and SSATB are now read in from data files and KDif, EFF and SSA are calculated using the AFGEN function.
 KDif, EFF and SSA which are now functions of DVS or DTEMP
 
+SSA renamed to SSI following PCSE
+
 FORMAL PARAMETERS:  (I=input,O=output,C=control,IN=init,T=time)
 name   type meaning                                    units  class
 ----   ---- -------                                    -----  -----
@@ -68,6 +70,7 @@ void WofostModel::maintanance_respiration() {
 }
 */
 
+
 void WofostModel::crop_initialize() {
 // 2.6    initial crop conditions at emergence or transplanting
 	crop.IDANTH = -99;
@@ -95,9 +98,10 @@ void WofostModel::crop_initialize() {
     crop.WST = crop.FS * crop.TADW;
     crop.WSO  = crop.FO * crop.TADW;
     crop.WLV  = crop.FL * crop.TADW;
-	
+
 	crop.TWRT = crop.WRT;
 	crop.TWLV = crop.WLV;
+
 	crop.TWST = crop.WST;
 	crop.TWSO = crop.WSO;
 	
@@ -105,8 +109,9 @@ void WofostModel::crop_initialize() {
     crop.LV[0] = crop.WLV;
     crop.LASUM = crop.p.LAIEM;
     crop.LAIEXP = crop.p.LAIEM;
-    crop.SSA = AFGEN(crop.p.SSATB, crop.DVS);
-    crop.LAI = crop.LASUM + crop.SSA * crop.WST + crop.p.SPA * crop.WSO;
+    crop.SAI = crop.WST * AFGEN(crop.p.SSATB, crop.DVS);
+    crop.PAI = crop.WSO * crop.p.SPA;
+    crop.LAI = crop.LASUM + crop.SAI + crop.PAI;
 
 	crop.TMINRA = 0.;
 	for(int i = 0; i < 7; i++){
@@ -198,7 +203,8 @@ void WofostModel::crop_rates() {
 	double RMRES = (crop.p.RMR * crop.WRT + crop.p.RML * crop.WLV + crop.p.RMS * crop.WST + crop.p.RMO * crop.WSO);
 	RMRES *= AFGEN (crop.p.RFSETB, crop.DVS);
 	double TEFF  = pow(crop.p.Q10, ((atm.TEMP - 25.)/10.));
-	double MRES  = std::min(crop.GASS, RMRES * TEFF);
+	crop.PMRES = RMRES * TEFF;
+	double MRES  = std::min(crop.GASS, crop.PMRES);
 	double ASRC  = crop.GASS - MRES;
 
   //DM partitioning factors, and dry matter increase
@@ -206,7 +212,6 @@ void WofostModel::crop_rates() {
 	crop.FL = AFGEN(crop.p.FLTB, crop.DVS);
 	crop.FS = AFGEN(crop.p.FSTB, crop.DVS);
 	crop.FO = AFGEN(crop.p.FOTB, crop.DVS);
-
 
 	crop.TRANRF = crop.TRA/crop.TRAMX;   //commented previously
 
@@ -221,9 +226,6 @@ void WofostModel::crop_rates() {
 	// sum of FR, FL, FS, FO shouldd remain 1.
 			double FRTMOD = std::max( 1., 1 / (crop.TRANRF + 0.5));
 			crop.FR = std::min(0.6, crop.FR * FRTMOD);
-			crop.FL = crop.FL;
-			crop.FS = crop.FS;
-			crop.FO = crop.FO;
 		} else {
 	// Nitrogen stress is more severe than water stress resulting in
 	// less partitioning to leaves and more to stems
@@ -239,7 +241,7 @@ void WofostModel::crop_rates() {
 	double DMI = CVF * ASRC;
 
   //check on partitioning
-	double FCHECK = crop.FR+(crop.FL + crop.FS + crop.FO)*(1.-crop.FR) - 1.;
+	double FCHECK = crop.FR + (crop.FL + crop.FS + crop.FO) * (1 - crop.FR) - 1;
     //test
 	if (fabs(FCHECK) > 0.0001){
 		std::string m = "Error in partitioning functions on step " + std::to_string(step) + " FCHECK = " + std::to_string(FCHECK) + " FR = " + std::to_string(crop.FR) 
@@ -260,18 +262,25 @@ void WofostModel::crop_rates() {
   //growth rate by plant organ
   //growth rate roots and aerial parts
 	double ADMI = (1. - crop.FR) * DMI;
-	
+	if (control.useForce & forcer.force_ADMI) {
+		ADMI = forcer.ADMI[time];
+	} 	
+
 	double GRRT = crop.FR * DMI;
 	if (control.useForce & forcer.force_DMI) {
 		GRRT = crop.FR * forcer.DMI[time];
 	} 	
+	
 	crop.DRRT = crop.WRT * AFGEN(crop.p.RDRRTB, crop.DVS);
 	crop.GWRT = GRRT - crop.DRRT;
 
   //growth rate leaves
   //weight of new leaves
-	crop.GRLV = crop.FL * ADMI;
-
+	if (control.useForce & forcer.force_FL) {
+		crop.GRLV = forcer.FL[time] * ADMI;
+	} else {
+		crop.GRLV = crop.FL * ADMI;
+	}
   //death of leaves due to water stress or high LAI
 	double DSLV1 = crop.WLV * (1. - crop.TRA/crop.TRAMX) * crop.p.PERDL;
 	double LAICR = 3.2 / crop.KDif;
@@ -306,7 +315,7 @@ void WofostModel::crop_rates() {
 	crop.SLAT = AFGEN(crop.p.SLATB, crop.DVS);
 
   //leaf area not to exceed exponential growth curve
-	if (crop.LAIEXP > 6) {
+	if (crop.LAIEXP < 6) {
 		double DTEFF = std::max(0., atm.TEMP - crop.p.TBASE);
 		crop.GLAIEX = crop.LAIEXP * crop.p.RGRLAI * DTEFF;
     //source-limited increase in leaf area
@@ -318,6 +327,7 @@ void WofostModel::crop_rates() {
 			crop.SLAT = GLA / crop.GRLV;
 		}
 	}
+	
 	//growth rate stems
 	double GRST = crop.FS * ADMI;
 	crop.DRST = AFGEN(crop.p.RDRSTB, crop.DVS) * crop.WST;
@@ -394,23 +404,23 @@ void WofostModel::crop_states() {
   //calculation of new leaf area and weight
 	crop.LASUM = 0.;
 	crop.WLV = 0.;
-	for(int j = 0; j < crop.ILVOLD; j++){
-		crop.LASUM = crop.LASUM + crop.LV[j] * crop.SLA[j];
-		crop.WLV = crop.WLV + crop.LV[j];
+	for (int j = 0; j < crop.ILVOLD; j++){
+		crop.LASUM += crop.LV[j] * crop.SLA[j];
+		crop.WLV += crop.LV[j];
 	}
 
-	crop.LAIEXP = crop.LAIEXP + crop.GLAIEX;
+	crop.LAIEXP += crop.GLAIEX;
   //dry weight of living plant organs and total above ground biomass
-	crop.WRT = crop.WRT + crop.GWRT;
-	crop.WST = crop.WST + crop.GWST;
-	crop.WSO = crop.WSO + crop.GWSO;
+	crop.WRT += crop.GWRT;
+	crop.WST += crop.GWST;
+	crop.WSO += crop.GWSO;
 	crop.TADW = crop.WLV + crop.WST + crop.WSO;
-
+	
   //dry weight of dead plant organs
-	crop.DWRT = crop.DWRT + crop.DRRT;
-	crop.DWLV = crop.DWLV + crop.DRLV;
-	crop.DWST = crop.DWST + crop.DRST;
-	crop.DWSO = crop.DWSO + crop.DRSO;
+	crop.DWRT += crop.DRRT;
+	crop.DWLV += crop.DRLV;
+	crop.DWST += crop.DRST;
+	crop.DWSO += crop.DRSO;
 
   //dry weight of dead and living plant organs
 	crop.TWRT = crop.WRT + crop.DWRT;
@@ -419,11 +429,15 @@ void WofostModel::crop_states() {
 	crop.TWSO = crop.WSO + crop.DWSO;
 	crop.TAGP = crop.TWLV + crop.TWST + crop.TWSO;
 
-	//total gross assimilation and maintenance respiration
-	//leaf area index
-	crop.SSA = AFGEN(crop.p.SSATB, crop.DVS);
+    // from pcse: SSA * WST = Stem Area Index (SAI)
+	// crop.SSA = AFGEN(crop.p.SSATB, crop.DVS);
+	crop.SAI = crop.WST * AFGEN(crop.p.SSATB, crop.DVS);
 
-	crop.LAI = crop.LASUM + crop.SSA * crop.WST + crop.p.SPA * crop.WSO;
+	// pod area index
+	crop.PAI = crop.WSO * crop.p.SPA;
+
+	//leaf area index
+	crop.LAI = crop.LASUM + crop.SAI + crop.PAI;
 
 	if(control.nutrient_limited){
 		npk_crop_dynamics_states();
@@ -434,7 +448,8 @@ void WofostModel::crop_states() {
 	if(crop.DVS >= crop.p.DVSEND){
 		crop.alive = false;
 	} 	else if(crop.LAI <= 0.002 && crop.DVS > 0.5) {
-		messages.push_back("no living leaves (anymore)");
+		//messages.push_back("no living leaves (anymore)");
 		crop.alive = false;
 	}
 }
+

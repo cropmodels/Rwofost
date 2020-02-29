@@ -11,7 +11,7 @@ Author: C.A. van Diepen, April 1989
 
 EVTRA routine calculates for a given crop cover the maximum evaporation rate from a shaded wet soil surface and from a shaded water surface, and the maximum and actual crop transpiration rate.
 
-SWEAF computes the fraction of easily available soil water between field capacity and wilting point is a function of the potential evapotranspiration rate (for a closed canopy) in cm/day, ET0, and the crop group number, CGNR (from 1 (=drought-sensitive) to 5 (=drought-resistent)). The function SWEAF describes this relationship given in tabular form by Doorenbos and  Kassam (1979) and by Van Keulen and Wolf (1986; p.108, table 20). Chapter 20 in documentation WOFOST Version 4.1 (1988)
+SWEAF computes the fraction of easily available soil water between field capacity and wilting point is a function of the potential evapotranspiration rate (for a closed canopy) in cm/day, ET0, and the crop group number, CGNR (from 1 (=drought-sensitive) to 5 (=drought-resistant)). The function SWEAF describes this relationship given in tabular form by Doorenbos and  Kassam (1979) and by Van Keulen and Wolf (1986; p.108, table 20). Chapter 20 in documentation WOFOST Version 4.1 (1988)
 
 
 */
@@ -50,7 +50,7 @@ void WofostModel::EVTRA() {
     soil.EVSMX = std::max(0., atm.ES0 * EKL);
     crop.TRAMX = std::max(0.0001, atm.ET0*(1. - EKL));
 
-    //actual transpiration rate
+     //actual transpiration rate
     if (! control.water_limited) {
         crop.TRA  = crop.TRAMX;
     } else {
@@ -81,8 +81,10 @@ void WofostModel::EVTRA() {
 	            RFOS = RFOSMX + (1. - DSOS/4.)*(1. - RFOSMX);
 			}
         } 
-        crop.TRA = RFWS * RFOS * crop.TRAMX;
+		crop.RFTRA =  RFWS * RFOS;
+        crop.TRA =  crop.RFTRA * crop.TRAMX;
 		crop.TRANRF = crop.TRA / crop.TRAMX;
+		
     }
 
 }

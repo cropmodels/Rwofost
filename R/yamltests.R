@@ -40,10 +40,12 @@
 	prec <- y$Precision
 	dsoil <- wofost_soil("soil_5")
 	dcrop <- wofost_crop('maize_1')
+	dcrop <- wofost_crop('barley')
 	#dcrop <- wofost_crop('sugarbeet_601')
 
-	if (ttype == "rootdynamics") {
+	if (isTRUE(grep("dynamics", ttype))) {
 		yy <- yaml::read_yaml(gsub("rootdynamics", "potentialproduction", yf))
+		yy <- yaml::read_yaml(gsub("leafdynamics", "potentialproduction", yf))
 		dcrop$FRTB <- Rwofost:::.make_matrices(yy$ModelParameters$FRTB)
 	} 
 
@@ -108,9 +110,10 @@
 	if (!is.null(frc)) {
 		f <- lapply(frc, unlist)
 		f <- data.frame(t(do.call(cbind, f)), stringsAsFactors=FALSE)
-		f[,1] <- as.Date(f[,1])
+		j <- which(colnames(f) == "DAY")
+		f <- f[, c(j, (1:ncol(f))[-j])]	
+		f$DAY <- as.Date(f$DAY)
 		for (i in 2:ncol(f)) f[,i] <- as.numeric(f[,i])
-
 		force(m) <- f
 	}
 	
@@ -122,8 +125,30 @@
 	if (colnames(r)[1] == "DAY") {
 		r[,1] <- as.Date(r[,1])
 		for (i in 2:ncol(r)) r[,i] <- as.numeric(r[,i])
+	} else {
+		for (i in 1:ncol(r)) r[,i] <- as.numeric(r[,i])	
 	}
+	
 	list(R=x, P=r, prec=prec, skip=skip)
+}
+
+
+
+.getPR <- function(path, test, i) {
+    ii <- formatC(i, width=2, flag="0")
+    yf <- file.path(path, paste0("test_", test, "_wofost71_", ii, ".yaml")) 
+    x <- Rwofost:::.yamltest(yf)
+  
+    #skipping vernalization cases for now
+    if (x$skip) return(NULL)
+    p <- x$P
+    r <- x$R
+    cn <- colnames(r)[colnames(r) %in% colnames(p)]
+    r <- r[, c("date", cn)]
+    p <- p[, c("DAY", cn)]
+    p <- p[1:nrow(r), ]
+    x$P <- p
+	x
 }
 
 
@@ -145,7 +170,7 @@
 }
 
 
-.test <- function(path, group, tests=1:44) {
+.test <- function(path, group, tests=1:42) {
 
 	if (group == "astro"){
 		aprec <- list(ANGOT=1000, ATMTR=0.004, COSLD=0.005, DAYL=0.1, DAYLP=0.1, DIFPP=1.5, DSINBE=250, SINLD=0.0005)
@@ -163,6 +188,9 @@
 		if (group == "astro"){
 			x$prec <- aprec
 		}
+		x$prec$TWLV <- 10
+		x$prec$LAI <- 0.1
+
 		if (!x$skip) {
 			stopifnot(x$P$DAY[1] == x$R$date[1])
 			x$P <- x$P[1:nrow(x$R), ]
@@ -191,13 +219,15 @@
 	result
 }
 
-#ydir <- "C:/github/cropmodels/Rwofost/test_data/"
+#library(Rwofost)
+#ydir <- "C:/github/cropmodels/Rwofost_test/test_data/"
 #xs <- Rwofost:::.test(ydir, "astro") #OK
 #xy <- Rwofost:::.test(ydir, "phenology") #OK (skipping vernalization)
 #xp <- Rwofost:::.test(ydir, "partitioning") #OK
 #xa <- Rwofost:::.test(ydir, "assimilation") #OK
 #xr <- Rwofost:::.test(ydir, "rootdynamics") # OK
-
+#xp <- Rwofost:::.test(ydir, "respiration") #OK
+#xl <- Rwofost:::.test(ydir, "leafdynamics")
 #xp <- Rwofost:::.test(ydir, "potentialproduction", 1:4)
 #xw <- Rwofost:::.test(ydir, "waterlimitedproduction", 1:4)
 
