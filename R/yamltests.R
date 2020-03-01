@@ -24,7 +24,7 @@
 	w <- data.frame(
 				date=as.Date(x$DAY), 
 				srad=as.numeric(x$IRRAD) / 1000,
-				prec=as.numeric(x$RAIN),
+				prec=as.numeric(x$RAIN) * 10,
 				tmin=as.numeric(x$TMIN),
 				tmax=as.numeric(x$TMAX),
 				vapr=as.numeric(x$VAP),
