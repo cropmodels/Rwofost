@@ -173,11 +173,7 @@ void WofostModel::WATGW_initialize() {
     soil.TSR = 0.;
     soil.CRT = 0.;
     soil.PERCT = 0.;
-    atm.RAINT = 0.;
     soil.WDRT = 0.;
-    soil.TOTINF = 0.;
-    soil.TOTIRR = 0.;
-    soil.SUMSM = 0.;
     soil.DRAINT = 0.;
     //--------------------------------------------
     //        all rates are initially set at zero
@@ -349,19 +345,15 @@ void WofostModel::WATGW_states(){
 //----------------------------------------------------------------------
 
 //        transpiration
-    //        total evaporation from surface water layer and/or soil
-    soil.EVWT = soil.EVWT + soil.EVW;
-    soil.EVST = soil.EVST + soil.EVS;
-    //        totals for rainfall, irrigation and infiltration
-    atm.RAINT = atm.RAINT + atm.RAIN;
-    soil.TOTINF = soil.TOTINF + soil.RIN;
-    soil.TOTIRR = soil.TOTIRR + soil.RIRR;
-    //        surface storage and runoff
+    // total evaporation from surface water layer and/or soil
+    soil.EVWT += soil.EVW;
+    soil.EVST += soil.EVS;
+    // surface storage and runoff
     double SSPRE = soil.SS + (atm.RAIN + soil.RIRR - soil.EVW - soil.RIN);
     soil.SS = std::min(SSPRE, soil.p.SSMAX);
-    soil.TSR = soil.TSR + (SSPRE - soil.SS);
-    //        amount of water in rooted zone
-    soil.W = soil.W + soil.DW;
+    soil.TSR += (SSPRE - soil.SS);
+    // amount of water in rooted zone
+    soil.W += soil.DW;
 
     //        total capillary rise or percolation
     soil.CRT = soil.CRT + soil.CR;
@@ -390,11 +382,11 @@ void WofostModel::WATGW_states(){
         soil.WDRT = soil.WDRT + WDR;
         soil.W = soil.W + WDR;
     }
-    //        mean soil moisture content in rooted zone
+    // mean soil moisture content in rooted zone
     soil.SM = soil.W / crop.RD;
-    //        calculating mean soil moisture content over growing period
-    soil.SUMSM = soil.SUMSM + soil.SM;
-    //        save rooting depth
+    // calculating mean soil moisture content over growing period
+    //soil.SUMSM += soil.SM;
+    // save rooting depth
     crop.RDOLD = crop.RD;
     //------------------------------
     //        check on waterlogging

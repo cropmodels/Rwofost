@@ -48,10 +48,11 @@ void WofostModel::model_output(){
 	if (control.output_option == "TEST") {
 		output.values.insert(output.values.end(),
 			{double(step), atm.ANGOT, atm.ATMTR, atm.COSLD, atm.DAYL, 
-				atm.DAYLP, atm.DifPP, atm.DSINBE, atm.SINLD, 
+				atm.DAYLP, atm.DifPP, atm.DSINBE, atm.SINLD, soil.EVWMX,
 				crop.TSUM, crop.DVR, crop.DVS, soil.EVS, crop.LAI, crop.LASUM, 
 				crop.SAI, crop.PGASS, crop.RD, soil.SM,  crop.FL, crop.FO, crop.FR, crop.FS,
-				crop.PMRES,	crop.TAGP, crop.TRA, crop.WRT, crop.WLV, crop.WST, crop.WSO,
+				crop.PMRES,	crop.TAGP, crop.TRA, crop.TRAMX, crop.RFTRA, 
+				crop.WRT, crop.WLV, crop.WST, crop.WSO,
 				crop.TWRT, crop.TWLV, crop.TWST, crop.TWSO, crop.GRLV, crop.SLAT
 			}
 		);	
@@ -104,7 +105,9 @@ void WofostModel::model_initialize() {
 
 	if (control.output_option == "TEST") {
 		output.names = {"step", "ANGOT", "ATMTR", "COSLD", "DAYL", "DAYLP", "DIFPP",
-			"DSINBE", "SINLD", "TSUM", "DVR", "DVS", "EVS", "LAI", "LASUM", "SAI", "PGASS", "RD", "SM", "FL", "FO", "FR", "FS", "PMRES", "TAGP", "TRA", "WRT", "WLV", "WST", "WSO", "TWRT", "TWLV", "TWST", "TWSO", "GRLV", "SLAT"};
+			"DSINBE", "SINLD", "EVWMX", "TSUM", "DVR", "DVS", "EVS", "LAI", "LASUM", "SAI", "PGASS", "RD", "SM", "FL", "FO", "FR", "FS", "PMRES", "TAGP", 
+			"TRA", "TRAMX", "RFTRA", "WRT", "WLV", "WST", "WSO", 
+			"TWRT", "TWLV", "TWST", "TWSO", "GRLV", "SLAT"};
 	} else {
 		output.names = {"step", "TSUM", "DVS", "LAI", "WRT", "WLV", "WST", "WSO"};
 	}

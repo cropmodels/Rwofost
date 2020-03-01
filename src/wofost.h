@@ -173,7 +173,7 @@ struct WofostSoil {
 
 // RATES
 	double EVS, EVW, CR, DMAX, DZ;
-	double RIN, RIRR, DW, PERC, LOSS, DWLOW;
+	double RIN, RINold, RIRR, DW, PERC, LOSS, DWLOW;
 	
 // STATES
 	double SM, SS, W, WI, DSLR, WLOW, WLOWI, WWLOW;
@@ -182,13 +182,12 @@ struct WofostSoil {
 // VARIABLES
 	double RDM;
 	int ILWPER, IDFWOR;
-	double EVWMX, EVSMX, EVST, EVWT, TSR, WDRT, TOTINF, TOTIRR, SUMSM, PERCT, LOSST;
+	double EVWMX, EVSMX, EVST, EVWT, TSR, WDRT, PERCT, LOSST;
 	double SPAC, SPOC, WEXC, CAPRMX, SEEP, COSUT; 	// STDAY
 	double RTDF, MH0, MH1, ZT, SUBAIR, WZ, WZI, WE, WEDTOT, CRT, DRAINT, PF;
 
 	std::vector<double> SDEFTB, DEFDTB, CAPRFU;
 
-	
 	struct ratesNPK {
 		double RNSOIL, RPSOIL, RKSOIL;
 		double RNAVAIL, RPAVAIL, RKAVAIL;
@@ -206,7 +205,7 @@ struct WofostSoil {
 
 
 struct WofostAtmosphere {
-	double RAIN, RAINT, AVRAD, TEMP, DTEMP, TMIN, TMAX, E0, ES0, ET0, DAYL, DAYLP, WIND, VAP;
+	double RAIN, AVRAD, TEMP, DTEMP, TMIN, TMAX, E0, ES0, ET0, DAYL, DAYLP, WIND, VAP;
 	double SINLD, COSLD, DTGA, DSINB, DSINBE, DifPP;
 	double ATMTR, ANGOT;
 };

@@ -290,23 +290,22 @@ void WofostModel::crop_rates() {
   //determine extra death due to exceeding of life p.SPAN of leaves leaf death is imposed on array until no more leaves have to die or all leaves are gone
 	double REST = crop.DSLV;
 	int i1 = crop.ILVOLD;
-	while(REST > crop.LV[i1 - 1] && i1 >= 1){
+	while (REST > crop.LV[i1 - 1] && i1 >= 1){
 		REST = REST - crop.LV[i1 - 1];
 		i1--;
 	}
 
   //check if some of the remaining leaves are older than p.SPAN, sum their weights
 	double DALV = 0.;
-	if (crop.LVAGE[i1 - 1] > crop.p.SPAN && REST > 0. && i1 >= 1){
+	if (crop.LVAGE[i1 - 1] > crop.p.SPAN && REST > 0. && i1 >= 1) {
 		DALV = crop.LV[i1 - 1] - REST;
 		REST = 0.;
 		i1--;
 	}
-	while(i1 >= 1 && crop.LVAGE[i1 - 1] > crop.p.SPAN){
-		DALV = DALV + crop.LV[i1 - 1];
+	while (i1 >= 1 && crop.LVAGE[i1 - 1] > crop.p.SPAN) {
+		DALV += crop.LV[i1 - 1];
 		i1--;
 	}
-	DALV = DALV;
   //death rate leaves and growth rate living leaves
 	crop.DRLV = crop.DSLV + DALV;
 

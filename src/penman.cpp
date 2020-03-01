@@ -53,21 +53,20 @@ void WofostModel::PENMAN() {
 //  latent heat of evaporation of water (J/kg=J/mm)
 	double LHVAP = 2.45e6;
 //  Stefan Boltzmann constant (J/m2/d/K4)
-	double STBC = 4.9e-3;
+	double STBC = 4.9e-3; //5.670373E-8 * 24*3600
+
 
 //10.2 preparatory calculations
 //  mean daily temperature and temperature difference (Celsius)
 //  coefficient Bu in wind function, dependent on temperature difference
 	double TMPA  = ( atm.TMIN + atm.TMAX ) / 2.; // average temp
 	double TDif  = atm.TMAX - atm.TMIN;
-
 	double BU    = 0.54 + 0.35 * LIMIT(0, 1, (TDif - 12.) / 4.);
 
 //  barometric pressure (mbar)
 //  psychrometric constant (mbar/Celsius)
 	double PBAR  = 1013. * exp(-0.034 * control.elevation / (TMPA+273.));
 	double GAMMA = PSYCON * PBAR/1013.;
-
 
 //  saturated vapour pressure according to equation of Goudriaan
 //  (1977) derivative of SVAP with respect to temperature, i.e.
@@ -103,10 +102,9 @@ void WofostModel::PENMAN() {
     atm.ET0 = (DELTA*RNC+GAMMA*EAC)/(DELTA+GAMMA);
 
 //  Ensure reference evaporation >= 0.
-    atm.E0  = std::max(0., atm.E0) / 10;
+    atm.E0  = std::max(0., atm.E0) / 10;  // in cm!
     atm.ES0 = std::max(0., atm.ES0)  / 10;
     atm.ET0 = std::max(0., atm.ET0)  / 10;
-       
 }
 
 
@@ -209,24 +207,18 @@ void WofostModel::PENMAN_MONTEITH() {
 
         // Reference ET in mm/day
         atm.ET0 = (DELTA * (RN-G))/(DELTA + MGAMMA) + (GAMMA * EA)/(DELTA + MGAMMA);
-        atm.ET0 = std::max(0., atm.ET0);
+        atm.ET0 = std::max(0., atm.ET0 / 10); 
     } else {
         atm.ET0 = 0.;
 	}
-	// ignoring the difference between canopy, soil and water, as canopy is much more important.
-    atm.E0  = atm.ET0;
-    atm.ES0 = atm.ET0;
 }	
 
 
 
 void WofostModel::ET() {
 	ASTRO();
-	if (control.usePENMAN) {
-		PENMAN();
-	} else {
-		PENMAN_MONTEITH();
-	}
+	PENMAN(); // E0, ES0, ET0
+	PENMAN_MONTEITH(); // ET0
 }
 
 

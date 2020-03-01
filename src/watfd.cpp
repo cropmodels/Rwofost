@@ -93,11 +93,7 @@ void WofostModel::WATFD_initialize() {
   soil.EVST   = 0.;
   soil.EVWT   = 0.;
   soil.TSR    = 0.;
-  atm.RAINT  = 0.;
   soil.WDRT   = 0.;
-  soil.TOTINF = 0.;
-  soil.TOTIRR = 0.;
-  soil.SUMSM  = 0.;
   soil.PERCT  = 0.;
   soil.LOSST  = 0.;
 
@@ -106,31 +102,27 @@ void WofostModel::WATFD_initialize() {
     soil.EVS   = 0.;
     soil.EVW   = 0.;
     soil.RIN   = 0.;
+	soil.RINold = 0.;
     soil.RIRR  = 0.;
     soil.DW    = 0.;
     soil.PERC  = 0.;
     soil.LOSS  = 0.;
     soil.DWLOW = 0.;
 
-
     // infiltration parameters WOFOST41
     // DATA p.NINFTB/0.0,0.00, 0.5,0.12, 1.0,0.29, 2.0,0.71, 3.0,0.91, 7.0,1.00, 8*0./
     // infiltration parameters WOFOST_WRR
     // this is a multiplier for non-infiltrating fraction of rainfall as a function of daily rainfall
-    // RH: this needs to become an input variable
-    soil.p.NINFTB.resize(8);
-    double help[8] = {0.0, 0.0, 0.5, 0.0, 1.5, 1.0, 0.0, 0.0};
-    for (int i =0; i<8; i++) {
-      soil.p.NINFTB[i] = help[i];
-    }
+    // RH: this needs to become an input variable?
+    soil.p.NINFTB = {0.0, 0.0, 0.5, 0.0, 1.5, 1.0, 0.0, 0.0};
+	
 }
 
 
 void WofostModel::WATFD_rates() {
 // rates of the water balance
 
-//  N.B.: transpiration rate is calculated in EVTRA called by CROPSI actual evaporation rates ...
-    soil.EVW = 0.;
+	soil.EVW = 0.;
     soil.EVS = 0.;
 // from surface water if surface storage more than 1 cm, ...
     if (soil.SS > 1.)  {
@@ -140,120 +132,120 @@ void WofostModel::WATFD_rates() {
 
 //!!in old WOFOST:   evs = evsmx * limit(0.,1.,(sm-p.SMW/3.)/(p.SM0-p.SMW/3.))
 // RH: looks odd as RIN is a rate that is computed later. Should be based on a state?
-      if (soil.RIN >= 1.)  {
-        soil.EVS  = soil.EVSMX;
-        soil.DSLR = 1.;
-      } else {
-         soil.DSLR   = soil.DSLR + 1.;
-         double EVSMXT = soil.EVSMX * (sqrt(soil.DSLR) - sqrt(soil.DSLR - 1.));
-         soil.EVS    = std::min(soil.EVSMX, EVSMXT + soil.RIN);
-       }
+// now using RINold as in pcse
+		if (soil.RINold >= 1.)  {
+			soil.EVS  = soil.EVSMX;
+			soil.DSLR = 1.;
+		} else {
+			soil.DSLR  += 1.;
+			double EVSMXT = soil.EVSMX * (sqrt(soil.DSLR) - sqrt(soil.DSLR - 1.));
+			soil.EVS = std::min(soil.EVSMX, EVSMXT + soil.RINold);
+		}
     }
 
-//  preliminary infiltration rate
-   double RINPRE;
-   if (soil.SS <= 0.1)  {
-// without surface storage
-      if (soil.p.IFUNRN == 0) {
-        RINPRE = (1. - soil.p.NOTINF) * atm.RAIN + soil.RIRR + soil.SS;
-      } else {
-        RINPRE = (1. -soil.p.NOTINF * AFGEN(soil.p.NINFTB, atm.RAIN)) * atm.RAIN + soil.RIRR + soil.SS;
-      }
-   } else {
-//  with surface storage, infiltration limited by p.SOPE
-//!!  Next line replaced TvdW 24-jul-97
-//!!  original: AVAIL  = SS+(RAIN+RIRR-EVW)
-      double AVAIL = soil.SS + (atm.RAIN * (1. - soil.p.NOTINF) + soil.RIRR - soil.EVW);
-      RINPRE = std::min (soil.p.SOPE, AVAIL);
-   }
+	double RINPRE;
+	if (soil.p.IFUNRN == 0) {
+		RINPRE = (1 - soil.p.NOTINF) * atm.RAIN;
+	} else {
+		RINPRE = (1 - soil.p.NOTINF * AFGEN(soil.p.NINFTB, atm.RAIN)) * atm.RAIN;
+	}
+    RINPRE += soil.RIRR + soil.SS;
+    if (soil.SS > 0.1) {
+       //with surface storage, infiltration limited by SOPE
+        double AVAIL = RINPRE + soil.RIRR - soil.EVW;
+        RINPRE = std::min(soil.p.SOPE, AVAIL);
+	}
 
 // percolation
 // equilibrium amount of soil moisture in rooted zone
-  double WE = soil.p.SMFCF * crop.RD;
+	double WE = soil.p.SMFCF * crop.RD;
 // percolation from rooted zone to subsoil equals amount of excess moisture in rooted zone (not to exceed conductivity)
-  double PERC1 =  LIMIT (0., soil.p.SOPE, (soil.W - WE) - crop.TRA - soil.EVS);
+	double PERC1 =  LIMIT (0., soil.p.SOPE, (soil.W - WE) - crop.TRA - soil.EVS);
 
 // loss of water at the lower end of the maximum root zone equilibrium amount of soil moisture below rooted zone
-  double WELOW = soil.p.SMFCF * (soil.RDM - crop.RD);
-  soil.LOSS  = LIMIT (0., soil.p.KSUB, (soil.WLOW - WELOW) + PERC1 );
+	double WELOW = soil.p.SMFCF * (soil.RDM - crop.RD);
+	soil.LOSS  = LIMIT (0., soil.p.KSUB, (soil.WLOW - WELOW) + PERC1 );
 // for rice water losses are limited to p.K0/20
-  if (crop.p.IAIRDU == 1) soil.LOSS = std::min (soil.LOSS, 0.05 * soil.p.K0);
+	if (crop.p.IAIRDU == 1) soil.LOSS = std::min (soil.LOSS, 0.05 * soil.p.K0);
 
 // percolation not to exceed uptake capacity of subsoil
-   double PERC2 = ((soil.RDM - crop.RD) * soil.p.SM0 - soil.WLOW) + soil.LOSS;
-   soil.PERC  = std::min (PERC1, PERC2);
+	double PERC2 = ((soil.RDM - crop.RD) * soil.p.SM0 - soil.WLOW) + soil.LOSS;
+	soil.PERC  = std::min (PERC1, PERC2);
 
 // adjustment of infiltration rate
-   soil.RIN = std::min(RINPRE, (soil.p.SM0-soil.SM) * crop.RD + crop.TRA + soil.EVS + soil.PERC);
-
+	soil.RIN = std::min(RINPRE, (soil.p.SM0-soil.SM) * crop.RD + crop.TRA + soil.EVS + soil.PERC);
+	soil.RINold = soil.RIN;
 // rates of change in amounts of moisture W and WLOW
-   soil.DW    = -crop.TRA - soil.EVS - soil.PERC + soil.RIN;
-   soil.DWLOW = soil.PERC - soil.LOSS;
+	soil.DW    =  soil.RIN - crop.TRA - soil.EVS - soil.PERC;
+	soil.DWLOW = soil.PERC - soil.LOSS;
+	
 
+    // Check if DW creates a negative value of W
+    // If so, reduce EVS to reach W == 0
+    double Wtmp = soil.W + soil.DW;
+    if (Wtmp < 0.0) {
+        soil.EVS += Wtmp;
+        soil.DW = -soil.W;
+	}
+    // Computation of rate of change in surface storage and surface runoff
+    // SStmp is the layer of water that cannot infiltrate and that can potentially
+    // be stored on the surface. Here we assume that RAIN_NOTINF automatically
+    // ends up in the surface storage (and finally runoff).
+    //double SStmp = atm.RAIN + soil.RIRR - soil.EVW - soil.RIN;
+    // rate of change in surface storage is limited by SSMAX - SS
+    //soil.DSS = min(SStmp, (soil.p.SSMAX - soil.SS))
+    // Remaining part of SStmp is send to surface runoff
+    //soil.DTSR = SStmp - soil.DSS;
+	
 }
 
 
 void WofostModel::WATFD_states() {
 
 // total evaporation from surface water layer and/or soil
-  soil.EVWT = soil.EVWT + soil.EVW;
-  soil.EVST = soil.EVST + soil.EVS;
-
-// totals for rainfall, irrigation and infiltration
-  atm.RAINT  = atm.RAINT + atm.RAIN;
-  soil.TOTINF = soil.TOTINF + soil.RIN;
-  soil.TOTIRR = soil.TOTIRR + soil.RIRR;
+	soil.EVWT += soil.EVW;
+	soil.EVST += soil.EVS;
 
 // surface storage and runoff
-  double SSPRE = soil.SS + (atm.RAIN + soil.RIRR - soil.EVW - soil.RIN);
-  soil.SS    = std::min (SSPRE, soil.p.SSMAX);
-  soil.TSR   = soil.TSR + (SSPRE - soil.SS);
+	double SSPRE = soil.SS + (atm.RAIN + soil.RIRR - soil.EVW - soil.RIN);
+	soil.SS    = std::min (SSPRE, soil.p.SSMAX);
+	soil.TSR  += SSPRE - soil.SS;
 
 // amount of water in rooted zone
-  double W_NEW = soil.W + soil.DW;
-  if (W_NEW < 0.0)  {
-      soil.EVST = soil.EVST + W_NEW;
-      soil.W = 0.0;
-  } else {
-      soil.W = W_NEW;
-  }
+	double W_NEW = soil.W + soil.DW;
+	if (W_NEW < 0.0)  {
+		soil.EVST = soil.EVST + W_NEW;
+		soil.W = 0.0;
+	} else {
+		soil.W = W_NEW;
+	}
 
 // total percolation and loss of water by deep leaching
-  soil.PERCT = soil.PERCT + soil.PERC;
-  soil.LOSST = soil.LOSST + soil.LOSS;
+	soil.PERCT += soil.PERC;
+	soil.LOSST += soil.LOSS;
 
 // amount of water in unrooted, lower part of rootable zone
-  soil.WLOW = soil.WLOW + soil.DWLOW;
+	soil.WLOW += soil.DWLOW;
 // total amount of water in the whole rootable zone
-  soil.WWLOW = soil.W + soil.WLOW;
-
+	soil.WWLOW = soil.W + soil.WLOW;
 
 //----------------------------------------------
 //        change of rootzone subsystem boundary
 //----------------------------------------------
-//        calculation of amount of soil moisture in new rootzone
+// calculation of amount of soil moisture in new rootzone
 
-//        old rooting depth
-// RH:
-// this: crop.RD - crop.RDOLD
-// should be replaced by the root growth rate
-
-   if (crop.RD - crop.RDOLD > 0.001)  {
+   if (crop.RR > 0.001)  {
 // water added to root zone by root growth, in cm
-      double WDR  = soil.WLOW*(crop.RD - crop.RDOLD)/(soil.RDM - crop.RDOLD);
-      
-
+      double WDR  = soil.WLOW * (crop.RR)/(soil.RDM - crop.RDOLD);
 // total water addition to rootzone by root growth
-      soil.WDRT = soil.WDRT + WDR;
+      soil.WDRT += WDR;
 // amount of soil moisture in extended rootzone
-      soil.W = soil.W + WDR;
+      soil.W += WDR;
    }
-
 // mean soil moisture content in rooted zone
    soil.SM = soil.W / crop.RD;
-  //        calculating mean soil moisture content over growing period
-   soil.SUMSM = soil.SUMSM + soil.SM;
-  //        save rooting depth
+  // calculating mean soil moisture content over growing period
+   //soil.SUMSM += soil.SM;
+  // save rooting depth
    crop.RDOLD = crop.RD;
-
 }

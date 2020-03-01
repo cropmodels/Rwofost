@@ -43,7 +43,7 @@ void WofostModel::EVTRA() {
     double KGLOB = 0.75 * crop.KDif;
     //crop specific correction on potential transpiration rate
     atm.ET0 = crop.p.CFET * atm.ET0;
-
+              
     //maximum evaporation and transpiration rates
     double EKL = exp( -KGLOB * crop.LAI);
     soil.EVWMX = atm.E0 * EKL;

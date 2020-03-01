@@ -44,8 +44,9 @@
 	#dcrop <- wofost_crop('sugarbeet_601')
 
 	if (isTRUE(grep("dynamics", ttype))) {
-		yy <- yaml::read_yaml(gsub("rootdynamics", "potentialproduction", yf))
-		yy <- yaml::read_yaml(gsub("leafdynamics", "potentialproduction", yf))
+		yy <- yf
+		yy <- yaml::read_yaml(gsub("rootdynamics", "potentialproduction", yy))
+		yy <- yaml::read_yaml(gsub("leafdynamics", "potentialproduction", yy))
 		dcrop$FRTB <- Rwofost:::.make_matrices(yy$ModelParameters$FRTB)
 	} 
 
