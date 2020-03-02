@@ -24,10 +24,10 @@
 	w <- data.frame(
 				date=as.Date(x$DAY), 
 				srad=as.numeric(x$IRRAD) / 1000,
-				prec=as.numeric(x$RAIN) * 10,
+				prec=as.numeric(x$RAIN) * 10, #cm to mm
 				tmin=as.numeric(x$TMIN),
 				tmax=as.numeric(x$TMAX),
-				vapr=as.numeric(x$VAP),
+				vapr=as.numeric(x$VAP) / 10, #hPa to kPa
 				wind=as.numeric(x$WIND)
 			)
 	
@@ -229,6 +229,6 @@
 #xr <- Rwofost:::.test(ydir, "rootdynamics") # OK
 #xp <- Rwofost:::.test(ydir, "respiration") #OK
 #xl <- Rwofost:::.test(ydir, "leafdynamics")
-#xp <- Rwofost:::.test(ydir, "potentialproduction", 1:4)
-#xw <- Rwofost:::.test(ydir, "waterlimitedproduction", 1:4)
+#xp <- Rwofost:::.test(ydir, "potentialproduction")
+#xw <- Rwofost:::.test(ydir, "waterlimitedproduction")
 
