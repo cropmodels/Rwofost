@@ -51,7 +51,7 @@ corresponds with Wind's loam with a drain  depth of 150 cm.
 
 void WofostModel::STDAY_initialize() {
 	
-// RH:  Terrible hack (BI = "Bintje" ???	)
+// RH: this is a strange hack
 /*    if( soil.CRPNAM.substr(1,2) == "BI" ){ 
 // two seepage parameters for deep seedbed (potato)
         soil.SPAC = soil.p.SPADS;

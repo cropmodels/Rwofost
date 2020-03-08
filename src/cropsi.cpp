@@ -17,8 +17,8 @@ Modifications since WOFOST Version 4.1:
 
 Tamme van der Wal (25-July-1997)
 1) New parameter is read in: p.DVSI                 |
-2) KDIFTB, EFFTB and SSATB are now read in from data files and KDif, EFF and SSA are calculated using the AFGEN function.
-KDif, EFF and SSA which are now functions of DVS or DTEMP
+2) KDif, EFF and SSA are now functions of DVS or DTEMP, 
+calculated using KDIFTB, EFFTB and SSATB and the AFGEN function.
 
 SSA renamed to SSI following PCSE
 
@@ -119,9 +119,12 @@ void WofostModel::crop_initialize() {
 	}
 	
 	crop.TMNSAV.reserve(7);
-	if (control.nutrient_limited){
-		npk_crop_dynamics_initialize();
-	}
+	
+	//if (control.nutrient_limited){
+	//	npk_crop_dynamics_initialize();
+	//}
+
+	//vernalization_initialize();
 
 }
 
@@ -146,7 +149,7 @@ void WofostModel::crop_rates() {
     int j = 0;
     for (int i = 0; i < 7; i++) {
       if (crop.TMNSAV[i] != -99) {
-        crop.TMINRA = crop.TMINRA + crop.TMNSAV[i];
+        crop.TMINRA += crop.TMNSAV[i];
         j++;
       }
     }
@@ -154,13 +157,18 @@ void WofostModel::crop_rates() {
 
 
     crop.DTSUM = AFGEN(crop.p.DTSMTB, atm.TEMP);
+	//vernalization_rates();
     if(crop.DVS < 1.){
       //effects of daylength and temperature on development during vegetative phase
 		crop.DVR = crop.DTSUM / crop.p.TSUM1;
+		double DVRED;
 		if (crop.p.IDSL >= 1) {
-			double DVRED = LIMIT(0.,1.,(atm.DAYLP- crop.p.DLC)/(crop.p.DLO - crop.p.DLC));
-			crop.DVR = crop.DVR * DVRED;
+			DVRED = LIMIT(0.,1.,(atm.DAYLP- crop.p.DLC)/(crop.p.DLO - crop.p.DLC));
+		} else {
+			DVRED = 1;
 		}
+		//crop.DVR = crop.DVR * DVRED * crop.r.VERNFAC;
+		crop.DVR = crop.DVR * DVRED;
 
     } else { //development during generative phase
 		crop.DVR = crop.DTSUM / crop.p.TSUM2;
@@ -186,12 +194,13 @@ void WofostModel::crop_rates() {
   //  crop.GASS = crop.PGASS * crop.TRA / crop.TRAMX;
   // nutrient status and reduction factor
 	double reduction;
-	if (control.nutrient_limited) {
-		npk_stress();
-		reduction = std::min(crop.vn.NPKREF, crop.TRA / crop.TRAMX);
-	}  else {
-		reduction = crop.TRA / crop.TRAMX;
-	}
+	//if (control.nutrient_limited) {
+	//	npk_stress();
+	//	reduction = std::min(crop.vn.NPKREF, crop.TRA / crop.TRAMX);
+	//}  else {
+	reduction = crop.TRA / crop.TRAMX;
+	//}
+	
     // water stress reduction
     // Select minimum of nutrient and water stress
   //double reduction = min(crop.vn.NPKREF, crop.TRA / crop.TRAMX);
@@ -215,6 +224,7 @@ void WofostModel::crop_rates() {
 
 	crop.TRANRF = crop.TRA/crop.TRAMX;   //commented previously
 
+/*
 	if (control.nutrient_limited){
 
 		if (crop.TRANRF < crop.vn.NNI) {
@@ -235,6 +245,7 @@ void WofostModel::crop_rates() {
 			crop.FL = FL;
 		}
 	}
+*/
 
 	double CVF = 1./((crop.FL/crop.p.CVL + crop.FS/crop.p.CVS + crop.FO/crop.p.CVO)*(1. - crop.FR) + crop.FR/crop.p.CVR);
 
@@ -336,9 +347,9 @@ void WofostModel::crop_rates() {
 	crop.GWSO = crop.FO * ADMI;
 	crop.DRSO = 0.;
 
-	if(control.nutrient_limited){
-		npk_crop_dynamics_rates();
-	}
+	//if(control.nutrient_limited){
+	//	npk_crop_dynamics_rates();
+	//}
 
 	ROOTD_rates();
 
@@ -358,13 +369,11 @@ void WofostModel::crop_states() {
   //save date of anthesis, adjust development stage
 	if( crop.DVS >= 1. && crop.IDANTH < 0 ){
 		crop.IDANTH = int( step ) - crop.emergence;
-
-/* RH: DVS is above 1 for the first time and set back
-     to exactly 1. That seems to be a strange fudge.
-     figure out why this is, or remove?	*/
-		crop.DVS = 1.;
-//    DOANTH = true;
+// RH: DVS is above 1 for the first time and set back
+//       to exactly 1. That seems to be a strange fudge.
+ 		crop.DVS = 1.;
 	}
+	//vernalization_states();
 
 
   //leaf death is imposed on array until no more leaves have to die or all leaves are gone
@@ -438,9 +447,9 @@ void WofostModel::crop_states() {
 	//leaf area index
 	crop.LAI = crop.LASUM + crop.SAI + crop.PAI;
 
-	if(control.nutrient_limited){
-		npk_crop_dynamics_states();
-	}
+	//if(control.nutrient_limited){
+	//	npk_crop_dynamics_states();
+	//}
 
 	ROOTD_states();
 

@@ -239,8 +239,8 @@ int main(int argc, char *argv[]) {
 	m.crop = crp;
 	m.soil = sol;
 	m.control = tim;
-    int start = date2int(date(1977, 1, 1));
-	m.control.modelstart = start;
+    //int start = date2int(date(1977, 1, 1));
+	//m.control.modelstart = start;
 	m.wth = wth;
 //    m.wth$latitude <- 52.57
 	m.model_run();

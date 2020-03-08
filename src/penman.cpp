@@ -215,12 +215,6 @@ void WofostModel::PENMAN_MONTEITH() {
 
 
 
-void WofostModel::ET() {
-	ASTRO();
-	PENMAN(); // E0, ES0, ET0
-	PENMAN_MONTEITH(); // ET0
-}
-
 
 
 /*

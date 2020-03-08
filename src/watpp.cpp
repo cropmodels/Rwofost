@@ -7,7 +7,6 @@ License: GNU General Public License (GNU GPL) v. 2
 Based on FORTRAN code WOFOST version 7.1.7, release September 2013
 Copyright 1988, 2013 Alterra, Wageningen-UR, Licensed under the EUPL, Version 1.1.
 
-
 Subroutine WATPP is derived from subroutine APPLE of WOFOST Version 4.1. WATPP is called by WOFSIM. In this routine the variables of the soil water balance in the potential production situation are calculated. The purpose is to quantify the crop water requirements for continuous growth without drought stress. It is assumed that the soil is permanently at field capacity.
 
 Author: C.A. van Diepen, February 1989, revised July 1990
@@ -28,7 +27,6 @@ VARIABLE TYPE Description                                      Units   I/O
 */
 
 #include "wofost.h"
-//#include <iostream>
 
 void WofostModel::WATPP_initialize() {
       soil.SM   = soil.p.SMFCF;

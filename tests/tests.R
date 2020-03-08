@@ -1,5 +1,5 @@
 
-.make_matrices <- function(x) {
+make_matrices <- function(x) {
 	if (length(x) > 1) { 
 		x <- matrix(x, nrow=2) 
 		# remove trailing zeros
@@ -15,7 +15,7 @@
 }
 
 
-.yamltest <- function(yf) {
+yamltest <- function(yf) {
 
 	ttype <- strsplit(basename(yf), "_")[[1]][2]
 	y <- yaml::read_yaml(yf)
@@ -135,7 +135,7 @@
 
 
 
-.getPR <- function(path, test, i) {
+getPR <- function(path, test, i) {
     ii <- formatC(i, width=2, flag="0")
     yf <- file.path(path, paste0("test_", test, "_wofost71_", ii, ".yaml")) 
     x <- Rwofost:::.yamltest(yf)
@@ -153,25 +153,25 @@
 }
 
 
-.complot <- function(x, p, r=p) {
+complot <- function(x, p, r=p) {
 	plot(x$R$date, x$P[[p]], ylim=range(c(x$P[[p]], x$R[[r]])), xlab="", ylab=p, col="blue")
 	points(x$R$date, x$R[[r]], col="red", pch=2, cex=.5)
 	legend("topleft", c("Py", "R"), pch=c(1, 2), pt.cex=c(1,0.5), col=c("blue", "red"))
 }
 
-.error <- function(x, p, r=p) {
+error <- function(x, p, r=p) {
 	rmse <- sqrt(mean((x$P[[p]] - x$R[[r]])^2))
 	min(rmse / mean(x$P[[p]]), rmse / median(x$P[[p]]))
 }
 
 
-.test_precision <- function(x, p) {
+test_precision <- function(x, p) {
 	dif <- abs(x$P[[p]] - x$R[[p]])
 	sum( dif > x$prec[[p]]) / nrow(x$P)
 }
 
 
-.test <- function(path, group, tests=1:42) {
+test <- function(path, group, tests=1:42) {
 
 	if (group == "astro"){
 		aprec <- list(ANGOT=1000, ATMTR=0.004, COSLD=0.005, DAYL=0.1, DAYLP=0.1, DIFPP=1.5, DSINBE=250, SINLD=0.0005)
@@ -220,14 +220,17 @@
 	result
 }
 
-#library(Rwofost)
+
+## location of the wofost yaml test files.
 #ydir <- "C:/github/cropmodels/Rwofost_test/test_data/"
-#xs <- Rwofost:::.test(ydir, "astro") #OK
-#xy <- Rwofost:::.test(ydir, "phenology") #OK (skipping vernalization)
-#xp <- Rwofost:::.test(ydir, "partitioning") #OK
-#xa <- Rwofost:::.test(ydir, "assimilation") #OK
-#xr <- Rwofost:::.test(ydir, "rootdynamics") # OK
-#xp <- Rwofost:::.test(ydir, "respiration") #OK
+
+#library(Rwofost)
+#xs <- Rwofost:::.test(ydir, "astro")
+#xy <- Rwofost:::.test(ydir, "phenology")
+#xp <- Rwofost:::.test(ydir, "partitioning")
+#xa <- Rwofost:::.test(ydir, "assimilation")
+#xr <- Rwofost:::.test(ydir, "rootdynamics")
+#xp <- Rwofost:::.test(ydir, "respiration")
 #xl <- Rwofost:::.test(ydir, "leafdynamics")
 #xp <- Rwofost:::.test(ydir, "potentialproduction")
 #xw <- Rwofost:::.test(ydir, "waterlimitedproduction")

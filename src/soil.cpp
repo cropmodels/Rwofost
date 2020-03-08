@@ -1,11 +1,8 @@
 /*
-C++ code by Huang Fang and Robert Hijmans
-Date: July 2016
+Robert Hijmans
+July 2016
 
 License: GNU General Public License (GNU GPL) v. 2
-
-Based on FORTRAN code WOFOST version 7.1.7, release September 2013
-Copyright 1988, 2013 Alterra, Wageningen-UR, Licensed under the EUPL, Version 1.1.
 */
 
 #include <vector>

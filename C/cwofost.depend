@@ -3,21 +3,21 @@
 	<math.h>
 	<vector>
 
-1582590913 source:c:\github\cropmodels\rwofost\src\astro.cpp
+1582594513 source:c:\github\cropmodels\rwofost\src\astro.cpp
 	<math.h>
 	<vector>
 	"wofost.h"
 
-1582593456 c:\github\cropmodels\rwofost\src\wofost.h
+1583698447 c:\github\cropmodels\rwofost\src\wofost.h
 	<vector>
 	<string>
 	"SimUtil.h"
 
-1582592740 source:c:\github\cropmodels\rwofost\src\cropsi.cpp
+1583697952 source:c:\github\cropmodels\rwofost\src\cropsi.cpp
 	<math.h>
 	"wofost.h"
 
-1582595567 source:c:\github\cropmodels\rwofost\src\evtra.cpp
+1583035204 source:c:\github\cropmodels\rwofost\src\evtra.cpp
 	<vector>
 	<math.h>
 	"wofost.h"
@@ -58,71 +58,72 @@
 	"SimUtil.h"
 	<string.h>
 
-1582590913 source:c:\github\cropmodels\rwofost\src\penman.cpp
+1583289895 source:c:\github\cropmodels\rwofost\src\penman.cpp
 	"SimUtil.h"
 	"wofost.h"
 	<cmath>
 
-1582595604 source:c:\github\cropmodels\rwofost\src\rootd.cpp
+1582860718 source:c:\github\cropmodels\rwofost\src\rootd.cpp
 	"wofost.h"
 	"SimUtil.h"
 
-1582595297 source:c:\github\cropmodels\rwofost\src\soil.cpp
+1583687874 source:c:\github\cropmodels\rwofost\src\soil.cpp
 	<vector>
 	"SimUtil.h"
 	"wofost.h"
 
-1582590913 source:c:\github\cropmodels\rwofost\src\stday.cpp
+1583687966 source:c:\github\cropmodels\rwofost\src\stday.cpp
 	"wofost.h"
 	"SimUtil.h"
 
-1582590913 source:c:\github\cropmodels\rwofost\src\subsol.cpp
+1582594513 source:c:\github\cropmodels\rwofost\src\subsol.cpp
 	<algorithm>
 	<cmath>
 	<vector>
 	"wofost.h"
 	"SimUtil.h"
 
-1582590913 source:c:\github\cropmodels\rwofost\src\totass.cpp
+1582594513 source:c:\github\cropmodels\rwofost\src\totass.cpp
 	<math.h>
 	<algorithm>
 	"wofost.h"
 
-1582593613 source:c:\github\cropmodels\rwofost\src\watfd.cpp
+1583040517 source:c:\github\cropmodels\rwofost\src\watfd.cpp
 	<vector>
 	"SimUtil.h"
 	"wofost.h"
 	<math.h>
 
-1582590913 source:c:\github\cropmodels\rwofost\src\watgw.cpp
+1583039053 source:c:\github\cropmodels\rwofost\src\watgw.cpp
 	"wofost.h"
+	"subsol.h"
 	"SimUtil.h"
 	<math.h>
 
-1582590913 source:c:\github\cropmodels\rwofost\src\watpp.cpp
+1583688056 source:c:\github\cropmodels\rwofost\src\watpp.cpp
 	"wofost.h"
 
-1582595592 source:c:\github\cropmodels\rwofost\src\wofost.cpp
+1583687534 source:c:\github\cropmodels\rwofost\src\wofost.cpp
 	<vector>
 	"wofost.h"
 	"SimUtil.h"
 	<math.h>
 	<string.h>
 
-1582591772 source:c:\github\cropmodels\rwofost\c\main.cpp
+1583698110 source:c:\github\cropmodels\rwofost\c\main.cpp
 	<vector>
 	<fstream>
 	"wofost.h"
 	"date.h"
 	"files.h"
 
-1582590913 c:\github\cropmodels\rwofost\c\date.h
+1582594513 c:\github\cropmodels\rwofost\c\date.h
 	<iostream>
 
-1582590913 c:\github\cropmodels\rwofost\c\files.h
+1582594513 c:\github\cropmodels\rwofost\c\files.h
 	"date.h"
 
-1582590913 source:c:\github\cropmodels\rwofost\c\files.cpp
+1582594513 source:c:\github\cropmodels\rwofost\c\files.cpp
 	<iostream>
 	<string>
 	<vector>
@@ -132,13 +133,18 @@
 	"files.h"
 	"date.h"
 
-1582590913 source:c:\github\cropmodels\rwofost\c\date.cpp
+1582594513 source:c:\github\cropmodels\rwofost\c\date.cpp
 	"date.h"
 	<vector>
 	<string>
 	<sstream>
 
-1582590913 c:\github\cropmodels\rwofost\src\simutil.h
+1582759600 c:\github\cropmodels\rwofost\src\simutil.h
 	<vector>
 	<algorithm>
+
+1583697957 source:c:\github\cropmodels\rwofost\src\vernalisation.cpp
+	"wofost.h"
+
+1582863571 c:\github\cropmodels\rwofost\src\subsol.h
 

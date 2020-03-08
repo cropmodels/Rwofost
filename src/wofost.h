@@ -7,7 +7,6 @@ License: GNU General Public License (GNU GPL) v. 2
 
 #include <vector>
 #include <string>
-//#include "date.h"
 #include "SimUtil.h"
 
 class WofostWeather {
@@ -22,7 +21,7 @@ struct WofostControl {
 	unsigned cropstart; // sowing, emergence, ...;
 	//bool long_output;
 	std::string output_option;
-	bool npk_model = false;  //if model is npk, default false
+	//bool npk_model = false;  //if model is npk, default false
 
 	double latitude, elevation;
 	double CO2 = 410;
@@ -42,6 +41,7 @@ struct WofostControl {
 };
 
 
+/*
 struct WofostCropParametersNPK {
 	double TCNT, TCPT, TCKT;
 	double DVSNPK_STOP, NFIX_FR, NPART;
@@ -53,7 +53,7 @@ struct WofostCropParametersNPK {
 	double NCRIT_FR, PCRIT_FR, KCRIT_FR;
 	double NLUE_NPK, NPK_TRANSLRT_FR;
 };
-
+*/
 
 struct WofostCropParameters {
     int IAIRDU, IDSL;
@@ -65,12 +65,32 @@ struct WofostCropParameters {
 	//tables
 	std::vector<double> DTSMTB, AMAXTB, TMPFTB, KDIFTB, EFFTB, TMNFTB, RFSETB, SLATB, FRTB, FLTB, FSTB, FOTB, RDRSTB, RDRRTB, SSATB;
 	std::vector<double> CO2AMAXTB, CO2EFFTB, CO2TRATB;
+	
+	//vernalization
+	unsigned VERNSAT; // Saturated vernalisation requirements (days)
+	unsigned VERNBASE; // Base vernalisation requirements (days)
+	std::vector<double> VERNRTB; // vernalisation rate temperature response.
+	double VERNDVS; // DVS at which vernalisation is fulfilled
+	
 } ;
 
+struct WofostCropRates {
+	double VERNR;   // Rate of vernalisation
+    double VERNFAC; // Red. factor for phenol. devel.
+
+};
+
+struct WofostCropStates {
+	unsigned VERN; // Vernalisation state (days)
+	long DOV;      // Day when vernalisation requirements are fulfilled.
+	bool ISVERNALISED; // has the vernalisation been reached?
+};
 
 struct WofostCrop {
 
 	WofostCropParameters p;
+	WofostCropRates r;
+	WofostCropStates s;
 	
 // rates
 	double GASS, GWST, GWSO;
@@ -78,6 +98,7 @@ struct WofostCrop {
 	double DVR, DTSUME, DTSUM, GLAIEX;
 	double RR, FYSDEL;
 	
+
 	//struct states {
 	double RD, RDOLD, GRLV, DWRT, DWLV, DWST, DWSO;
 	double DVS, LAI, LAIEXP, WRT, WLV, WST, WSO;
@@ -98,9 +119,9 @@ struct WofostCrop {
 
 	
 //04/2017 npk
-	double GASST, MREST, CTRAT, HI;
+	//double GASST, MREST, CTRAT, HI;
 
-	
+	/*
 	WofostCropParametersNPK pn; // nutrient parameters
 
 	struct ratesNPK {
@@ -124,7 +145,8 @@ struct WofostCrop {
 		double ATKLV, ATKST, ATKRT;
 	};
 	statesNPK sn;
-
+	*/
+	
 	struct variables {
 		double NNI, PNI, KNI, NPKI, NPKREF;
 		double NTRANSLOCATABLE, PTRANSLOCATABLE, KTRANSLOCATABLE;
@@ -137,7 +159,7 @@ struct WofostCrop {
 
 };
 
-
+/*
 struct WofostSoilParametersNPK {
 	double BG_N_SUPPLY, BG_P_SUPPLY, BG_K_SUPPLY;
 	std::vector<double> N_recovery, P_recovery, K_recovery;
@@ -145,7 +167,7 @@ struct WofostSoilParametersNPK {
 	double NSOILBASE, PSOILBASE, KSOILBASE;
 	double NSOILI, PSOILI, KSOILI;
 };
-
+*/
 
 struct WofostSoilParameters {
 
@@ -169,7 +191,7 @@ struct WofostSoilParameters {
 struct WofostSoil {
 
 	WofostSoilParameters p;
-	WofostSoilParametersNPK pn;
+	//WofostSoilParametersNPK pn;
 
 // RATES
 	double EVS, EVW, CR, DMAX, DZ;
@@ -188,6 +210,7 @@ struct WofostSoil {
 
 	std::vector<double> SDEFTB, DEFDTB, CAPRFU;
 
+	/*
 	struct ratesNPK {
 		double RNSOIL, RPSOIL, RKSOIL;
 		double RNAVAIL, RPAVAIL, RKAVAIL;
@@ -199,7 +222,7 @@ struct WofostSoil {
 		double NAVAIL, PAVAIL, KAVAIL;
 	};
 	statesNPK sn;
-	
+	*/
 
 };
 
@@ -230,7 +253,7 @@ struct WofostModel {
 	unsigned step, time, DOY, npk_step;
 	int IDHALT, ISTATE, IOX;
 
-	std::vector<std::string>  messages;
+	std::vector<std::string> messages;
 	bool fatalError;
 
 	WofostSoil soil;
@@ -251,9 +274,13 @@ struct WofostModel {
 	void crop_rates();
 	void crop_states();
 
+	void vernalization_initialize();
+	void vernalization_states();
+	void vernalization_rates();
+
 	//void npk_rates();
 	//void npk_states();
-	void npk_demand_uptake_initialize();
+/*	void npk_demand_uptake_initialize();
 	void npk_demand_uptake_rates();
 	void npk_demand_uptake_states();
 
@@ -271,7 +298,7 @@ struct WofostModel {
 
 	void npk_stress();
 	void npk_apply();
-
+*/
 	//void maintanance_respiration();
 
 	void soil_initialize();
@@ -300,7 +327,6 @@ struct WofostModel {
 	void ASTRO();
 	void PENMAN();
 	void PENMAN_MONTEITH();
-	void ET();
 	void EVTRA();
 	double TOTASS();
 

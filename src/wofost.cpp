@@ -38,7 +38,11 @@ bool WofostModel::weather_step() {
 */
 
 		DOY = doy_from_days(wth.date[time]);
-		ET();
+		
+		ASTRO();
+		PENMAN(); // E0, ES0, ET0
+		PENMAN_MONTEITH(); // ET0
+
 	}
 	return true;
 }
@@ -121,12 +125,14 @@ void WofostModel::model_initialize() {
 	fatalError = false;
 
 	soil_initialize();
+	/*
 	if(control.nutrient_limited){
 		npk_soil_dynamics_initialize();
 		npk_translocation_initialize();
 		npk_demand_uptake_initialize();
 	}
-
+	*/
+	
 	if (ISTATE == 1) {
 		crop.DVS = -0.1;
 	} else {
@@ -190,7 +196,7 @@ void WofostModel::force_states() {
 void WofostModel::model_run() {
 
 	step = 1;
-	npk_step = 0;
+	//npk_step = 0;
 	unsigned cropstart_step = step + control.cropstart;
 
 	model_initialize();
@@ -211,11 +217,11 @@ void WofostModel::model_run() {
 		force_states();
 	
 		weather_step();
-		if(control.nutrient_limited){
-			npk_soil_dynamics_rates();
-		} else{
+		//if(control.nutrient_limited){
+		//	npk_soil_dynamics_rates();
+		//} else{
 			soil_rates();
-		}
+		//}
 		soil.EVWMX = atm.E0;
 		soil.EVSMX = atm.ES0;
 		if (step >= cropstart_step) {
@@ -247,11 +253,11 @@ void WofostModel::model_run() {
 
 		if (!crop_emerged) {
 			model_output();
-			if(control.nutrient_limited){
-				npk_soil_dynamics_states();
-			} else {
+			//if(control.nutrient_limited){
+			//	npk_soil_dynamics_states();
+			//} else {
 				soil_states();
-			}
+			//}
 			time++;
 			step++;
 		}
@@ -278,18 +284,18 @@ void WofostModel::model_run() {
 		
 		if (! weather_step()) break;
 		crop_rates();
-		if (control.nutrient_limited){
-			npk_soil_dynamics_rates();
-		} else {
+		//if (control.nutrient_limited){
+		//	npk_soil_dynamics_rates();
+		//} else {
 			soil_rates();
-		}
+		//}
 		model_output();
 		crop_states();
-		if(control.nutrient_limited){
-			npk_soil_dynamics_states();
-		} else {
+		//if(control.nutrient_limited){
+		//	npk_soil_dynamics_states();
+		//} else {
 			soil_states();
-		}
+		//}
 
 		time++;
 		step++;

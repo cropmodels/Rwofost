@@ -108,6 +108,7 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	cntr.IDURMX = valueFromList<int>(control, "IDURMX");
 		
 	//npk
+	/*
 	cntr.npk_model = valueFromListDefault<int>(control, "npk_model", false);
 	if(cntr.npk_model){
 		cntr.NPKdates = vectorFromList<long>(control, "NPKdates");
@@ -148,7 +149,8 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 		crp.pn.PMAXLV_TB = TableFromList(crop, "PMAXLV_TB");
 		crp.pn.KMAXLV_TB = TableFromList(crop, "KMAXLV_TB");
 	}
-
+	*/
+	
 	crp.p.TBASEM = valueFromList<double>(crop, "TBASEM");
 	crp.p.TEFFMX = valueFromList<double>(crop, "TEFFMX");
 	crp.p.TSUMEM = valueFromList<double>(crop, "TSUMEM");
@@ -241,6 +243,7 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	sol.p.SMLIM = valueFromList<double>(soil, "SMLIM");
 	sol.p.SSI = valueFromList<double>(soil, "SSI");
 
+	/*
 	if(cntr.npk_model){
 		sol.pn.N_recovery = vectorFromList<double>(control, "Nrecovery");
 		sol.pn.P_recovery = vectorFromList<double>(control, "Precovery");
@@ -256,7 +259,7 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 		sol.pn.KSOILBASE_FR = valueFromList<double>(soil, "KSOILBASE_FR");
 
 	}
-
+	*/
 
 // weather
 	WofostWeather wth;

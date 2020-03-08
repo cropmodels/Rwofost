@@ -26,11 +26,11 @@ RCPP_EXPOSED_CLASS(WofostWeather)
 
 RCPP_EXPOSED_CLASS(WofostCrop)
 RCPP_EXPOSED_CLASS(WofostCropParameters)
-RCPP_EXPOSED_CLASS(WofostCropParametersNPK)
+//RCPP_EXPOSED_CLASS(WofostCropParametersNPK)
 
 RCPP_EXPOSED_CLASS(WofostSoil)
 RCPP_EXPOSED_CLASS(WofostSoilParameters)
-RCPP_EXPOSED_CLASS(WofostSoilParametersNPK)
+//RCPP_EXPOSED_CLASS(WofostSoilParametersNPK)
 
 RCPP_EXPOSED_CLASS(WofostControl)
 RCPP_EXPOSED_CLASS(WofostModel)
@@ -75,13 +75,15 @@ RCPP_MODULE(wofost){
 		.field("vapr", &WofostWeather::vapr) 
 	;
 	
+	/*
 	// incomplete
     class_<WofostCropParametersNPK>("WofostCropParametersNPK")
 		.field("TCNT", &WofostCropParametersNPK::TCNT)
 		.field("TCPT", &WofostCropParametersNPK::TCPT)
 		.field("TCKT", &WofostCropParametersNPK::TCKT)
 	;
-
+	*/
+	
 	class_<WofostCropParameters>("WofostCropParameters")
 		.field("TBASEM", &WofostCropParameters::TBASEM)
 		.field("TEFFMX", &WofostCropParameters::TEFFMX)
@@ -138,7 +140,7 @@ RCPP_MODULE(wofost){
 	
     class_<WofostCrop>("WofostCrop")
 		.field("p", &WofostCrop::p, "crop parameters")
-		.field("pn", &WofostCrop::pn, "crop nutrient parameters")
+		//.field("pn", &WofostCrop::pn, "crop nutrient parameters")
 	;
 
 	
@@ -171,14 +173,15 @@ RCPP_MODULE(wofost){
 		.field("RDMSOL", &WofostSoilParameters::RDMSOL)
 	;
 	
-	
+	/*	
     class_<WofostSoilParametersNPK>("WofostSoilParametersNPK")
 		.field("BG_N_SUPPLY", &WofostSoilParametersNPK::BG_N_SUPPLY)
 	;
+	*/
 	
     class_<WofostSoil>("WofostSoil")
 		.field("p", &WofostSoil::p, "soil parameters")
-		.field("pn", &WofostSoil::pn, "soil nutrient parameters")
+		//.field("pn", &WofostSoil::pn, "soil nutrient parameters")
 	;
 	
     class_<WofostOutput>("WofostOutput")
