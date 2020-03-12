@@ -25,6 +25,27 @@
 }
 
 
+.notavailable <- function(group, error=TRUE) {
+	if (group == "crop") {
+		f <- list.files(system.file("wofost/crop", package="Rwofost"), full.names=TRUE)
+	} else {
+		f <- list.files(system.file("wofost/soil", package="Rwofost"), full.names=TRUE)
+	}
+	x <- gsub(".ini", "", basename(f))
+	y <- rep("", 5*ceiling((length(x))/5))
+	y[1:length(x)] <- x
+	y <- matrix(y, ncol=5, byrow=TRUE)
+	y <- apply(y, 1, function(i)paste(i, collapse=", "))
+	y <- paste(gsub(", ,", "", y), collapse="\n")
+	if (error) {
+		stop(paste(group, "not available. Choose one of:\n"), y)
+	} else {
+		print(paste("Choose one of:\n", y))
+	}
+	invisible(x)
+}
+
+
 wofost_control <- function(filename="") {
 	x <- list()
 	if (filename != "") {
@@ -80,14 +101,14 @@ wofost_control <- function(filename="") {
 		ini <- ini[-s,]
 		x$IRRdates <- IRRdates
 	}
-	s <- which(ini[,2] == "NPKdates")
-	if (length(s) > 0){
-		NPKdates <- ini[s[1], 3]
-		NPKdates <- (strsplit(NPKdates, ","))[[1]]
-		NPKdates <- as.Date(NPKdates)
-		ini <- ini[-s,]
-		x$NPKdates <- NPKdates
-	}
+	#s <- which(ini[,2] == "NPKdates")
+	#if (length(s) > 0){
+	#	NPKdates <- ini[s[1], 3]
+	#	NPKdates <- (strsplit(NPKdates, ","))[[1]]
+	#	NPKdates <- as.Date(NPKdates)
+	#	ini <- ini[-s,]
+	#	x$NPKdates <- NPKdates
+	#}
 	x <- append(x, .getNumLst(ini))
 	x
 }
@@ -95,6 +116,14 @@ wofost_control <- function(filename="") {
 
 wofost_soil <- function(name="") {
 
+	if (missing(name)) {
+		return(.notavailable("soil", FALSE))
+	}
+	name <- trimws(name)
+	if (name == "") {
+		return(.notavailable("soil", FALSE))
+	}
+	
 	if (file.exists(name)) {
 		ini <- .readIniFile(name)
 		lst <- .getNumLst(ini)
@@ -108,22 +137,22 @@ wofost_soil <- function(name="") {
 		ini <- .readIniFile(f[i])
 		lst <- .getNumLst(ini)
 		return(lst)
-  } else if (name == "") {
-		message("Choose one of:",paste(soils, collapse=", "))
 	} else {
-		stop(paste("not available. Provide a valid filename or choose one of:", paste(soils, collapse=", ")))
+		.notavailable("soil")
 	}
 }
 
 
-
 wofost_crop <- function(name="") {
-	if (missing(name)) {
-		f <- list.files(system.file("wofost/crop", package="Rwofost"), full.names=TRUE)
-		crops <- gsub(".ini", "", basename(f))
-		stop(paste("not available. Choose one of:", paste(crops, collapse=", ")))
-	}
 
+	if (missing(name)) {
+		return(.notavailable("crop", FALSE))
+	}
+	name <- trimws(name)
+	if (name == "") {
+		return(.notavailable("crop", FALSE))
+	}
+	
 	if (file.exists(name)) {
 		ini <- .readIniFile(name)
 		lst <- .getNumLst(ini)
@@ -137,10 +166,9 @@ wofost_crop <- function(name="") {
 		ini <- .readIniFile(f[i])
 		lst <- .getNumLst(ini)
 		return(lst)
-		} else if (name == "") {
-			message("Choose one of:", paste(crops, collapse=", "))
-		} else {
-			stop(paste("not available. Choose a valid filename or one of:", paste(crops, collapse=", ")))
-		}
+	} else {
+		.notavailable("crop")
+	}
 }
+
 

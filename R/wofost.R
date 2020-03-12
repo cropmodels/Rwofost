@@ -1,18 +1,18 @@
 
-wofost_model <- function(crop, weather, soil, control, location) {
+wofost_model <- function(crop, weather, soil, control) {
 	m <- WofostModel$new()
 	if (!missing(crop)) { crop(m) <- crop }
 	if (!missing(soil)) { soil(m) <- soil }
 	if (!missing(control)) { control(m) <- control }
 	if (!missing(weather)) { weather(m) <- weather }
-	if (!missing(location)) { location(m) <- location }
 	return(m)
 }
 
 
 setMethod("run", signature("Rcpp_WofostModel"), 
-	function(x, stopError=TRUE, ...) {
+	function(x, ...) {
 		x$run()
+		stopError <- isTRUE(list(...)$stopError)
 		msgs <- x$messages
 		nm <- length(msgs)
 		if (nm > 0) {
@@ -78,7 +78,9 @@ setMethod("weather<-", signature("Rcpp_WofostModel", "data.frame"),
 
 		# x$setWeather(value$date, value$tmin, value$tmax, value$srad, value$prec, value$wind, value$vapr)
 
-		w <- WofostWeather$new()
+		w <- new('Rcpp_WofostWeather')
+
+		#w <- WofostWeather$new()
 		w$date <- as.integer(value$date)
 		w$srad <- value$srad
 		w$tmin <- value$tmin

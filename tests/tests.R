@@ -47,7 +47,7 @@ yamltest <- function(yf) {
 		yy <- yf
 		yy <- yaml::read_yaml(gsub("rootdynamics", "potentialproduction", yy))
 		yy <- yaml::read_yaml(gsub("leafdynamics", "potentialproduction", yy))
-		dcrop$FRTB <- Rwofost:::.make_matrices(yy$ModelParameters$FRTB)
+		dcrop$FRTB <- make_matrices(yy$ModelParameters$FRTB)
 	} 
 
 	if (ttype == "waterlimitedproduction") {
@@ -225,13 +225,13 @@ test <- function(path, group, tests=1:42) {
 #ydir <- "C:/github/cropmodels/Rwofost_test/test_data/"
 
 #library(Rwofost)
-#xs <- Rwofost:::.test(ydir, "astro")
-#xy <- Rwofost:::.test(ydir, "phenology")
-#xp <- Rwofost:::.test(ydir, "partitioning")
-#xa <- Rwofost:::.test(ydir, "assimilation")
-#xr <- Rwofost:::.test(ydir, "rootdynamics")
-#xp <- Rwofost:::.test(ydir, "respiration")
-#xl <- Rwofost:::.test(ydir, "leafdynamics")
-#xp <- Rwofost:::.test(ydir, "potentialproduction")
-#xw <- Rwofost:::.test(ydir, "waterlimitedproduction")
+#xs <- yamltest(ydir, "astro")
+#xy <- yamltest(ydir, "phenology")
+#xp <- yamltest(ydir, "partitioning")
+#xa <- yamltest(ydir, "assimilation")
+#xr <- yamltest(ydir, "rootdynamics")
+#xp <- yamltest(ydir, "respiration")
+#xl <- yamltest(ydir, "leafdynamics")
+#xp <- yamltest(ydir, "potentialproduction")
+#xw <- yamltest(ydir, "waterlimitedproduction")
 
