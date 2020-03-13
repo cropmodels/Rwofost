@@ -7,7 +7,8 @@ WOFOST crop parameters
 }
 
 \description{
-This functions returns a list with parameters describing a crop for the WOFOST model
+This function returns a list of crop parameters for the WOFOST model.
+See this manual \url{https://www.wur.nl/en/show/WOFOST-7.1-User-Manual.htm} for their interpretation.
 }
 
 \usage{

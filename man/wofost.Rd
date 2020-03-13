@@ -29,6 +29,24 @@ matrix
 \code{\link{wofost_model}}
 }
 
+\details{
+The weather data must be passed as a data.frame with the following variables and units.
+
+\tabular{llll}{
+	\tab \bold{variable} \tab \bold{description} \tab \bold{class / unit} \cr
+	\tab \code{date} \tab "Date" class variable \tab - \cr
+	\tab \code{srad} \tab Solar radiation  \tab kJ m-2 day-1 \cr
+	\tab \code{tmin} \tab Minimum temperature \tab degrees C \cr
+	\tab \code{tmax} \tab Maximum temperature \tab degrees C \cr
+	\tab \code{vapr} \tab Vapor pressure \tab kPa \cr
+	\tab \code{wind} \tab Wind speed \tab m s-1 \cr
+	\tab \code{prec} \tab Precipitation \tab mm day-1 \cr
+}
+
+Note that there should not be any time gaps between the days in the data.frame 
+
+}
+
 \references{
 Van Diepen, C.A., J. Wolf, and H van Keulen, 1989. WOFOST: a simulation model of crop production. Soil Use and Management, 5: 16-24
 
@@ -38,20 +56,24 @@ Van Keulen, H. and J. Wolf, 1986. Modelling of agricultural production : weather
 
 \examples{
 
-library(Rwofost)
 # weather data
-f <- system.file("extdata/18419.rds", package="meteor")
-w <- readRDS(f)
-w$srad <- w$srad * 1000
+f <- system.file("extdata/Netherlands_Swifterbant.csv", package="meteor")
+w <- read.csv(f)
+w$date <- as.Date(w$date)
+head(w)
 
+# crop and soil parameters
 crop <- wofost_crop("barley")
 soil <- wofost_soil("ec1")
 
+# "control" parameters
 contr <- wofost_control()
-contr$modelstart <- as.Date("2012-02-06")
+contr$modelstart <- as.Date("1980-02-06")
 contr$latitude=52.57
 contr$elevation=50
 
+
+# run model
 d <- wofost(crop, w, soil, contr)
 
 # output
@@ -60,18 +82,12 @@ tail(d)
 plot(d[,"step"], d[, "LAI"])
 
 
-## Anther example
+## Another example
 crop <- wofost_crop("rapeseed_1001")
-f <- system.file("extdata/Netherlands_Swifterbant.csv", package="meteor")
-wth_n <- read.csv(f)
-wth_n$date <- as.Date(wth_n$date)
-
-cont <- wofost_control()
-cont$IPRODL <- 0
 soil <- wofost_soil("soil_5")
-cont$modelstart <- as.Date("1977-01-01")
+contr$modelstart <- as.Date("1977-01-01")
 
-rp <- wofost(crop, wth_n, soil, cont)
+rp <- wofost(crop, w, soil, contr)
 plot(rp[,"step"], rp[, "LAI"])
 
 # yield
@@ -79,18 +95,17 @@ plot(rp[, 1], rp[,"WSO"])
 
 
 ## water limited
-cont <- wofost_control()
-cont$water_limited <- TRUE
-cont$modelstart <- as.Date("1985-01-01")
+contr$water_limited <- TRUE
+contr$modelstart <- as.Date("1985-01-01")
 
 crop <- wofost_crop("maize_1")
 f <- system.file("extdata/Philippines_IRRI.csv", package="meteor")
-wth_n <- read.csv(f)
-wth_n$date <- as.Date(wth_n$date)
-soil <- wofost_soil("soil_5")
-cont$elevation <- 21
-cont$latitude <- 14.18
-rp <- wofost(crop, wth_n, soil, cont)
+wth <- read.csv(f)
+wth$date <- as.Date(wth$date)
+contr$elevation <- 21
+contr$latitude <- 14.18
 
-plot(rp[,"step"], rp[, "LAI"])
+ma <- wofost(crop, wth, soil, contr)
+plot(ma[,"step"], ma[, "LAI"])
+
 }

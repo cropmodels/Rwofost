@@ -34,7 +34,8 @@ struct WofostControl {
 	int INYRG, ISTCHO, IDLSOW, IENCHO, IDAYEN, IDURMX;
 	int IOXWL;   //IOX for water limited
 	//int	IPRODL, IWB; // water limited (1) or potential (0)
-	bool water_limited = false, nutrient_limited = false;
+	bool water_limited = false; 
+	// nutrient_limited = false;
 	std::vector<double> N_amount, P_amount, K_amount;
 	std::vector<long> NPKdates;
 	bool useForce;

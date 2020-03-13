@@ -73,15 +73,19 @@ void WofostModel::model_output(){
 
 void WofostModel::model_initialize() {
 
+	fatalError = false;
+
 // start time (relative to weather data)
 	if (control.modelstart < wth.date[0]) {
 		std::string m = "model cannot start before beginning of the weather data";
 	    messages.push_back(m);
 	    fatalError = true;
+		//return;
 	} else if (control.modelstart > wth.date[wth.date.size()-1]) {
 		std::string m = "model cannot start after the end of the weather data";
 	    messages.push_back(m);
 	    fatalError = true;
+		//return;
 	} else {
 		time=0;
 		while (wth.date[time] < control.modelstart) {
@@ -120,9 +124,7 @@ void WofostModel::model_initialize() {
 	output.values.reserve(output.names.size() * 150);
 	
 	DOY = doy_from_days(wth.date[time]);
-
     crop.alive = true;
-	fatalError = false;
 
 	soil_initialize();
 	/*

@@ -7,6 +7,7 @@ Date: 2020-03-12
 LinkingTo: Rcpp
 Imports: meteor, methods (>= 0.2-2), Rcpp (>= 0.12.4)
 Depends: R (>= 3.5.0)
+URL: https://github.com/cropmodels/Rwofost
 SystemRequirements: C++11
 Authors@R: c(person("Robert J.", "Hijmans", role = c("cre", "aut"),  email = "r.hijmans@gmail.com"), person("Huang", "Fang", role = "ctb"), person("C.A.", "van Diepen", role = "ctb"), person("Allard", "de Wit", role = "ctb"), person("Daniel", "van Kraalingen", role = "ctb"), person("Tamme", "van der Wal", role = "ctb"), person("C.", "Rappoldt", role = "ctb"), person("Hendrik", "Boogard", role = "ctb"), person("I.G.A.M.", "Noy", role = "ctb"), person("Alterra, Wageningen-UR", role = "cph"))
 Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>

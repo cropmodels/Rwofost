@@ -74,7 +74,7 @@ std::vector<double> TableFromList(List lst, const char* s){
 
 
 
-// [[Rcpp::export]]
+// [[Rcpp::export(".wofost")]]
 NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 
 // control ("timer") parameters
@@ -96,7 +96,7 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	}
 	
 	cntr.water_limited = valueFromListDefault<bool>(control, "water_limited", false); 
-	cntr.nutrient_limited = valueFromListDefault<bool>(control, "nutrient_limited", false); 
+	//cntr.nutrient_limited = valueFromListDefault<bool>(control, "nutrient_limited", false); 
 	cntr.IOXWL = valueFromList<int>(control, "IOXWL");
 
 	cntr.ISTCHO = valueFromList<int>(control, "ISTCHO");

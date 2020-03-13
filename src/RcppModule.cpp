@@ -49,7 +49,7 @@ RCPP_MODULE(wofost){
 		.field("elevation", &WofostControl::elevation) 
 		.field("CO2",  &WofostControl::CO2) 
 		.field("water_limited", &WofostControl::water_limited)
-		.field("nutrient_limited", &WofostControl::nutrient_limited)
+		//.field("nutrient_limited", &WofostControl::nutrient_limited)
 		.field("IOXWL", &WofostControl::IOXWL)
 		.field("ISTCHO", &WofostControl::ISTCHO) 
 		.field("IDESOW", &WofostControl::IDESOW) 

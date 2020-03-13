@@ -33,7 +33,7 @@ weather(x) <- value
 
 \arguments{
 \item{crop}{list. Crop parameters}
-\item{weather}{data.frame with weather data}
+\item{weather}{data.frame with weather data. See Details}
 \item{soil}{list. Soil parameters}
 \item{control}{list. Model control options}
 \item{value}{crop, weather, soil, or control data; as above}
@@ -45,23 +45,44 @@ weather(x) <- value
 WofostModel object
 }
 
+
+\details{
+The weather data must be passed as a data.frame with the following variables and units.
+
+\tabular{llll}{
+	\tab \bold{variable} \tab \bold{description} \tab \bold{class / unit} \cr
+	\tab \code{date} \tab "Date" class variable \tab - \cr
+	\tab \code{srad} \tab Solar radiation  \tab kJ m-2 day-1 \cr
+	\tab \code{tmin} \tab Minimum temperature \tab degrees C \cr
+	\tab \code{tmax} \tab Maximum temperature \tab degrees C \cr
+	\tab \code{vapr} \tab Vapor pressure \tab kPa \cr
+	\tab \code{wind} \tab Wind speed \tab m s-1 \cr
+	\tab \code{prec} \tab Precipitation \tab mm day-1 \cr
+}
+
+Note that there should not be any time gaps between the days in the data.frame 
+}
+
+
+
 \references{
 Van Diepen, C.A., J. Wolf, and H van Keulen, 1989. WOFOST: a simulation model of crop production. Soil Use and Management, 5: 16-24
 
 Van Keulen, H. and J. Wolf, 1986. Modelling of agricultural production : weather, soils and crops. \url{http://edepot.wur.nl/168025}
 }
 
-
 \examples{
 
 # weather data
-f <- system.file("extdata/18419.rds", package="meteor")
-w <- readRDS(f)
-w$srad <- w$srad * 1000
+f <- system.file("extdata/Netherlands_Swifterbant.csv", package="meteor")
+w <- read.csv(f)
+w$date <- as.Date(w$date)
+
 crop <- wofost_crop("barley")
 soil <- wofost_soil("ec1")
 contr <- wofost_control()
-contr$modelstart <- as.Date("2012-02-06")
+
+contr$modelstart <- as.Date("1980-02-06")
 contr$latitude=52.57
 contr$elevation=50
 
@@ -70,17 +91,19 @@ m <- wofost_model(crop, w, soil, contr)
 
 # run model
 x <- run(m)
-plot(x[,"date"], x[, "LAI"])
+plot(x[,"date"], x[, "LAI"], cex=.5)
 
 # make a change
-m$control$modelstart = as.Date("2012-02-20")
+m$control$modelstart = as.Date("1980-02-20")
 
 # run model again
 y <- run(m)
-lines(y[,"date"], y[, "LAI"])
+lines(y[,"date"], y[, "LAI"], col="red")
 
 # change the crop 
 crop(m) <- wofost_crop("potato_704") 
+p <- run(m)
+lines(p[,"date"], p[, "LAI"], col="blue")
 }
 
 

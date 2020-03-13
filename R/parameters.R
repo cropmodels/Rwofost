@@ -1,20 +1,22 @@
 
 
-.getNumLst <- function(ini) {
+.getNumLst <- function(ini, make_matrix=TRUE) {
 	v <- ini[,3]
 	vv <- sapply(v, function(i) strsplit(i, ","), USE.NAMES = FALSE)
 	vv <- sapply(vv, as.numeric)
-	lst <- lapply(vv, function(i) {
-			if(length(i) > 1) { 
-				#matrix(i, ncol=2, byrow=TRUE) 
-				matrix(i, nrow=2) 
-			} else {
-				i
+	if (make_matrix) {
+		vv <- lapply(vv, function(i) {
+				if (length(i) > 1) { 
+					#matrix(i, ncol=2, byrow=TRUE) 
+					matrix(i, nrow=2) 
+				} else {
+					i
+				}
 			}
-		}
-	)
-	names(lst) <- ini[,2]
-	lst
+		)
+	} 
+	names(vv) <- ini[,2]
+	vv
 }
 
 
@@ -46,47 +48,24 @@
 }
 
 
+.as.numeric_date <- function(x) {
+	if (all(nchar(x) == 10)) {
+		if (sapply(strsplit(x, "-"), length) == 3) {
+			return(as.Date(x))
+		}
+	}
+	as.numeric(x)
+}
+
+
 wofost_control <- function(filename="") {
 	x <- list()
-	if (filename != "") {
-		ini <- .readIniFile(filename)
-		s <- which(ini[,2] == "modelstart")
-		if (length(s) > 0){
-			startdate <- as.Date(ini[s[1], 3])
-			ini <- ini[-s,]
-			x$modelstart <- startdate
-		}
-		s <- which(ini[,2] == "IRRdates")
-		if (length(s) > 0){
-			IRRdates <- ini[s[1], 3]
-			IRRdates <- (strsplit(IRRdates, ","))[[1]]
-			IRRdates <- as.Date(IRRdates)
-			ini <- ini[-s,]
-			x$IRRdates <- IRRdates
-		}
-		s <- which(ini[,2] == "NPKdates")
-		if (length(s) > 0){
-			NPKdates <- ini[s[1], 3]
-			NPKdates <- (strsplit(NPKdates, ","))[[1]]
-			NPKdates <- as.Date(NPKdates)
-			ini <- ini[-s,]
-			x$NPKdates <- NPKdates
-		}
-		x <- append(x, .getNumLst(ini))
-
-		#if (length(s) > 0) {
-		#	startdate <- as.Date(ini[s[1], 3])
-		#	ini <- ini[-s,]
-		#	x <- .getNumLst(ini)
-		#	x$modelstart <- startdate
-		#} else {
-		#	x <- .getNumLst(ini)
-		#}
-		return(x)
-	}
-
-	f <- system.file("wofost/control.ini", package="Rwofost")
-	ini <- .readIniFile(f)
+	filename <- trimws(filename)
+	if (filename == "") {
+		filename <- system.file("wofost/control.ini", package="Rwofost")
+	} 
+	ini <- .readIniFile(filename)
+		
 	s <- which(ini[,2] == "modelstart")
 	if (length(s) > 0){
 		startdate <- as.Date(ini[s[1], 3])
@@ -101,15 +80,16 @@ wofost_control <- function(filename="") {
 		ini <- ini[-s,]
 		x$IRRdates <- IRRdates
 	}
-	#s <- which(ini[,2] == "NPKdates")
-	#if (length(s) > 0){
-	#	NPKdates <- ini[s[1], 3]
-	#	NPKdates <- (strsplit(NPKdates, ","))[[1]]
-	#	NPKdates <- as.Date(NPKdates)
-	#	ini <- ini[-s,]
-	#	x$NPKdates <- NPKdates
-	#}
-	x <- append(x, .getNumLst(ini))
+	s <- which(ini[,2] == "NPKdates")
+	if (length(s) > 0){
+		NPKdates <- ini[s[1], 3]
+		NPKdates <- (strsplit(NPKdates, ","))[[1]]
+		NPKdates <- as.Date(NPKdates)
+		ini <- ini[-s,]
+		x$NPKdates <- NPKdates
+	}
+		
+	x <- append(x, .getNumLst(ini, make_matrix=FALSE))
 	x
 }
 

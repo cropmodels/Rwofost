@@ -1,4 +1,13 @@
 
+
+wofost <- function(crop, weather, soil, control) {
+    d <- .Call('_Rwofost_wofost', PACKAGE = 'Rwofost', crop, weather, soil, control)
+	date <- as.Date(control$modelstart) - 1  + d[, "step"]
+	d <- data.frame(date=date, d)
+}
+
+
+
 wofost_model <- function(crop, weather, soil, control) {
 	m <- WofostModel$new()
 	if (!missing(crop)) { crop(m) <- crop }
@@ -96,9 +105,9 @@ setMethod("weather<-", signature("Rcpp_WofostModel", "data.frame"),
 )
 
 
-
-.req_ctr_pars <- c("modelstart", "cropstart", "water_limited", "nutrient_limited", "IOXWL", "ISTCHO", "IDESOW", "IDLSOW", "IENCHO", "IDAYEN", "IDURMX", "latitude", "CO2", "elevation")
+.req_ctr_pars <- c("modelstart", "cropstart", "water_limited", "IOXWL", "ISTCHO", "IDESOW", "IDLSOW", "IENCHO", "IDAYEN", "IDURMX", "latitude", "CO2", "elevation")
 .opt_ctr_pars <- c("output", "ANGSTA", "AMAXTB")
+.fut <- c("nutrient_limited")
 
 setMethod("control<-", signature("Rcpp_WofostModel", "list"), 
 	function(x, value) {
