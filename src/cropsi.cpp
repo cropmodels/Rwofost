@@ -16,11 +16,15 @@ Modifications since WOFOST Version 4.1:
 - simulation of crop emergence
 
 Tamme van der Wal (25-July-1997)
-1) New parameter is read in: p.DVSI                 |
-2) KDif, EFF and SSA are now functions of DVS or DTEMP, 
+1) New parameter is read in: DVSI
+             |2) KDif, EFF and SSA are now functions of DVS or DTEMP, 
 calculated using KDIFTB, EFFTB and SSATB and the AFGEN function.
-
 SSA renamed to SSI following PCSE
+
+RH, 18 March 2020
+DVSI set to a fixed value of 0 (or -0.2 if crop is seeded)
+DVSI set to a fixed value of 2 
+
 
 FORMAL PARAMETERS:  (I=input,O=output,C=control,IN=init,T=time)
 name   type meaning                                    units  class
@@ -76,6 +80,7 @@ void WofostModel::crop_initialize() {
 	crop.IDANTH = -99;
 //  DOANTH = false;
 	crop.DVS = crop.p.DVSI;
+	
 	crop.TSUM = 0.;
 	crop.FR = AFGEN(crop.p.FRTB, crop.DVS);
 	crop.FL = AFGEN(crop.p.FLTB, crop.DVS);

@@ -58,7 +58,9 @@ struct WofostCropParametersNPK {
 
 struct WofostCropParameters {
     int IAIRDU, IDSL;
-	double DLO, DLC, TSUM1, TSUM2, DVSI, DVSEND, TDWI, RGRLAI, SPA, SPAN, TBASE;
+	double DVSEND = 2; // now fixed
+	double DVSI = 0;
+	double DLO, DLC, TSUM1, TSUM2, TDWI, RGRLAI, SPA, SPAN, TBASE;
 	double CVL, CVO, CVR, CVS, Q10, RML, RMO, RMR, RMS, PERDL, CFET, DEPNR, RDMCR, RRI, RDI;
 	double LAIEM;
 	//emergence parameters

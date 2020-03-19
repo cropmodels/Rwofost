@@ -160,8 +160,8 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	crp.p.TSUM1 = valueFromList<double>(crop, "TSUM1");
 	crp.p.TSUM2 = valueFromList<double>(crop, "TSUM2");
 	crp.p.DTSMTB = TableFromList(crop, "DTSMTB");
-	crp.p.DVSI = valueFromList<double>(crop, "DVSI");
-	crp.p.DVSEND = valueFromList<double>(crop, "DVSEND");
+	//crp.p.DVSI = valueFromList<double>(crop, "DVSI");
+	//crp.p.DVSEND = valueFromList<double>(crop, "DVSEND");
 	crp.p.TDWI = valueFromList<double>(crop, "TDWI");
 	crp.p.LAIEM = valueFromList<double>(crop, "LAIEM");
 	crp.p.RGRLAI = valueFromList<double>(crop, "RGRLAI");

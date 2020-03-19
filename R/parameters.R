@@ -41,10 +41,8 @@
 	y <- paste(gsub(", ,", "", y), collapse="\n")
 	if (error) {
 		stop(paste(group, "not available. Choose one of:\n"), y)
-	} else {
-		print(paste("Choose one of:\n", y))
-	}
-	invisible(x)
+	} 
+	return(y)
 }
 
 

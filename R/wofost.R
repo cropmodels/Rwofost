@@ -48,7 +48,7 @@ setMethod("run", signature("Rcpp_WofostModel"),
 )
 
 
-.crop_pars <- c("TBASEM", "TEFFMX", "TSUMEM", "IDSL", "DLO", "DLC", "TSUM1", "TSUM2", "DTSMTB", "DVSI", "DVSEND", "TDWI", "LAIEM", "RGRLAI", "SLATB", "SPA", "SSATB", "SPAN", "TBASE", "CVL", "CVO", "CVR", "CVS", "Q10", "RML", "RMO", "RMR", "RMS", "RFSETB", "FRTB", "FLTB", "FSTB", "FOTB", "PERDL", "RDRRTB", "RDRSTB", "CFET", "DEPNR", "RDI", "RRI", "RDMCR", "IAIRDU", "KDIFTB", "EFFTB", "AMAXTB", "TMPFTB", "TMNFTB", "CO2AMAXTB", "CO2EFFTB", "CO2TRATB")
+.crop_pars <- c("TBASEM", "TEFFMX", "TSUMEM", "IDSL", "DLO", "DLC", "TSUM1", "TSUM2", "DTSMTB", "TDWI", "LAIEM", "RGRLAI", "SLATB", "SPA", "SSATB", "SPAN", "TBASE", "CVL", "CVO", "CVR", "CVS", "Q10", "RML", "RMO", "RMR", "RMS", "RFSETB", "FRTB", "FLTB", "FSTB", "FOTB", "PERDL", "RDRRTB", "RDRSTB", "CFET", "DEPNR", "RDI", "RRI", "RDMCR", "IAIRDU", "KDIFTB", "EFFTB", "AMAXTB", "TMPFTB", "TMNFTB", "CO2AMAXTB", "CO2EFFTB", "CO2TRATB")
 
 setMethod("crop<-", signature("Rcpp_WofostModel", "list"), 
 	function(x, value) {
