@@ -27,17 +27,19 @@ struct WofostControl {
 	double CO2 = 410;
 	
 	bool usePENMAN = true;
-	double ANGSTA = -0.18;
-	double ANGSTB = -0.55;
+	double ANGSTA = 0.18;
+	double ANGSTB = 0.55;
 
 	unsigned IDESOW;
-	int INYRG, ISTCHO, IDLSOW, IENCHO, IDAYEN, IDURMX;
-	int IOXWL;   //IOX for water limited
+	int INYRG, ISTCHO, IDLSOW, IDURMX;
+	//IENCHO, IDAYEN
+	bool stop_maturity = true;
+	int IOXWL;  //IOX for water limited
 	//int	IPRODL, IWB; // water limited (1) or potential (0)
 	bool water_limited = false; 
 	// nutrient_limited = false;
-	std::vector<double> N_amount, P_amount, K_amount;
-	std::vector<long> NPKdates;
+	//std::vector<double> N_amount, P_amount, K_amount;
+	//std::vector<long> NPKdates;
 	bool useForce;
 };
 

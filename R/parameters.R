@@ -113,6 +113,7 @@ wofost_soil <- function(name="") {
 	if (name %in% soils) {
 		i <- which (name == soils)
 		ini <- .readIniFile(f[i])
+		ini <- ini[ini[,2] %in% .soil_pars, ]
 		lst <- .getNumLst(ini)
 		return(lst)
 	} else {
@@ -121,7 +122,18 @@ wofost_soil <- function(name="") {
 }
 
 
-wofost_crop <- function(name="") {
+.printDescription <- function(f) {
+	d <- readLines(f)
+	d <- grep("\\#\\#", d, value=TRUE)
+	if (length(d) > 0) {
+		d <- trimws(gsub("\\#\\#", "", d))
+		d <- paste(d, collapse="\n")
+		cat(d, "\n")
+	}
+}
+
+
+wofost_crop <- function(name="", describe=FALSE) {
 
 	if (missing(name)) {
 		return(.notavailable("crop", FALSE))
@@ -134,6 +146,9 @@ wofost_crop <- function(name="") {
 	if (file.exists(name)) {
 		ini <- .readIniFile(name)
 		lst <- .getNumLst(ini)
+		if (describe) {
+			.printDescription(name)
+		}
 		return(lst)
 	}
 
@@ -142,7 +157,15 @@ wofost_crop <- function(name="") {
     if (name %in% crops) {
 		i <- which (name == crops)
 		ini <- .readIniFile(f[i])
+		ini <- ini[ini[,2] %in% .crop_pars, ]
+		j <- .crop_pars %in% ini[,2]
+		if (!(all(j))) {
+			warning(paste("missing parameter(s):", paste(.crop_pars[!j], collapse=", ")))
+		}		
 		lst <- .getNumLst(ini)
+		if (describe) {
+			.printDescription(f[i])
+		}
 		return(lst)
 	} else {
 		.notavailable("crop")

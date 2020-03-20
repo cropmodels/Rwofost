@@ -14,7 +14,6 @@ int2df <- function(f) {
 	d  <- gsub("\\# ", "", x[j])
 	d <- gsub("\\[", "(", d)
 	d <- gsub("\\]", ")", d)
-	d <- gsub("-; kg kg-1", "", d)
 
 	g <- gregexpr("\\(", d)
 	gg <- sapply(g, max)
@@ -28,6 +27,9 @@ int2df <- function(f) {
 	dd[,2] <- gsub("(cel)", "°C", dd[,2])
 	dd[,2] <- gsub("\\(", "", dd[,2])
 	dd[,2] <- gsub("\\)", "", dd[,2])
+	dd <- gsub("-; kg kg-1", "-", dd)
+	dd <- gsub("-; kg kg-1", "-", dd)
+	dd <- gsub("kg kg-1", "-", dd)
 	
 	k  <- grep("^\\[", x)
 	g <- x[k]
@@ -40,11 +42,7 @@ int2df <- function(f) {
 
 f  <- "C:\\github\\cropmodels\\Rwofost\\inst\\wofost\\crop\\barley.ini"
 r <- int2df(f)
-r <- r[r[,1] != "nutrient use", ]
-
-
-paste(as.vector(t(r)), collapse=', ')
-
-
-params <- gsub("(-; kg kg-1)", "(-)", params)
+write.csv(r, "croppars.csv")
+#r <- r[r[,1] != "nutrient use", ]
+#paste(as.vector(t(r)), collapse=', ')
 

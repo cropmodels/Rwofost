@@ -64,7 +64,7 @@ setMethod("crop<-", signature("Rcpp_WofostModel", "list"),
 	}
 )
 
-.soil_pars <- c("SMTAB", "SMW", "SMFCF", "SM0", "CRAIRC", "CONTAB", "K0", "SOPE", "KSUB", "SPADS", "SPASS", "SPODS", "SPOSS", "DEFLIM", "IZT", "IFUNRN", "WAV", "ZTI", "DD", "IDRAIN", "NOTINF", "SSMAX", "SMLIM", "SSI", "RDMSOL")
+.soil_pars <- c("SMTAB", "SMW", "SMFCF", "SM0", "CRAIRC", "CONTAB", "K0", "SOPE", "KSUB", "IZT", "IFUNRN", "WAV", "ZTI", "DD", "IDRAIN", "NOTINF", "SSMAX", "SMLIM", "SSI", "RDMSOL")
 
 setMethod("soil<-", signature("Rcpp_WofostModel", "list"), 
 	function(x, value) {
@@ -105,7 +105,7 @@ setMethod("weather<-", signature("Rcpp_WofostModel", "data.frame"),
 )
 
 
-.req_ctr_pars <- c("modelstart", "cropstart", "water_limited", "IOXWL", "ISTCHO", "IDESOW", "IDLSOW", "IENCHO", "IDAYEN", "IDURMX", "latitude", "CO2", "elevation")
+.req_ctr_pars <- c("modelstart", "cropstart", "start_sowing", "max_duration", "water_limited", "watlim_type", "latitude", "CO2", "elevation")
 .opt_ctr_pars <- c("output", "ANGSTA", "AMAXTB")
 .fut <- c("nutrient_limited")
 

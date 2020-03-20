@@ -12,11 +12,12 @@ See this manual \url{https://www.wur.nl/en/show/WOFOST-7.1-User-Manual.htm} for 
 }
 
 \usage{
-wofost_crop(name='')
+wofost_crop(name="", describe=FALSE)
 }
 
 \arguments{
 \item{name}{character. Either the name of a crop that comes with the package (see examples) or a filename of a similarly formatted file}
+\item{describe}{logical. If \code{TRUE} avaialble metadata is printed}
 }
 
 \value{ list }

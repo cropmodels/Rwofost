@@ -97,16 +97,16 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	
 	cntr.water_limited = valueFromListDefault<bool>(control, "water_limited", false); 
 	//cntr.nutrient_limited = valueFromListDefault<bool>(control, "nutrient_limited", false); 
-	cntr.IOXWL = valueFromList<int>(control, "IOXWL");
+	cntr.IOXWL = valueFromList<int>(control, "watlim_type");
 
-	cntr.ISTCHO = valueFromList<int>(control, "ISTCHO");
-	cntr.IDESOW = valueFromList<int>(control, "IDESOW");
-	cntr.IDLSOW = valueFromList<int>(control, "IDLSOW");
+	cntr.ISTCHO = valueFromList<int>(control, "start_sowing");
+	//cntr.IDESOW = valueFromList<int>(control, "IDESOW");
+	//cntr.IDLSOW = valueFromList<int>(control, "IDLSOW");
 
-	cntr.IENCHO = valueFromList<int>(control, "IENCHO");
-	cntr.IDAYEN = valueFromList<int>(control, "IDAYEN");
-	cntr.IDURMX = valueFromList<int>(control, "IDURMX");
-		
+	//cntr.IENCHO = valueFromList<int>(control, "IENCHO");
+	//cntr.IDAYEN = valueFromList<int>(control, "IDAYEN");
+	cntr.IDURMX = valueFromList<int>(control, "max_duration");
+	cntr.stop_maturity = valueFromList<int>(control, "stop_maturity");
 	//npk
 	/*
 	cntr.npk_model = valueFromListDefault<int>(control, "npk_model", false);
@@ -222,11 +222,11 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	sol.p.K0 = valueFromList<double>(soil, "K0");
 	sol.p.SOPE = valueFromList<double>(soil, "SOPE");
 	sol.p.KSUB = valueFromList<double>(soil, "KSUB");
-	sol.p.SPADS = valueFromList<double>(soil, "SPADS");
-	sol.p.SPASS = valueFromList<double>(soil, "SPASS");
-	sol.p.SPODS = valueFromList<double>(soil, "SPODS");
-	sol.p.SPOSS = valueFromList<double>(soil, "SPOSS");
-	sol.p.DEFLIM = valueFromList<double>(soil, "DEFLIM");
+	//sol.p.SPADS = valueFromList<double>(soil, "SPADS");
+	//sol.p.SPASS = valueFromList<double>(soil, "SPASS");
+	//sol.p.SPODS = valueFromList<double>(soil, "SPODS");
+	//sol.p.SPOSS = valueFromList<double>(soil, "SPOSS");
+	//sol.p.DEFLIM = valueFromList<double>(soil, "DEFLIM");
 
 
 	//soil variables that used to be in the control object

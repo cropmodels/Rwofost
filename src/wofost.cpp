@@ -97,10 +97,15 @@ void WofostModel::model_initialize() {
 		ISTATE = 3;
 	} else if (control.ISTCHO == 1) { // model starts at sowing
 		ISTATE = 1;
-	} else if (control.ISTCHO == 2) { // model starts prior to earliest possible sowing date
-		ISTATE = 0;
-		STDAY_initialize();
+	} else {
+		std::string m = "start_sowing (ISTCHO) must be 0 or 1";
+	    messages.push_back(m);
+	    fatalError = true;
 	}
+	//	if (control.ISTCHO == 2) { // model starts prior to earliest possible sowing date
+	//	ISTATE = 0;
+	//	STDAY_initialize();
+	//}
 
 //	ISTATE = 3;
 
@@ -266,6 +271,9 @@ void WofostModel::model_run() {
 	}
 	crop.emergence = step;
 
+
+	unsigned maxdur = step + control.IDURMX;
+	/*
 	unsigned maxdur;
 	if (control.IENCHO == 1) {
 		maxdur = cropstart_step + control.IDAYEN;
@@ -277,7 +285,9 @@ void WofostModel::model_run() {
 		// throw error
 		maxdur = step + 365;
 	}
-
+	*/
+	
+	
 //	crop_initialize();
 
 	while ((crop.alive) && (step < maxdur)) {
@@ -305,7 +315,8 @@ void WofostModel::model_run() {
 			break;
 		}
 	}
-	if (control.IENCHO == 1) {
+	//if (control.IENCHO == 1) {
+	if (control.stop_maturity == 0) {
 		// should continue until maxdur if water balance if IENCHO is 1
 		while (step < maxdur) {
 			weather_step();

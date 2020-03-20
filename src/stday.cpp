@@ -58,7 +58,22 @@ void WofostModel::STDAY_initialize() {
         soil.SPOC = soil.p.SPODS;
     }
     else{
-*/		
+*/
+
+	// 1st topsoil seepage parameter deep seedbed
+	soil.p.SPADS = 0.800;
+	// 2nd topsoil seepage parameter deep seedbed
+	soil.p.SPODS = 0.040;
+	// 1st topsoil seepage parameter shallow seedbed
+	soil.p.SPASS = 0.900;
+	// 2nd topsoil seepage parameter shallow seedbed
+	soil.p.SPOSS = 0.070;
+	// required moisture deficit deep seedbed
+	soil.p.DEFLIM = 0.000;
+		
+	control.IDESOW = 0;
+	control.IDLSOW = 15;
+		
 // two seepage parameters for shallow seedbed (all other crops)
     soil.CAPRFU = {-0.50,0.50, 0.00,0.20, 0.10,0.15, 0.40,0.10, 1.00,0.05};
     soil.SPAC = soil.p.SPASS;

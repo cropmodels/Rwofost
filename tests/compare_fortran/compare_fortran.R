@@ -4,6 +4,7 @@ par(ask=TRUE)
 ## compare with FORTRAN wofost
 ## 1
 library(Rwofost)
+outdir <- "C:/github/cropmodels/Rwofost/tests/compare_fortran"
 
 crop <- wofost_crop("rapeseed_1001")
 f <- system.file("extdata/Netherlands_Swifterbant.csv", package="meteor")
@@ -11,7 +12,7 @@ wth_n <- read.csv(f)
 wth_n$date <- as.Date(wth_n$date)
 
 cont <- wofost_control()
-cont$IPRODL <- 0
+cont$water_limited <- 0
 soil <- wofost_soil("soil_5")
 #wth_n <- wth_n[wth_n$date >= '1977-01-01', ]
 cont$modelstart <- as.Date('1977-01-01')
@@ -21,7 +22,7 @@ cont$CO2=360
 
 rp <- wofost(crop, wth_n, soil, cont)
 
-f <- system.file("test/1/wofost.out", package="Rwofost")
+f <- file.path(outdir, "1/wofost.out")
 d <- Rwofost:::.readFortranOutput(f)
 
 par(mfrow=c(1,2))
@@ -37,7 +38,7 @@ points(rp[, 1], rp[,'WSO'])
 # no photoperiod effect
 crop$IDSL <- 0
 rp <- wofost(crop, wth_n, soil, cont)
-f <- system.file("test/2/wofost.out", package="Rwofost")
+f <- file.path(outdir, "2/wofost.out")
 d <- Rwofost:::.readFortranOutput(f)
 plot(d[,'DAY'], d[,'LAI'], type='l')
 points(rp[,'step'], rp[, 'LAI'])
@@ -61,7 +62,7 @@ cont$usePENMAN <- TRUE
 
 rp <- wofost(crop, wth_n, soil, cont)
 
-f <- system.file("test/3/wofost.out", package="Rwofost")
+f <- file.path(outdir, "3/wofost.out")
 d <- Rwofost:::.readFortranOutput(f, TRUE)
 plot(d[,'DAY'], d[,'LAI'], type='l')
 points(rp[,'step'], rp[, 'LAI'])
@@ -72,14 +73,14 @@ soil <- wofost_soil("ec1")
 cont$IZT <- 1
 rp <- wofost(crop, wth_n, soil, cont)
 
-f <- system.file("test/4/wofost.out", package="Rwofost")
+f <- file.path(outdir, "4/wofost.out")
 d <- Rwofost:::.readFortranOutput(f, TRUE)
 plot(d[,'DAY'], d[,'LAI'], type='l')
 points(rp[,'step'], rp[, 'LAI'])
 
 
 ## 5 npk mode
-f <- system.file("test/5/wofost_npk_reference_results.csv", package="Rwofost")
+f <- file.path(outdir, "5/wofost_npk_reference_results.csv")
 d <- read.csv(f)
 soil <- wofost_soil("ec4")
 crop <- wofost_crop("winterwheat_102")
