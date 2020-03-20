@@ -153,10 +153,10 @@ WofostControl getControlParameters(const char *filename) {
     tim.cropstart = iFromINI(control, "cropstart");
     tim.output_option = sFromINI(control, "output", "default");
 	tim.water_limited = bFromINI(control, "water_limited");
-	tim.IOXWL  = iFromINI(control, "IOXWL");
-	tim.IENCHO = iFromINI(control, "IENCHO");
-	tim.IDAYEN = iFromINI(control, "IDAYEN");
-	tim.IDURMX = iFromINI(control, "IDURMX");
+	tim.IOXWL  = iFromINI(control, "watlim_type");
+	tim.ISTCHO = iFromINI(control, "start_sowing");
+	tim.stop_maturity = iFromINI(control, "stop_maturity");
+	tim.IDURMX = iFromINI(control, "max_duration");
 //	date emergence = dateFromINI(control, "emergence") );
 	tim.latitude  = dFromINI(control, "latitude");
 	tim.elevation = dFromINI(control, "elevation");
