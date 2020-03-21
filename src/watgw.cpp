@@ -134,7 +134,7 @@ void WofostModel::WATGW_initialize() {
         //-----------------------------------------------------
 //        initial state variables of the water balance
 //-----------------------------------------------------
-    soil.SS = soil.p.SSI;
+    soil.ss = soil.p.SSI;
     soil.ZT = LIMIT(0.1, XDEF, soil.p.ZTI);
     if(soil.p.IDRAIN == 1){
         soil.ZT = std::max(soil.ZT, soil.p.DD);
@@ -204,7 +204,7 @@ void WofostModel::WATGW_rates() {
     soil.EVW = 0.;
     soil.EVS = 0.;
     //        ... from surface water if surface storage more than 1 cm, ...
-    if(soil.SS > 1.){
+    if(soil.ss > 1.){
         soil.EVW = soil.EVWMX;
         //           ... else from soil surface
     } else {
@@ -220,17 +220,17 @@ void WofostModel::WATGW_rates() {
     }
     //        preliminary infiltration rate
     double RINPRE;
-    if(soil.SS > 0.1){
+    if(soil.ss > 0.1){
         //           with surface storage, infiltration limited by p.SOPE
         //!!         Next line replaced TvdW 24-jul-97
         //!!            AVAIL  = SS+(RAIN+RIRR-EVW)`
-        double AVAIL = soil.SS + (atm.RAIN * (1. - soil.p.NOTINF) + soil.RIRR - soil.EVW);
+        double AVAIL = soil.ss + (atm.RAIN * (1. - soil.p.NOTINF) + soil.RIRR - soil.EVW);
         RINPRE = std::min(soil.p.SOPE, AVAIL);
     } else {
         if(soil.p.IFUNRN == 0) { 
-			RINPRE = (1. - soil.p.NOTINF) * atm.RAIN + soil.RIRR + soil.SS; 
+			RINPRE = (1. - soil.p.NOTINF) * atm.RAIN + soil.RIRR + soil.ss; 
 		} else { // if(soil.p.IFUNRN == 1){
-            RINPRE = (1. - soil.p.NOTINF * AFGEN(soil.p.NINFTB, atm.RAIN)) * atm.RAIN + soil.RIRR + soil.SS;
+            RINPRE = (1. - soil.p.NOTINF * AFGEN(soil.p.NINFTB, atm.RAIN)) * atm.RAIN + soil.RIRR + soil.ss;
         }
     }
     //        indicator for groundwater table within (-) or below (+) rootzone
@@ -349,9 +349,9 @@ void WofostModel::WATGW_states(){
     soil.EVWT += soil.EVW;
     soil.EVST += soil.EVS;
     // surface storage and runoff
-    double SSPRE = soil.SS + (atm.RAIN + soil.RIRR - soil.EVW - soil.RIN);
-    soil.SS = std::min(SSPRE, soil.p.SSMAX);
-    soil.TSR += (SSPRE - soil.SS);
+    double SSPRE = soil.ss + (atm.RAIN + soil.RIRR - soil.EVW - soil.RIN);
+    soil.ss = std::min(SSPRE, soil.p.SSMAX);
+    soil.TSR += (SSPRE - soil.ss);
     // amount of water in rooted zone
     soil.W += soil.DW;
 

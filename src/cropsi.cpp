@@ -82,10 +82,10 @@ void WofostModel::crop_initialize() {
 	crop.DVS = crop.p.DVSI;
 	
 	crop.TSUM = 0.;
-	crop.FR = AFGEN(crop.p.FRTB, crop.DVS);
-	crop.FL = AFGEN(crop.p.FLTB, crop.DVS);
-	crop.FS = AFGEN(crop.p.FSTB, crop.DVS);
-	crop.FO = AFGEN(crop.p.FOTB, crop.DVS);
+	crop.Fr = AFGEN(crop.p.FRTB, crop.DVS);
+	crop.Fl = AFGEN(crop.p.FLTB, crop.DVS);
+	crop.Fs = AFGEN(crop.p.FSTB, crop.DVS);
+	crop.Fo = AFGEN(crop.p.FOTB, crop.DVS);
 	crop.SLA[0] = AFGEN(crop.p.SLATB, crop.DVS);
 
 	crop.LVAGE[0] = 0.;
@@ -98,11 +98,11 @@ void WofostModel::crop_initialize() {
 	crop.DWSO = 0;
 
     //emergence
-    crop.WRT = crop.FR * crop.p.TDWI;
-    crop.TADW = (1. - crop.FR) * crop.p.TDWI;
-    crop.WST = crop.FS * crop.TADW;
-    crop.WSO  = crop.FO * crop.TADW;
-    crop.WLV  = crop.FL * crop.TADW;
+    crop.WRT = crop.Fr * crop.p.TDWI;
+    crop.TADW = (1. - crop.Fr) * crop.p.TDWI;
+    crop.WST = crop.Fs * crop.TADW;
+    crop.WSO  = crop.Fo * crop.TADW;
+    crop.WLV  = crop.Fl * crop.TADW;
 
 	crop.TWRT = crop.WRT;
 	crop.TWLV = crop.WLV;
@@ -222,10 +222,10 @@ void WofostModel::crop_rates() {
 	double ASRC  = crop.GASS - MRES;
 
   //DM partitioning factors, and dry matter increase
-	crop.FR = AFGEN(crop.p.FRTB, crop.DVS);
-	crop.FL = AFGEN(crop.p.FLTB, crop.DVS);
-	crop.FS = AFGEN(crop.p.FSTB, crop.DVS);
-	crop.FO = AFGEN(crop.p.FOTB, crop.DVS);
+	crop.Fr = AFGEN(crop.p.FRTB, crop.DVS);
+	crop.Fl = AFGEN(crop.p.FLTB, crop.DVS);
+	crop.Fs = AFGEN(crop.p.FSTB, crop.DVS);
+	crop.Fo = AFGEN(crop.p.FOTB, crop.DVS);
 
 	crop.TRANRF = crop.TRA/crop.TRAMX;   //commented previously
 
@@ -240,34 +240,34 @@ void WofostModel::crop_rates() {
 	// RH: this seems wrong. FR is affected but this is not corrected for
 	// sum of FR, FL, FS, FO shouldd remain 1.
 			double FRTMOD = std::max( 1., 1 / (crop.TRANRF + 0.5));
-			crop.FR = std::min(0.6, crop.FR * FRTMOD);
+			crop.Fr = std::min(0.6, crop.Fr * FRTMOD);
 		} else {
 	// Nitrogen stress is more severe than water stress resulting in
 	// less partitioning to leaves and more to stems
 			double FLVMOD = exp(- crop.pn.NPART * (1.0 - crop.vn.NNI));
-			double FL = (crop.FL * FLVMOD);
-			crop.FS = crop.FS + crop.FL - FL;
-			crop.FL = FL;
+			double FL = (crop.Fl * FLVMOD);
+			crop.Fs = crop.Fs + crop.Fl - FL;
+			crop.Fl = FL;
 		}
 	}
 */
 
-	double CVF = 1./((crop.FL/crop.p.CVL + crop.FS/crop.p.CVS + crop.FO/crop.p.CVO)*(1. - crop.FR) + crop.FR/crop.p.CVR);
+	double CVF = 1./((crop.Fl/crop.p.CVL + crop.Fs/crop.p.CVS + crop.Fo/crop.p.CVO)*(1. - crop.Fr) + crop.Fr/crop.p.CVR);
 
 	double DMI = CVF * ASRC;
 
   //check on partitioning
-	double FCHECK = crop.FR + (crop.FL + crop.FS + crop.FO) * (1 - crop.FR) - 1;
+	double FCHECK = crop.Fr + (crop.Fl + crop.Fs + crop.Fo) * (1 - crop.Fr) - 1;
     //test
 	if (fabs(FCHECK) > 0.0001){
-		std::string m = "Error in partitioning functions on step " + std::to_string(step) + " FCHECK = " + std::to_string(FCHECK) + " FR = " + std::to_string(crop.FR) 
-		+ " FL = " + std::to_string(crop.FL) + " FS = " + std::to_string(crop.FS)
-		+ " FO = " + std::to_string(crop.FO);
+		std::string m = "Error in partitioning functions on step " + std::to_string(step) + " FCHECK = " + std::to_string(FCHECK) + " FR = " + std::to_string(crop.Fr) 
+		+ " FL = " + std::to_string(crop.Fl) + " FS = " + std::to_string(crop.Fs)
+		+ " FO = " + std::to_string(crop.Fo);
 		messages.push_back(m);
 		//fatalError = true;
 	}
   //check on carbon balance
-	double CCHECK = (crop.GASS - MRES - (crop.FR + (crop.FL + crop.FS + crop.FO)*(1. - crop.FR)) * DMI/CVF)/ std::max(0.0001, crop.GASS);
+	double CCHECK = (crop.GASS - MRES - (crop.Fr + (crop.Fl + crop.Fs + crop.Fo)*(1. - crop.Fr)) * DMI/CVF)/ std::max(0.0001, crop.GASS);
   
 	if (fabs(CCHECK) > 0.0001){
 		std::string m = "Carbon balance leak (CCHECK in cropsi) on step " + std::to_string(step);
@@ -277,14 +277,14 @@ void WofostModel::crop_rates() {
 
   //growth rate by plant organ
   //growth rate roots and aerial parts
-	double ADMI = (1. - crop.FR) * DMI;
+	double ADMI = (1. - crop.Fr) * DMI;
 	if (control.useForce & forcer.force_ADMI) {
 		ADMI = forcer.ADMI[time];
 	} 	
 
-	double GRRT = crop.FR * DMI;
+	double GRRT = crop.Fr * DMI;
 	if (control.useForce & forcer.force_DMI) {
-		GRRT = crop.FR * forcer.DMI[time];
+		GRRT = crop.Fr * forcer.DMI[time];
 	} 	
 	
 	crop.DRRT = crop.WRT * AFGEN(crop.p.RDRRTB, crop.DVS);
@@ -295,7 +295,7 @@ void WofostModel::crop_rates() {
 	if (control.useForce & forcer.force_FL) {
 		crop.GRLV = forcer.FL[time] * ADMI;
 	} else {
-		crop.GRLV = crop.FL * ADMI;
+		crop.GRLV = crop.Fl * ADMI;
 	}
   //death of leaves due to water stress or high LAI
 	double DSLV1 = crop.WLV * (1. - crop.TRA/crop.TRAMX) * crop.p.PERDL;
@@ -344,12 +344,12 @@ void WofostModel::crop_rates() {
 	}
 	
 	//growth rate stems
-	double GRST = crop.FS * ADMI;
+	double GRST = crop.Fs * ADMI;
 	crop.DRST = AFGEN(crop.p.RDRSTB, crop.DVS) * crop.WST;
 	crop.GWST = GRST - crop.DRST;
 
   //growth rate storage organs
-	crop.GWSO = crop.FO * ADMI;
+	crop.GWSO = crop.Fo * ADMI;
 	crop.DRSO = 0.;
 
 	//if(control.nutrient_limited){

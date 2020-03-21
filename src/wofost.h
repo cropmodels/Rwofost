@@ -117,7 +117,9 @@ struct WofostCrop {
 	int emergence, ILVOLD, IDANTH;
 	double EFF, AMAX, PGASS, TRA, RFTRA, TRANRF;
 	double LASUM, KDif, TRAMX;
-	double FR, FL, FS, FO;
+	double Fr, Fl, Fs, Fo;
+// FS is a system variable on solaris so renamed to Fs etc
+
 	double TMINRA, DSLV, SLAT;
 	double PMRES;
 	std::vector<double> SLA = std::vector<double>(366), LV = std::vector<double>(366), LVAGE = std::vector<double>(366), TMNSAV = std::vector<double>(7);
@@ -203,8 +205,8 @@ struct WofostSoil {
 	double RIN, RINold, RIRR, DW, PERC, LOSS, DWLOW;
 	
 // STATES
-	double SM, SS, W, WI, DSLR, WLOW, WLOWI, WWLOW;
-
+	double SM, ss, W, WI, DSLR, WLOW, WLOWI, WWLOW;
+// SS is a system variable on SOLARIS. Hence ss.
 	
 // VARIABLES
 	double RDM;

@@ -54,7 +54,7 @@ void WofostModel::model_output(){
 			{double(step), atm.ANGOT, atm.ATMTR, atm.COSLD, atm.DAYL, 
 				atm.DAYLP, atm.DifPP, atm.DSINBE, atm.SINLD, soil.EVWMX,
 				crop.TSUM, crop.DVR, crop.DVS, soil.EVS, crop.LAI, crop.LASUM, 
-				crop.SAI, crop.PGASS, crop.RD, soil.SM,  crop.FL, crop.FO, crop.FR, crop.FS,
+				crop.SAI, crop.PGASS, crop.RD, soil.SM,  crop.Fl, crop.Fo, crop.Fr, crop.Fs,
 				crop.PMRES,	crop.TAGP, crop.TRA, crop.TRAMX, crop.RFTRA, 
 				crop.WRT, crop.WLV, crop.WST, crop.WSO,
 				crop.TWRT, crop.TWLV, crop.TWST, crop.TWSO, crop.GRLV, crop.SLAT
@@ -194,8 +194,8 @@ void WofostModel::force_states() {
 		if (forcer.force_WSO)  crop.WSO = forcer.WSO[time];
 		if (forcer.force_WST)  crop.WST = forcer.WST[time];
 		if (forcer.force_RFTRA) crop.RFTRA = forcer.RFTRA[time];
-		if (forcer.force_FR)   crop.FR = forcer.FR[time];
-		if (forcer.force_FL)   crop.FL = forcer.FL[time];
+		if (forcer.force_FR)   crop.Fr = forcer.FR[time];
+		if (forcer.force_FL)   crop.Fl = forcer.FL[time];
 	}
 }
 
