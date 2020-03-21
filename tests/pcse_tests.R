@@ -70,9 +70,9 @@ yamltest <- function(yf) {
 		cal <- m[[1]][[1]]$CropCalendar
 		tim$modelstart <- as.Date(names(m[[1]]))
 		tim$cropstart <- as.integer(tim$modelstart - as.Date(cal$crop_start_date))
-		tim$IPRODL <- 1
-		tim$IDURMX <- cal$max_duration
-		if (cal$crop_start_type == "sowing") tim$ISTCHO = 1
+		tim$max_duration <- cal$max_duration
+		if (cal$crop_start_type == "sowing") tim$start_sowing = 1
+		if (cal$crop_end_type == "maturity") tim$stop_maturity = 1
 	
 		p <- y$ModelParameters
 		np <- names(p)
@@ -80,8 +80,8 @@ yamltest <- function(yf) {
 			return(list(skip=TRUE))
 		}
 		
-		pcrop <- np %in% .crop_pars
-		psoil <- np %in% .soil_pars
+		pcrop <- np %in% Rwofost:::.crop_pars
+		psoil <- np %in% Rwofost:::.soil_pars
 		pother <- p[!(pcrop | psoil)]
 		pcrop <- p[pcrop]
 		psoil <- p[psoil]
@@ -89,9 +89,8 @@ yamltest <- function(yf) {
 		pcrop$CO2AMAXTB = c(40., 0.00, 360., 1.00, 720., 1.35, 1000., 1.50, 2000., 1.50)
 		pcrop$CO2EFFTB = c(40., 0.00, 360., 1.00, 720., 1.11, 1000., 1.11, 2000., 1.11)
 		pcrop$CO2TRATB = c(40., 0.00, 360., 1.00, 720., 0.9, 1000., 0.9, 2000., 0.9)
-		pcrop <- lapply(pcrop, Rwofost:::.make_matrices)
+		pcrop <- lapply(pcrop, make_matrices)
 
-	   # parameters missing: 
 		nms <- names(dsoil)
 		nms <- nms[!(nms %in% names(pcrop))]
 		psoil <- c(psoil, dsoil[nms])
@@ -135,22 +134,25 @@ yamltest <- function(yf) {
 
 
 
-getPR <- function(path, test, i) {
+getPR <- function(path, test, i, subsetcols=TRUE, subsetrows=TRUE) {
     ii <- formatC(i, width=2, flag="0")
     yf <- file.path(path, paste0("test_", test, "_wofost71_", ii, ".yaml")) 
-    x <- Rwofost:::.yamltest(yf)
+    x <- yamltest(yf)
   
     #skipping vernalization cases for now
     if (x$skip) return(NULL)
-    p <- x$P
-    r <- x$R
-    cn <- colnames(r)[colnames(r) %in% colnames(p)]
-    r <- r[, c("date", cn)]
-    p <- p[, c("DAY", cn)]
-    p <- p[1:nrow(r), ]
-    x$P <- p
+	if (subsetcols) {
+		cn <- colnames(x$R)[colnames(x$R) %in% colnames(x$P)]
+		x$R <- x$R[, c("date", cn)]
+		x$P <- x$P[, c("DAY", cn)]
+	}
+	if (subsetrows) {
+		x$P <- x$P[1:nrow(x$R), ]
+	}
 	x
 }
+
+
 
 
 complot <- function(x, p, r=p) {
@@ -171,21 +173,20 @@ test_precision <- function(x, p) {
 }
 
 
-test <- function(path, group, tests=1:42) {
+wtest <- function(path, group, tests=1:42) {
 
 	if (group == "astro"){
 		aprec <- list(ANGOT=1000, ATMTR=0.004, COSLD=0.005, DAYL=0.1, DAYLP=0.1, DIFPP=1.5, DSINBE=250, SINLD=0.0005)
 	}
-	
 	bf <- paste0("test_", group, "_wofost71_")
 
 	first <- TRUE
-	j = 1;
+	j <- 1;
 	for (i in tests) {
 		fname <- paste0(bf, formatC(i, width=2, flag="0"), ".yaml")
 		
 		yf <- file.path(path, fname)
-		x <- .yamltest(yf) 
+		x <- yamltest(yf) 
 		if (group == "astro"){
 			x$prec <- aprec
 		}
@@ -196,7 +197,7 @@ test <- function(path, group, tests=1:42) {
 			stopifnot(x$P$DAY[1] == x$R$date[1])
 			x$P <- x$P[1:nrow(x$R), ]
 			x$P <- x$P[, colnames(x$P)[colnames(x$P) %in% colnames(x$R)], drop=FALSE]
-			test <- sapply(colnames(x$P), function(v) .test_precision(x, v) )
+			test <- sapply(colnames(x$P), function(v) test_precision(x, v) )
 			if (first) {
 				result <- matrix(nrow=length(tests), ncol=length(test))
 				first <- FALSE
@@ -220,18 +221,4 @@ test <- function(path, group, tests=1:42) {
 	result
 }
 
-
-## location of the wofost yaml test files.
-#ydir <- "C:/github/cropmodels/Rwofost_test/test_data/"
-
-#library(Rwofost)
-#xs <- yamltest(ydir, "astro")
-#xy <- yamltest(ydir, "phenology")
-#xp <- yamltest(ydir, "partitioning")
-#xa <- yamltest(ydir, "assimilation")
-#xr <- yamltest(ydir, "rootdynamics")
-#xp <- yamltest(ydir, "respiration")
-#xl <- yamltest(ydir, "leafdynamics")
-#xp <- yamltest(ydir, "potentialproduction")
-#xw <- yamltest(ydir, "waterlimitedproduction")
 

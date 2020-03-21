@@ -50,7 +50,8 @@ RCPP_MODULE(wofost){
 		.field("CO2",  &WofostControl::CO2) 
 		.field("water_limited", &WofostControl::water_limited)
 		//.field("nutrient_limited", &WofostControl::nutrient_limited)
-		.field("watlim_type", &WofostControl::IOXWL)
+		.field("watlim_oxygen", &WofostControl::IOXWL)
+		
 		.field("start_sowing", &WofostControl::ISTCHO) 
 		//.field("IDESOW", &WofostControl::IDESOW) 
 		//.field("IDLSOW", &WofostControl::IDLSOW) 

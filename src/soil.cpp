@@ -26,8 +26,6 @@ void WofostModel::soil_initialize() {
 
 
 void WofostModel::soil_rates() {
-	soil.EVWMX = atm.E0;
-	soil.EVSMX = atm.ES0;
 
 	if (control.water_limited) {
 		if (soil.p.IZT == 0) {

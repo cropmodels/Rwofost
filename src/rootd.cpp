@@ -29,14 +29,14 @@ void WofostModel::ROOTD_initialize() {
 
 void WofostModel::ROOTD_rates() {
 // root growth RR in cm 
+	crop.RR = 0; 
+
    if (crop.Fr > 0 ) { 
 		// with groundwater, root growth zero nearby groundwater
-		if (!(crop.p.IAIRDU == 0 && soil.ZT - crop.RD < 10)) { 
+		if (crop.p.IAIRDU || ((soil.ZT - crop.RD) >= 10)) { 
 			crop.RR = std::min(soil.RDM - crop.RD, crop.p.RRI);
 		}
-	} else {
-		crop.RR = 0; 
- 	}
+	} 
 }
 
 void WofostModel::ROOTD_states() {

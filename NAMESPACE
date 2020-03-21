@@ -1,4 +1,4 @@
 useDynLib(Rwofost)
 import(methods, Rcpp, meteor)
-exportMethods("crop<-", "soil<-", "control<-", "weather<-", "run")
+exportMethods("crop<-", "soil<-", "control<-", "weather<-", "force<-", "run")
 export(wofost, wofost_model, wofost_crop, wofost_soil, wofost_control)

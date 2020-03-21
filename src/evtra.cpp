@@ -63,7 +63,7 @@ void WofostModel::EVTRA() {
         //reduction in transpiration in case of oxygen shortage
         //for non-rice crops, and possibly deficient land drainage        
 	    double RFOS=1.;
-		if (crop.p.IAIRDU == 0 && IOX == 1){
+		if ((!crop.p.IAIRDU) && (control.IOXWL)){
             //critical soil moisture content for aeration
             double SMAIR = soil.p.SM0 - soil.p.CRAIRC;
             //count days since start oxygen shortage (up to 4 days)

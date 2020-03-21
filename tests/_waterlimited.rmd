@@ -1,0 +1,31 @@
+---
+title: "Water-limited production"
+date: "2/27/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R code
+
+```{r cc, fig.height=8, fig.width=6}
+
+library(Rwofost)
+source("pcse_tests.R")
+
+ydir <- "C:/github/cropmodels/Rwofost_test/test_data/"
+group <- "waterlimitedproduction"
+
+for (i in 1:44) {
+    x <- getPR(ydir, group, i)
+    if (is.null(x)) next # skipping vernalization cases
+    par(mfrow=c(4,2), mai=c(.5,.75,.1,.1))
+    for (v in colnames(x$P)[-c(1,2)]) complot(x, v)  
+    print(paste(group, i))
+}
+```
+

@@ -43,6 +43,12 @@ bool WofostModel::weather_step() {
 		PENMAN(); // E0, ES0, ET0
 		PENMAN_MONTEITH(); // ET0
 
+	//(evapo)transpiration rates
+		EVTRA();
+		
+		//soil.EVWMX = atm.E0;
+		//soil.EVSMX = atm.ES0;
+
 	}
 	return true;
 }
@@ -108,13 +114,6 @@ void WofostModel::model_initialize() {
 	//}
 
 //	ISTATE = 3;
-
-//	control.IWB = control.IPRODL;
-	if (control.water_limited) {
-		IOX = control.IOXWL;  
-	} else {
-		IOX = 0;
-	}
 
 	if (control.output_option == "TEST") {
 		output.names = {"step", "ANGOT", "ATMTR", "COSLD", "DAYL", "DAYLP", "DIFPP",
@@ -227,10 +226,11 @@ void WofostModel::model_run() {
 		//if(control.nutrient_limited){
 		//	npk_soil_dynamics_rates();
 		//} else{
-			soil_rates();
+		soil_rates();
 		//}
-		soil.EVWMX = atm.E0;
-		soil.EVSMX = atm.ES0;
+		//soil.EVWMX = atm.E0;
+		//soil.EVSMX = atm.ES0;
+		
 		if (step >= cropstart_step) {
 			if (ISTATE == 0 ) { // find day of sowing
 				STDAY();

@@ -94,7 +94,7 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	
 	cntr.water_limited = valueFromListDefault<bool>(control, "water_limited", false); 
 	//cntr.nutrient_limited = valueFromListDefault<bool>(control, "nutrient_limited", false); 
-	cntr.IOXWL = valueFromList<int>(control, "watlim_type");
+	cntr.IOXWL = valueFromList<int>(control, "watlim_oxygen");
 
 	cntr.ISTCHO = valueFromList<int>(control, "start_sowing");
 	//cntr.IDESOW = valueFromList<int>(control, "IDESOW");
@@ -206,11 +206,13 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 // soil parameters
 	struct WofostSoil sol;
 
-	if (cntr.IOXWL != 0) {
-		sol.p.SMTAB = TableFromList(soil, "SMTAB");
-	} else { // should be no need to read it; need to check if true
-		sol.p.SMTAB = TableFromList(soil, "SMTAB");
-	}
+	//if (cntr.IOXWL != 0) {
+	
+	sol.p.SMTAB = TableFromList(soil, "SMTAB");
+	
+	//} else { // should be no need to read it; need to check if true
+	//	sol.p.SMTAB = TableFromList(soil, "SMTAB");
+	//}
 	sol.p.SMW = valueFromList<double>(soil, "SMW");
 	sol.p.SMFCF = valueFromList<double>(soil, "SMFCF");
 	sol.p.SM0 = valueFromList<double>(soil, "SM0");

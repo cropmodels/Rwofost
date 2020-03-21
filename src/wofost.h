@@ -34,7 +34,7 @@ struct WofostControl {
 	int INYRG, ISTCHO, IDLSOW, IDURMX;
 	//IENCHO, IDAYEN
 	bool stop_maturity = true;
-	int IOXWL;  //IOX for water limited
+	bool IOXWL = false;  //oxygen limitation
 	//int	IPRODL, IWB; // water limited (1) or potential (0)
 	bool water_limited = false; 
 	// nutrient_limited = false;
@@ -260,7 +260,8 @@ struct WofostOutput {
 struct WofostModel {
 
 	unsigned step, time, DOY, npk_step;
-	int IDHALT, ISTATE, IOX;
+	int IDHALT, ISTATE;
+	//bool IOX;
 
 	std::vector<std::string> messages;
 	bool fatalError;

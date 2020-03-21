@@ -192,8 +192,6 @@ void WofostModel::crop_rates() {
 	DTGA = DTGA * AFGEN(crop.p.TMNFTB, crop.TMINRA);
 	crop.PGASS = DTGA * 30./44.;
 
-  //(evapo)transpiration rates
-	EVTRA();
   //water stress reduction
 
   //  crop.GASS = crop.PGASS * crop.TRA / crop.TRAMX;
