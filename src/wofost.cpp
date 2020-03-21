@@ -316,8 +316,9 @@ void WofostModel::model_run() {
 		}
 	}
 	//if (control.IENCHO == 1) {
-	if (control.stop_maturity == 0) {
+	if (!control.stop_maturity) {
 		// should continue until maxdur if water balance if IENCHO is 1
+	    crop.TRA = 0;
 		while (step < maxdur) {
 			weather_step();
 			soil_rates();

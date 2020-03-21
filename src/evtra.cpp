@@ -58,7 +58,7 @@ void WofostModel::EVTRA() {
         double SWDEP = SWEAF(atm.ET0, crop.p.DEPNR);
         double SMCR = (1. - SWDEP) * (soil.p.SMFCF - soil.p.SMW) + soil.p.SMW;
         //reduction in transpiration in case of water shortage
-        double RFWS = LIMIT(0.,1.,(soil.SM - soil.p.SMW)/(SMCR - soil.p.SMW));
+        double RFWS = LIMIT(0.,1., (soil.SM - soil.p.SMW) / (SMCR - soil.p.SMW));
 
         //reduction in transpiration in case of oxygen shortage
         //for non-rice crops, and possibly deficient land drainage        

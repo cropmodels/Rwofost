@@ -105,7 +105,8 @@ struct WofostCrop {
 	
 
 	//struct states {
-	double RD, RDOLD, GRLV, DWRT, DWLV, DWST, DWSO;
+	double RD=0;
+	double RDOLD, GRLV, DWRT, DWLV, DWST, DWSO;
 	double DVS, LAI, LAIEXP, WRT, WLV, WST, WSO;
 	double TWRT, TWLV, TWST, TWSO, TAGP, TSUM, TSUME;
 	double TADW, SAI, PAI; 
@@ -115,10 +116,11 @@ struct WofostCrop {
 // variables
 	bool alive;
 	int emergence, ILVOLD, IDANTH;
-	double EFF, AMAX, PGASS, TRA, RFTRA, TRANRF;
+	double EFF, AMAX, PGASS, RFTRA, TRANRF;
 	double LASUM, KDif, TRAMX;
 	double Fr, Fl, Fs, Fo;
 // FS is a system variable on solaris so renamed to Fs etc
+	double TRA=0; 
 
 	double TMINRA, DSLV, SLAT;
 	double PMRES;
