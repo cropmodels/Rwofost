@@ -105,7 +105,7 @@ setMethod("weather<-", signature("Rcpp_WofostModel", "data.frame"),
 )
 
 
-.req_ctr_pars <- c("modelstart", "cropstart", "start_sowing", "max_duration", "water_limited", "watlim_type", "latitude", "CO2", "elevation")
+.req_ctr_pars <- c("modelstart", "cropstart", "start_sowing", "max_duration", "water_limited", "watlim_oxygen", "latitude", "CO2", "elevation")
 .opt_ctr_pars <- c("output", "ANGSTA", "AMAXTB")
 .fut <- c("nutrient_limited")
 

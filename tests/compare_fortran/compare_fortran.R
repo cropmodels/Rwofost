@@ -31,7 +31,7 @@ points(rp[,'step'], rp[, 'LAI'])
 
 # yield
 plot(d[,'DAY'], d[,'WSO'], type='l')
-points(rp[, 1], rp[,'WSO'])
+points(rp[, 2], rp[,'WSO'])
 
 
 ## 2

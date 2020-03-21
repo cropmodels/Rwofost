@@ -40,7 +40,7 @@ yamltest <- function(yf) {
 	prec <- y$Precision
 	dsoil <- wofost_soil("soil_5")
 	dcrop <- wofost_crop('maize_1')
-	dcrop <- wofost_crop('barley')
+	#bcrop <- wofost_crop('barley')
 	#dcrop <- wofost_crop('sugarbeet_601')
 
 	if (isTRUE(grep("dynamics", ttype))) {

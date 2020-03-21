@@ -6,10 +6,12 @@
 \alias{soil<-}
 \alias{control<-}
 \alias{weather<-}
+\alias{force<-}
 \alias{crop<-,Rcpp_WofostModel,list-method}
 \alias{soil<-,Rcpp_WofostModel,list-method}
 \alias{control<-,Rcpp_WofostModel,list-method}
 \alias{weather<-,Rcpp_WofostModel,data.frame-method}
+\alias{force<-,Rcpp_WofostModel,data.frame-method}
 \alias{run,Rcpp_WofostModel-method}
 
 
@@ -28,6 +30,7 @@ crop(x) <- value
 soil(x) <- value
 control(x) <- value
 weather(x) <- value
+force(x) <- value
 }
 
 
@@ -36,7 +39,7 @@ weather(x) <- value
 \item{weather}{data.frame with weather data. See Details}
 \item{soil}{list. Soil parameters}
 \item{control}{list. Model control options}
-\item{value}{crop, weather, soil, or control data; as above}
+\item{value}{crop, weather, soil, or control data, as above; or a data.frame for "force"}
 \item{x}{WOFOST model}
 \item{\dots}{additiontal arguments. \code{stopError}(logica). If an error occurs and \code{stopError} is \code{TRUE}, and error message is given. Otherwise, a warning is given and some simulation data (up till when the error occurred) may be returned}
 }
@@ -62,8 +65,6 @@ The weather data must be passed as a data.frame with the following variables and
 
 Note that there should not be any time gaps between the days in the data.frame 
 }
-
-
 
 \references{
 Van Diepen, C.A., J. Wolf, and H van Keulen, 1989. WOFOST: a simulation model of crop production. Soil Use and Management, 5: 16-24
