@@ -88,12 +88,9 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	
 	cntr.latitude  = valueFromList<double>(control, "latitude");
 	cntr.elevation = valueFromList<double>(control, "elevation");
-	cntr.CO2 = valueFromList<double>(control, "CO2");
-	cntr.usePENMAN = valueFromListDefault<bool>(control, "usePENMAN", true);
-	if (cntr.usePENMAN) {
-		cntr.ANGSTA = valueFromListDefault<double>(control, "ANGSTA", -0.18);
-		cntr.ANGSTB = valueFromListDefault<double>(control, "ANGSTB", -0.55);
-	}
+	cntr.CO2 = valueFromListDefault<double>(control, "CO2", 360);
+	cntr.ANGSTA = valueFromListDefault<double>(control, "ANGSTA", 0.18);
+	cntr.ANGSTB = valueFromListDefault<double>(control, "ANGSTB", 0.55);
 	
 	cntr.water_limited = valueFromListDefault<bool>(control, "water_limited", false); 
 	//cntr.nutrient_limited = valueFromListDefault<bool>(control, "nutrient_limited", false); 

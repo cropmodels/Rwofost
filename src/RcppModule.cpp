@@ -60,7 +60,7 @@ RCPP_MODULE(wofost){
 		.field("max_duration", &WofostControl::IDURMX) 
 		.field("ANGSTA",  &WofostControl::ANGSTA) 
 		.field("ANGSTB",  &WofostControl::ANGSTB) 
-		.field("usePENMAN",  &WofostControl::usePENMAN) 
+		//.field("usePENMAN",  &WofostControl::usePENMAN) 
 		.field("useForce",  &WofostControl::useForce) 
 	;
 

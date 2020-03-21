@@ -24,7 +24,7 @@ struct WofostControl {
 	//bool npk_model = false;  //if model is npk, default false
 
 	double latitude, elevation;
-	double CO2 = 410;
+	double CO2 = 360;
 	
 	bool usePENMAN = true;
 	double ANGSTA = 0.18;
@@ -40,7 +40,7 @@ struct WofostControl {
 	// nutrient_limited = false;
 	//std::vector<double> N_amount, P_amount, K_amount;
 	//std::vector<long> NPKdates;
-	bool useForce;
+	bool useForce = false;
 };
 
 
