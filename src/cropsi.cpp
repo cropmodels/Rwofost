@@ -198,7 +198,6 @@ void WofostModel::crop_rates() {
   //water stress reduction
 	double reduction = crop.TRA / crop.TRAMX;
 
-
   //  crop.r.GASS = crop.PGASS * crop.TRA / crop.TRAMX;
   // nutrient status and reduction factor
 	//if (control.nutrient_limited) {

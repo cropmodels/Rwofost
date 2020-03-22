@@ -38,14 +38,14 @@ bool WofostModel::weather_step() {
 */
 
 		DOY = doy_from_days(wth.date[time]);
-		
+
 		ASTRO();
 		PENMAN(); // E0, ES0, ET0
 		PENMAN_MONTEITH(); // ET0
 
 	//(evapo)transpiration rates
 		EVTRA();
-		
+
 		//soil.EVWMX = atm.E0;
 		//soil.EVSMX = atm.ES0;
 
@@ -57,20 +57,20 @@ bool WofostModel::weather_step() {
 void WofostModel::model_output(){
 	if (control.output_option == "TEST") {
 		output.values.insert(output.values.end(),
-			{double(step), atm.ANGOT, atm.ATMTR, atm.COSLD, atm.DAYL, 
+			{double(step), atm.ANGOT, atm.ATMTR, atm.COSLD, atm.DAYL,
 				atm.DAYLP, atm.DifPP, atm.DSINBE, atm.SINLD, soil.EVWMX,
-				crop.s.TSUM, crop.r.DVR, crop.s.DVS, soil.EVS, crop.s.LAI, crop.LASUM, 
+				crop.s.TSUM, crop.r.DVR, crop.s.DVS, soil.EVS, crop.s.LAI, crop.LASUM,
 				crop.s.SAI, crop.PGASS, crop.s.RD, soil.SM,  crop.Fl, crop.Fo, crop.Fr, crop.Fs,
-				crop.PMRES,	crop.s.TAGP, crop.TRA, crop.TRAMX, crop.RFTRA, 
+				crop.PMRES,	crop.s.TAGP, crop.TRA, crop.TRAMX, crop.RFTRA,
 				crop.s.WRT, crop.s.WLV, crop.s.WST, crop.s.WSO,
 				crop.s.TWRT, crop.s.TWLV, crop.s.TWST, crop.s.TWSO, crop.s.GRLV, crop.SLAT
 			}
-		);	
+		);
 	} else {
 		output.values.insert(output.values.end(),
-			{double(step), crop.s.TSUM, crop.s.DVS, crop.s.LAI,   
+			{double(step), crop.s.TSUM, crop.s.DVS, crop.s.LAI,
 				crop.s.WRT, crop.s.WLV, crop.s.WST, crop.s.WSO,
-				crop.TRA, soil.EVS, soil.EVW, soil.SM 
+				crop.TRA, soil.EVS, soil.EVW, soil.SM
 			}
 		);
 	}
@@ -81,6 +81,11 @@ void WofostModel::model_output(){
 void WofostModel::model_initialize() {
 
 	fatalError = false;
+	if (wth.date.size() < 1) {
+		std::string m = "no weather data";
+	    messages.push_back(m);
+	    fatalError = true;
+	}
 
 // start time (relative to weather data)
 	if (control.modelstart < wth.date[0]) {
@@ -118,8 +123,8 @@ void WofostModel::model_initialize() {
 
 	if (control.output_option == "TEST") {
 		output.names = {"step", "ANGOT", "ATMTR", "COSLD", "DAYL", "DAYLP", "DIFPP",
-			"DSINBE", "SINLD", "EVWMX", "TSUM", "DVR", "DVS", "EVS", "LAI", "LASUM", "SAI", "PGASS", "RD", "SM", "FL", "FO", "FR", "FS", "PMRES", "TAGP", 
-			"TRA", "TRAMX", "RFTRA", "WRT", "WLV", "WST", "WSO", 
+			"DSINBE", "SINLD", "EVWMX", "TSUM", "DVR", "DVS", "EVS", "LAI", "LASUM", "SAI", "PGASS", "RD", "SM", "FL", "FO", "FR", "FS", "PMRES", "TAGP",
+			"TRA", "TRAMX", "RFTRA", "WRT", "WLV", "WST", "WSO",
 			"TWRT", "TWLV", "TWST", "TWSO", "GRLV", "SLAT"};
 	} else {
 		output.names = {"step", "TSUM", "DVS", "LAI", "WRT", "WLV", "WST", "WSO", "TRA", "EVS", "EVW", "SM"};
@@ -127,7 +132,7 @@ void WofostModel::model_initialize() {
 
 	output.values.resize(0);
 	output.values.reserve(output.names.size() * 150);
-	
+
 	DOY = doy_from_days(wth.date[time]);
     crop.alive = true;
 
@@ -139,13 +144,13 @@ void WofostModel::model_initialize() {
 		npk_demand_uptake_initialize();
 	}
 	*/
-	
+
 	if (ISTATE == 1) {
 		crop.s.DVS = -0.1;
 	} else {
 		crop.s.DVS = 0;
     }
-	
+
 	crop.s.WRT = 0;
     crop.s.TADW = 0;
     crop.s.WST = 0;
@@ -166,7 +171,7 @@ void WofostModel::model_initialize() {
     crop.RFTRA = 0;
 	crop.r.GASS = 0;
 	crop.s.GRLV = 0;
-	
+
 	// adjusting for CO2 effects
     double CO2AMAXadj = AFGEN(crop.p.CO2AMAXTB, control.CO2);
 	for(size_t i=1; i<crop.p.AMAXTB.size(); i=i+2) {
@@ -213,15 +218,15 @@ void WofostModel::model_run() {
 	bool crop_emerged = false;
 
 	force_states();
-	
+
 	if (ISTATE == 1) {
 		crop.s.DVS = -0.1;
 	}
 //
-	
+
 	while (! crop_emerged) {
 		force_states();
-	
+
 		weather_step();
 		//if(control.nutrient_limited){
 		//	npk_soil_dynamics_rates();
@@ -230,17 +235,17 @@ void WofostModel::model_run() {
 		//}
 		//soil.EVWMX = atm.E0;
 		//soil.EVSMX = atm.ES0;
-		
+
 		if (step >= cropstart_step) {
 			if (ISTATE == 0 ) { // find day of sowing
 				STDAY();
-			} else if (ISTATE == 1) { // find day of emergence				
+			} else if (ISTATE == 1) { // find day of emergence
 				//ugly
 				crop.s.DVS = crop.s.DVS + crop.r.DVR;
 				if (control.useForce & forcer.force_DVS) {
 					crop.s.DVS = forcer.DVS[time];
 				}
-			
+
 				crop.s.TSUME = crop.s.TSUME + crop.r.DTSUME;
 				if (crop.s.DVS >= 0) {
 					ISTATE = 3;
@@ -286,14 +291,14 @@ void WofostModel::model_run() {
 		maxdur = step + 365;
 	}
 	*/
-	
-	
+
+
 //	crop_initialize();
 
 	while ((crop.alive) && (step < maxdur)) {
-		
+
 		force_states();
-		
+
 		if (! weather_step()) break;
 		crop_rates();
 		//if (control.nutrient_limited){

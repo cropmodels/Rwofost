@@ -26,7 +26,7 @@ struct WofostControl {
 	double latitude, elevation;
 	double CO2 = 360;
 	
-	bool usePENMAN = true;
+	//bool usePENMAN = true;
 	double ANGSTA = 0.18;
 	double ANGSTB = 0.55;
 
@@ -148,9 +148,8 @@ struct WofostCrop {
 		double ATKLV, ATKST, ATKRT;
 	};
 	statesNPK sn;
-	*/
 	
-	struct variables {
+	struct variablesNPK {
 		double NNI, PNI, KNI, NPKI, NPKREF;
 		double NTRANSLOCATABLE, PTRANSLOCATABLE, KTRANSLOCATABLE;
 		double NDEMLV, NDEMST, NDEMRT, NDEMSO, PDEMLV, PDEMST, PDEMRT, PDEMSO, KDEMLV, KDEMST, KDEMRT, KDEMSO;
@@ -158,7 +157,8 @@ struct WofostCrop {
 		double NLOSSES_T, KLOSSES_T, PLOSSES_T;
 
 	};
-	variables vn;
+	variablesNPK vn;
+	*/
 
 };
 
