@@ -20,15 +20,6 @@ template <class T> T maxvalue(std::vector<T> v) {
 
 
 
-inline double clamp(double min, double max, double v) {
-  if (v < min) {
-    v = min;
-  } else if (v > max) {
-    v = max;
-  }
-  return(v);
-}
-
 inline double NOTNUL(double x) {
 	return (x == 0 ? 1 : x);
 }	
@@ -50,6 +41,14 @@ inline double LIMIT(double min, double max, double v) {
     v = max;
   }
   return(v);
+}
+
+inline double clamp(double minv, double maxv, double v) {
+  return v < minv ? minv : (v > maxv ? maxv : v);
+}
+
+inline void clampinplace(double minv, double maxv, double &v) {
+  v = v < minv ? minv : (v > maxv ? maxv : v);
 }
 
 inline double AFGEN(std::vector<double> xy, double x) {

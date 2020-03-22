@@ -61,7 +61,7 @@ void WofostModel::PENMAN() {
 //  coefficient Bu in wind function, dependent on temperature difference
 	double TMPA  = ( atm.TMIN + atm.TMAX ) / 2.; // average temp
 	double TDif  = atm.TMAX - atm.TMIN;
-	double BU    = 0.54 + 0.35 * LIMIT(0, 1, (TDif - 12.) / 4.);
+	double BU    = 0.54 + 0.35 * clamp(0, 1, (TDif - 12.) / 4.);
 
 //  barometric pressure (mbar)
 //  psychrometric constant (mbar/Celsius)
