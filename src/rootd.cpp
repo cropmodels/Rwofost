@@ -17,7 +17,7 @@ Compute the depth of the root zone is calculated for each day of the crop cycle
 
 
 void WofostModel::ROOTD_initialize() {
-    crop.RD = crop.p.RDI;
+    crop.s.RD = crop.p.RDI;
 	soil.RDM = std::max(crop.p.RDI, std::min(soil.p.RDMSOL, crop.p.RDMCR));
     if (soil.p.IZT == 0) { 
 		soil.ZT = 999.; 
@@ -29,18 +29,18 @@ void WofostModel::ROOTD_initialize() {
 
 void WofostModel::ROOTD_rates() {
 // root growth RR in cm 
-	crop.RR = 0; 
+	crop.r.RR = 0; 
 
    if (crop.Fr > 0 ) { 
 		// with groundwater, root growth zero nearby groundwater
-		if (crop.p.IAIRDU || ((soil.ZT - crop.RD) >= 10)) { 
-			crop.RR = std::min(soil.RDM - crop.RD, crop.p.RRI);
+		if (crop.p.IAIRDU || ((soil.ZT - crop.s.RD) >= 10)) { 
+			crop.r.RR = std::min(soil.RDM - crop.s.RD, crop.p.RRI);
 		}
 	} 
 }
 
 void WofostModel::ROOTD_states() {
-    crop.RD += crop.RR;
+    crop.s.RD += crop.r.RR;
 }
 
 

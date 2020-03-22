@@ -81,12 +81,22 @@ struct WofostCropParameters {
 } ;
 
 struct WofostCropRates {
+// rates
+	double GASS, GWST, GWSO;
+	double DRST, DRLV, DRRT, GWRT, DRSO; // dead rates
+	double DVR, DTSUME, DTSUM, GLAIEX;
+	double RR, FYSDEL;
+	
 	double VERNR;   // Rate of vernalisation
     double VERNFAC; // Red. factor for phenol. devel.
-
 };
 
 struct WofostCropStates {
+	double RD=0;
+	double RDOLD, GRLV, DWRT, DWLV, DWST, DWSO;
+	double DVS, LAI, LAIEXP, SAI, PAI, WRT, WLV, WST, WSO;
+	double TWRT, TWLV, TWST, TWSO, TAGP, TSUM, TSUME, TADW;
+
 	unsigned VERN; // Vernalisation state (days)
 	long DOV;      // Day when vernalisation requirements are fulfilled.
 	bool ISVERNALISED; // has the vernalisation been reached?
@@ -97,34 +107,17 @@ struct WofostCrop {
 	WofostCropParameters p;
 	WofostCropRates r;
 	WofostCropStates s;
-	
-// rates
-	double GASS, GWST, GWSO;
-	double DRST, DRLV, DRRT, GWRT, DRSO; // dead rates
-	double DVR, DTSUME, DTSUM, GLAIEX;
-	double RR, FYSDEL;
-	
-
-	//struct states {
-	double RD=0;
-	double RDOLD, GRLV, DWRT, DWLV, DWST, DWSO;
-	double DVS, LAI, LAIEXP, WRT, WLV, WST, WSO;
-	double TWRT, TWLV, TWST, TWSO, TAGP, TSUM, TSUME;
-	double TADW, SAI, PAI; 
-	//}
-	//states s;
-	
+		
 // variables
 	bool alive;
 	int emergence, ILVOLD, IDANTH;
 	double EFF, AMAX, PGASS, RFTRA, TRANRF;
 	double LASUM, KDif, TRAMX;
-	double Fr, Fl, Fs, Fo;
-// FS is a system variable on solaris so renamed to Fs etc
+	double Fr, Fl, Fs, Fo; // FS is a system variable on solaris so renamed to Fs etc
 	double TRA=0; 
-
 	double TMINRA, DSLV, SLAT;
 	double PMRES;
+
 	std::vector<double> SLA = std::vector<double>(366), LV = std::vector<double>(366), LVAGE = std::vector<double>(366), TMNSAV = std::vector<double>(7);
 
 	
@@ -213,12 +206,13 @@ struct WofostSoil {
 // SS is a system variable on SOLARIS. Hence ss.
 	
 // VARIABLES
-	double RDM;
 	int ILWPER, IDFWOR;
-	double EVWMX, EVSMX, EVST, EVWT, TSR, WDRT, PERCT, LOSST;
+	double RDM, EVWMX, EVSMX;
 	double SPAC, SPOC, WEXC, CAPRMX, SEEP, COSUT; 	// STDAY
-	double RTDF, MH0, MH1, ZT, SUBAIR, WZ, WZI, WE, WEDTOT, CRT, DRAINT, PF;
+	double RTDF, MH0, MH1, ZT, SUBAIR, WZ, WZI, WE, WEDTOT, PF;
 
+	// summation  TSR, EVST, EVWT, WDRT, CRT, DRAINT, PERCT, LOSST
+	
 	std::vector<double> SDEFTB, DEFDTB, CAPRFU;
 
 	/*

@@ -48,7 +48,7 @@ VERNFAC  Reduction factor on development rate due to        Y     -
 
 void WofostModel::vernalization_rates() {
     if (! crop.s.ISVERNALISED) {
-        if (crop.DVS < crop.p.VERNDVS) {
+        if (crop.s.DVS < crop.p.VERNDVS) {
             crop.r.VERNR = AFGEN(crop.p.VERNRTB, atm.TEMP);
             double rr = (crop.s.VERN - crop.p.VERNBASE)/(crop.p.VERNSAT - crop.p.VERNBASE);
             crop.r.VERNFAC = LIMIT(0., 1., rr);

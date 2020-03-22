@@ -108,7 +108,7 @@ void WofostModel::WATGW_initialize() {
 //        Table DEFDTB is the inverse function of SDEFTB.
 
 
-    crop.RDOLD = crop.RD;
+    crop.s.RDOLD = crop.s.RD;
     soil.MH0 = 0.;
     soil.MH1 = 2.;
     soil.SDEFTB.resize(30);
@@ -140,25 +140,25 @@ void WofostModel::WATGW_initialize() {
         soil.ZT = std::max(soil.ZT, soil.p.DD);
     }
     //        amount of air in soil below rooted zone
-    soil.SUBAIR = AFGEN(soil.SDEFTB, soil.ZT - crop.RD);
+    soil.SUBAIR = AFGEN(soil.SDEFTB, soil.ZT - crop.s.RD);
 
     //        amount of moisture in soil below rooted zone
-    soil.WZ = (XDEF - crop.RD) * soil.p.SM0 - soil.SUBAIR;
+    soil.WZ = (XDEF - crop.s.RD) * soil.p.SM0 - soil.SUBAIR;
     soil.WZI = soil.WZ;
     //        equilibrium amount of soil moisture in rooted zone
 
-    soil.WE = soil.p.SM0 * crop.RD + soil.SUBAIR - AFGEN(soil.SDEFTB, soil.ZT);
+    soil.WE = soil.p.SM0 * crop.s.RD + soil.SUBAIR - AFGEN(soil.SDEFTB, soil.ZT);
     //        equilibrium amount of moisture above drains up to the surface
     soil.WEDTOT = soil.p.SM0 * soil.p.DD - AFGEN(soil.SDEFTB, soil.p.DD);
 //        initial moisture content in rooted zone
-    if(soil.ZT < crop.RD + 100.){
+    if(soil.ZT < crop.s.RD + 100.){
         //           groundwater in or close to rootzone
         soil.W = soil.WE;
     } else{
     // groundwater well below rootzone
-        soil.W = soil.p.SMFCF * crop.RD;
+        soil.W = soil.p.SMFCF * crop.s.RD;
     }
-    soil.SM = soil.W/crop.RD;
+    soil.SM = soil.W/crop.s.RD;
     soil.WI = soil.W;
     // soil evaporation, days since last rain
     soil.DSLR = 1.;
@@ -168,13 +168,13 @@ void WofostModel::WATGW_initialize() {
     //----------------------------------------------------------
     //        all summation variables are initially set at zero
     //----------------------------------------------------------
-    soil.EVST = 0.;
-    soil.EVWT = 0.;
-    soil.TSR = 0.;
-    soil.CRT = 0.;
-    soil.PERCT = 0.;
-    soil.WDRT = 0.;
-    soil.DRAINT = 0.;
+//    soil.EVST = 0.;
+//    soil.EVWT = 0.;
+//    soil.TSR = 0.;
+//    soil.CRT = 0.;
+//    soil.PERCT = 0.;
+//    soil.WDRT = 0.;
+//    soil.DRAINT = 0.;
     //--------------------------------------------
     //        all rates are initially set at zero
     //--------------------------------------------
@@ -234,7 +234,7 @@ void WofostModel::WATGW_rates() {
         }
     }
     //        indicator for groundwater table within (-) or below (+) rootzone
-    double ZTMRD = soil.ZT - crop.RD;
+    double ZTMRD = soil.ZT - crop.s.RD;
     //        capillary flow through the lower root zone boundary
     //        no capillary flow if groundwater table is within rooted zone
     soil.CR = 0.;
@@ -243,7 +243,7 @@ void WofostModel::WATGW_rates() {
     if(ZTMRD > 0.){
         //           groundwater table below rooted zone:
         //           equilibrium amount of soil moisture in rooted zone
-        soil.WE = soil.p.SM0 * crop.RD + soil.SUBAIR - AFGEN(soil.SDEFTB, soil.ZT);
+        soil.WE = soil.p.SM0 * crop.s.RD + soil.SUBAIR - AFGEN(soil.SDEFTB, soil.ZT);
         //           soil suction
         soil.PF = AFGEN(soil.p.PFTAB, soil.SM);
         //           calculate capillary flow
@@ -268,7 +268,7 @@ void WofostModel::WATGW_rates() {
         double DR2;
         if(ZTMRD <= 0.){
             //              ground water above drains and within rootzone
-            DR2 = std::max(0., soil.W + std::max(0., soil.p.DD - crop.RD) * soil.p.SM0 - soil.WEDTOT);
+            DR2 = std::max(0., soil.W + std::max(0., soil.p.DD - crop.s.RD) * soil.p.SM0 - soil.WEDTOT);
             soil.DMAX = std::min(DR1, DR2);
         } else{
             //              groundwater above drains and below root zone ; available
@@ -276,7 +276,7 @@ void WofostModel::WATGW_rates() {
             //              and equilibrium water above groundwater level (both until
             //              root zone).
 
-            DR2 = (AFGEN(soil.SDEFTB, soil.p.DD - crop.RD) - soil.SUBAIR);
+            DR2 = (AFGEN(soil.SDEFTB, soil.p.DD - crop.s.RD) - soil.SUBAIR);
             soil.DMAX = std::min(DR1, DR2);
         }
 
@@ -292,7 +292,7 @@ void WofostModel::WATGW_rates() {
         // groundwater table within rootzone
         // air concentration above groundwater in cm3/cm3
         if (soil.ZT >= 0.1) {
-            AIRC = (crop.RD * soil.p.SM0 - soil.W) / soil.ZT;
+            AIRC = (crop.s.RD * soil.p.SM0 - soil.W) / soil.ZT;
         } else {
 			AIRC = 0; // RH ???
 		}
@@ -301,16 +301,16 @@ void WofostModel::WATGW_rates() {
         soil.RIN = std::min(RINPRE, AIRC * soil.ZT + crop.TRA + soil.EVS + soil.PERC);
         soil.DZ = (crop.TRA + soil.EVS + soil.PERC - soil.RIN) / AIRC;
         //           check if groundwater table stays within rooted zone
-        if (soil.DZ > crop.RD - soil.ZT) {
+        if (soil.DZ > crop.s.RD - soil.ZT) {
             //              groundwater table will drop below rooted zone;
             //              in order to maintain a stable moisture content in the rooted
             //              zone during this transition, water is recovered from the subsoil.
             //              In the water balance of the rooted zone this amount of water is
             //              accounted for as CR (capillary rise).
-            soil.CR = (soil.DZ - (crop.RD - soil.ZT)) * AIRC;
+            soil.CR = (soil.DZ - (crop.s.RD - soil.ZT)) * AIRC;
             //              new equilibrium groundwater depth, based on the soil water
             //              deficit
-            soil.DZ = (AFGEN(soil.DEFDTB, soil.CR) + crop.RD - soil.ZT);
+            soil.DZ = (AFGEN(soil.DEFDTB, soil.CR) + crop.s.RD - soil.ZT);
         }
     }else{
         //           groundwater table below rootzone
@@ -319,9 +319,9 @@ void WofostModel::WATGW_rates() {
         if(DEF1 < 0.){
             soil.PERC = soil.PERC + DEF1;
         }
-        soil.DZ = (AFGEN(soil.DEFDTB, DEF1) + crop.RD - soil.ZT);
+        soil.DZ = (AFGEN(soil.DEFDTB, DEF1) + crop.s.RD - soil.ZT);
         //           infiltration rate not to exceed available soil air volume
-        soil.RIN = std::min(RINPRE, (soil.p.SM0 - soil.SM - 0.0004) * crop.RD + crop.TRA + soil.EVS + soil.PERC - soil.CR);
+        soil.RIN = std::min(RINPRE, (soil.p.SM0 - soil.SM - 0.0004) * crop.s.RD + crop.TRA + soil.EVS + soil.PERC - soil.CR);
     }
         //        rate of change in amount of moisture in the root zone
     soil.DW = crop.TRA - soil.EVS - soil.PERC + soil.CR + soil.RIN;
@@ -346,48 +346,48 @@ void WofostModel::WATGW_states(){
 
 //        transpiration
     // total evaporation from surface water layer and/or soil
-    soil.EVWT += soil.EVW;
-    soil.EVST += soil.EVS;
+    //soil.EVWT += soil.EVW;
+    //soil.EVST += soil.EVS;
     // surface storage and runoff
     double SSPRE = soil.ss + (atm.RAIN + soil.RIRR - soil.EVW - soil.RIN);
     soil.ss = std::min(SSPRE, soil.p.SSMAX);
-    soil.TSR += (SSPRE - soil.ss);
+    //soil.TSR += (SSPRE - soil.ss);
     // amount of water in rooted zone
     soil.W += soil.DW;
 
     //        total capillary rise or percolation
-    soil.CRT = soil.CRT + soil.CR;
-    soil.PERCT = soil.PERCT + soil.PERC;
+    // soil.CRT = soil.CRT + soil.CR;
+    //soil.PERCT = soil.PERCT + soil.PERC;
     //        total drainage
-    soil.DRAINT = soil.DRAINT + soil.DMAX;
+    // soil.DRAINT = soil.DRAINT + soil.DMAX;
     //        groundwater depth
-    soil.ZT = soil.ZT + soil.DZ;
+    soil.ZT += soil.DZ;
     //        amount of air and water below rooted zone
-    soil.SUBAIR = AFGEN(soil.SDEFTB, soil.ZT - crop.RDOLD);
+    soil.SUBAIR = AFGEN(soil.SDEFTB, soil.ZT - crop.s.RDOLD);
     double XDEF = 1000.;
-    soil.WZ = (XDEF - crop.RDOLD) * soil.p.SM0 - soil.SUBAIR;
+    soil.WZ = (XDEF - crop.s.RDOLD) * soil.p.SM0 - soil.SUBAIR;
 
     //---------------------------------------------
     //        change of rootzone subsystem boundary
     //---------------------------------------------
     //        calculation of amount of soil moisture in new rootzone
-    if(crop.RD - crop.RDOLD > 0.001){
+    if(crop.s.RD - crop.s.RDOLD > 0.001){
         //           save old value SUBAIR, new values SUBAIR and WZ
         double SUBAI0 = soil.SUBAIR;
-        soil.SUBAIR = AFGEN(soil.SDEFTB, soil.ZT - crop.RD);
-        soil.WZ = (XDEF - crop.RD) * soil.p.SM0 - soil.SUBAIR;
+        soil.SUBAIR = AFGEN(soil.SDEFTB, soil.ZT - crop.s.RD);
+        soil.WZ = (XDEF - crop.s.RD) * soil.p.SM0 - soil.SUBAIR;
         //           water added to rooted zone by root growth
-        double WDR = soil.p.SM0 * (crop.RD - crop.RDOLD) - (SUBAI0 - soil.SUBAIR);
+        double WDR = soil.p.SM0 * (crop.s.RD - crop.s.RDOLD) - (SUBAI0 - soil.SUBAIR);
         //           total water addition to rootzone by root growth
-        soil.WDRT = soil.WDRT + WDR;
-        soil.W = soil.W + WDR;
+        //soil.WDRT = soil.WDRT + WDR;
+        soil.W += WDR;
     }
     // mean soil moisture content in rooted zone
-    soil.SM = soil.W / crop.RD;
+    soil.SM = soil.W / crop.s.RD;
     // calculating mean soil moisture content over growing period
     //soil.SUMSM += soil.SM;
     // save rooting depth
-    crop.RDOLD = crop.RD;
+    crop.s.RDOLD = crop.s.RD;
     //------------------------------
     //        check on waterlogging
     //------------------------------

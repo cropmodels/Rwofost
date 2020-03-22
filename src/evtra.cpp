@@ -45,7 +45,7 @@ void WofostModel::EVTRA() {
     atm.ET0 = crop.p.CFET * atm.ET0;
               
     //maximum evaporation and transpiration rates
-    double EKL = exp( -KGLOB * crop.LAI);
+    double EKL = exp( -KGLOB * crop.s.LAI);
     soil.EVWMX = atm.E0 * EKL;
     soil.EVSMX = std::max(0., atm.ES0 * EKL);
     crop.TRAMX = std::max(0.0001, atm.ET0*(1. - EKL));
@@ -67,12 +67,13 @@ void WofostModel::EVTRA() {
             //critical soil moisture content for aeration
             double SMAIR = soil.p.SM0 - soil.p.CRAIRC;
             //count days since start oxygen shortage (up to 4 days)
-		    double DSOS = 0.;
+		    double DSOS = 0;
             if (soil.SM >= SMAIR){
                 DSOS = std::min((DSOS + 1.), 4.);
             } 
             //maximum reduction reached after 4 days
-            double RFOSMX = LIMIT(0.,1.,(soil.p.SM0 - soil.SM)/(soil.p.SM0 - SMAIR));
+            double RFOSMX = clamp(0, 1, (soil.p.SM0 - soil.SM)/(soil.p.SM0 - SMAIR));
+			RFOS   = RFOSMX + (1 - DSOS/4) * (1-RFOSMX);
         } 	
 		crop.RFTRA =  RFWS * RFOS;
         crop.TRA =  crop.RFTRA * crop.TRAMX;

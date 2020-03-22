@@ -30,8 +30,8 @@ VARIABLE TYPE Description                                      Units   I/O
 
 void WofostModel::WATPP_initialize() {
     soil.SM   = soil.p.SMFCF;
-    soil.EVST = 0.;
-    soil.EVWT = 0.;
+//    soil.EVST = 0.;
+//    soil.EVWT = 0.;
     soil.EVS  = 0.;
     soil.EVW  = 0.;
 }
@@ -55,8 +55,8 @@ void WofostModel::WATPP_states() {
 // states of the water balance for potential production
 
 // total evaporation from surface water layer and/or soil
-         soil.EVWT = soil.EVWT + soil.EVW;
-         soil.EVST = soil.EVST + soil.EVS;
+  //       soil.EVWT = soil.EVWT + soil.EVW;
+  //       soil.EVST = soil.EVST + soil.EVS;
 // soil permanently at field capacity under potential production :
          soil.SM  = soil.p.SMFCF;
 }

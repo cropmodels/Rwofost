@@ -102,14 +102,14 @@ double WofostModel::TOTASS() {
 	double PI = 3.141592653589793238462643383279502884197169399375;
 
 
-    if( crop.AMAX > 0. && crop.LAI > 0) {
+    if( crop.AMAX > 0. && crop.s.LAI > 0) {
         for (int i = 0; i < 3; i++) {
             double HOUR = 12.0 + 0.5 * atm.DAYL * XGAUSS[i];
             double SINB = std::max(0., atm.SINLD + atm.COSLD * cos(2 * PI * (HOUR + 12) / 24));
             double PAR = 0.5 * atm.AVRAD * SINB * (1.+0.4 * SINB) / atm.DSINBE;
             double PARDIF = std::min(PAR, SINB * atm.DifPP);
             double PARDIR = PAR-PARDIF;
-            double FGROS = ASSIM (crop.AMAX, crop.EFF, crop.LAI, crop.KDif, SINB, PARDIR, PARDIF);
+            double FGROS = ASSIM (crop.AMAX, crop.EFF, crop.s.LAI, crop.KDif, SINB, PARDIR, PARDIF);
             DTGA = DTGA + FGROS * WGAUSS[i];
 
         }

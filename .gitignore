@@ -1,6 +1,6 @@
 *~
 output.csv
-
+*.pdf
 
 # Object files
 *.o
