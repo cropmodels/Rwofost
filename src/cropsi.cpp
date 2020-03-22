@@ -196,7 +196,7 @@ void WofostModel::crop_rates() {
 	crop.PGASS = DTGA * 30./44.;
 
   //water stress reduction
-	double = crop.TRA / crop.TRAMX;
+	double reduction = crop.TRA / crop.TRAMX;
 
 
   //  crop.r.GASS = crop.PGASS * crop.TRA / crop.TRAMX;
