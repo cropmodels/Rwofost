@@ -29,11 +29,11 @@ VARIABLE TYPE Description                                      Units   I/O
 #include "wofost.h"
 
 void WofostModel::WATPP_initialize() {
-      soil.SM   = soil.p.SMFCF;
-      soil.EVST = 0.;
-      soil.EVWT = 0.;
-      soil.EVS = 0.;
-      soil.EVW = 0.;
+    soil.SM   = soil.p.SMFCF;
+    soil.EVST = 0.;
+    soil.EVWT = 0.;
+    soil.EVS  = 0.;
+    soil.EVW  = 0.;
 }
 
 
@@ -41,12 +41,12 @@ void WofostModel::WATPP_rates() {
 // rates of the water balance for potential production
 
 // evaporation rate from soil EVS (for non-rice crops) or water surface EVW (for rice)
-    if (crop.p.IAIRDU == 0) {
-      soil.EVS = soil.EVSMX * (soil.p.SMFCF - soil.p.SMW / 3.) / (soil.p.SM0 - soil.p.SMW / 3.);
-      soil.EVW  = 0;
+    if (!crop.p.IAIRDU) {
+		soil.EVS = soil.EVSMX * (soil.p.SMFCF - soil.p.SMW / 3.) / (soil.p.SM0 - soil.p.SMW / 3.);
+		soil.EVW  = 0;
     } else {
-      soil.EVS = 0;
-      soil.EVW = soil.EVWMX;
+		soil.EVS = 0;
+		soil.EVW = soil.EVWMX;
     }
 }
 

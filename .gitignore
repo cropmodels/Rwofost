@@ -1,8 +1,5 @@
 *~
 output.csv
-*test_data/
-*test_for/
-*ycrop
 
 
 # Object files
@@ -34,9 +31,6 @@ symbols.rds
 
 *.tar.gz
 *Rcheck/
-*.o
-*.so
-*.exe
 *.Rhistory
 *.R~
 *.Rproj.user

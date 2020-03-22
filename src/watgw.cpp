@@ -71,7 +71,7 @@ SMFCF   R*4  soil moisture content at field capacity          cm3 cm-3  O
 
 
 void WofostModel::WATGW_initialize() {
-    //!!!      DATA XDEF/16000./
+    //!!!  DATA XDEF/16000./
     double XDEF = 1000.;
     //     mathematical parameters
     double PGAU[3] = {0.1127016654, 0.5, 0.8872983346};
@@ -256,8 +256,8 @@ void WofostModel::WATGW_rates() {
         if(FLOW <= 0.){
             soil.PERC = -1. * std::max(FLOW, std::min(soil.WE - soil.W, 0.));
         }
-        //           hypothesis : for rice percolation is limited to p.K0/20
-        if(crop.p.IAIRDU == 1){
+        // hypothesis : for rice percolation is limited to p.K0/20
+        if (crop.p.IAIRDU){
             soil.PERC = std::min(soil.PERC, 0.05 * soil.p.K0);
         }
     }
@@ -393,7 +393,7 @@ void WofostModel::WATGW_states(){
     //------------------------------
     //        finish conditions due to lasting lack of oxygen in root zone
     //        (non-rice crops only)
-    if(crop.p.IAIRDU == 0 && soil.RTDF >= 10.){
+    if((!crop.p.IAIRDU) && soil.RTDF >= 10.){
         std::string m ("Crop failure due to waterlogging");
         messages.push_back(m);
         fatalError = true;

@@ -59,7 +59,8 @@ struct WofostCropParametersNPK {
 */
 
 struct WofostCropParameters {
-    int IAIRDU, IDSL;
+    bool IAIRDU = false; // airducts present (true for rice)
+	int IDSL;
 	double DVSEND = 2; // now fixed
 	double DVSI = 0;
 	double DLO, DLC, TSUM1, TSUM2, TDWI, RGRLAI, SPA, SPAN, TBASE;
@@ -180,8 +181,9 @@ struct WofostSoilParametersNPK {
 
 struct WofostSoilParameters {
 
-	int IZT, IFUNRN;
-	int NOTINF; // fraction not inflitrating rainfall
+	bool IZT = false; //groundwater present 
+	int IFUNRN;
+	int NOTINF; // fraction not infiltrating rainfall
 	int IDRAIN; // presence of drains
 	double SM0, SMFCF, SMW, SOPE, KSUB, CRAIRC, K0, SMLIM, SSI;
 	double SSMAX; // max surface storage

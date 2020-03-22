@@ -36,7 +36,7 @@ double SWEAF(double ET0, double CGNR){
 
 void WofostModel::EVTRA() {
 
-//int IWB, int IOX, int p.IAIRDU, double KDif, double p.CFET, double p.DEPNR,
+// bool IOXWL, int p.IAIRDU, double KDif, double p.CFET, double p.DEPNR,
 //        double E0, double ES0, double ET0, double LAI, double SM, double p.SM0, double p.SMFCF, double p.SMW ,double p.CRAIRC){
 
     //extinction coefficient for total global radiation
@@ -61,8 +61,8 @@ void WofostModel::EVTRA() {
         double RFWS = LIMIT(0.,1., (soil.SM - soil.p.SMW) / (SMCR - soil.p.SMW));
 
         //reduction in transpiration in case of oxygen shortage
-        //for non-rice crops, and possibly deficient land drainage        
-	    double RFOS=1.;
+        //for non-rice crops and possibly deficient land drainage        
+	    double RFOS = 1.;
 		if ((!crop.p.IAIRDU) && (control.IOXWL)){
             //critical soil moisture content for aeration
             double SMAIR = soil.p.SM0 - soil.p.CRAIRC;
@@ -72,19 +72,10 @@ void WofostModel::EVTRA() {
                 DSOS = std::min((DSOS + 1.), 4.);
             } 
             //maximum reduction reached after 4 days
-            //call function LIMIT
             double RFOSMX = LIMIT(0.,1.,(soil.p.SM0 - soil.SM)/(soil.p.SM0 - SMAIR));
-
-            if (crop.p.IAIRDU == 0){
-                RFOS = LIMIT(0.,1.,((soil.p.SM0-0.05)-soil.SM)/0.05);
-            } else {
-	            RFOS = RFOSMX + (1. - DSOS/4.)*(1. - RFOSMX);
-			}
-        } 
+        } 	
 		crop.RFTRA =  RFWS * RFOS;
         crop.TRA =  crop.RFTRA * crop.TRAMX;
-		crop.TRANRF = crop.TRA / crop.TRAMX;
-		
+		crop.TRANRF = crop.TRA / crop.TRAMX;		
     }
-
 }
