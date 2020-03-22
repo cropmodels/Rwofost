@@ -2,8 +2,8 @@ Package: Rwofost
 Description: An implementation of the WOFOST ("World Food Studies") crop growth model. WOFOST is a dynamic simulation model that uses daily weather data, and crop, soil and management parameters to simulate crop growth and development. See De Wit et al. (2019) <doi:10.1016/j.agsy.2018.06.018> for a recent review of the history and use of the model.
 Type: Package
 Title: WOFOST Crop Growth Simulation Model
-Version: 0.6-1
-Date: 2020-03-21
+Version: 0.6-2
+Date: 2020-03-22
 LinkingTo: Rcpp
 Imports: meteor, methods (>= 0.2-2), Rcpp (>= 0.12.4)
 Depends: R (>= 3.5.0)
