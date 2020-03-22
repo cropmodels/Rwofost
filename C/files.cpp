@@ -6,7 +6,6 @@
 #include <algorithm>
 #include "files.h"
 #include "date.h"
-#include <cmath>  //isnan
 
 //Elizabeth Card
 // http://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c
