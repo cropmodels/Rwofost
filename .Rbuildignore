@@ -1,0 +1,7 @@
+.gitignore
+.gitattributes
+^C
+^npk
+LICENSE
+README.md
+^tests

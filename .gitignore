@@ -34,7 +34,6 @@ symbols.rds
 *.Rhistory
 *.R~
 *.Rproj.user
-*.Rbuildignore
 *.Rproj
 .Rproj.user
 
