@@ -145,24 +145,25 @@ void WofostModel::model_initialize() {
 		crop.DVS = 0;
     }
 	
-	crop.WRT = 0.;
-    crop.TADW = 0.;
-    crop.WST = 0.;
-    crop.WSO = 0.;
-    crop.WLV = 0.;
-    crop.LV[0] = 0.;
-    crop.LASUM = 0.;
-    crop.LAIEXP = 0.;
-    crop.LAI = 0.;
-    crop.SAI = 0.;
-    crop.PAI = 0.;
+	crop.WRT = 0;
+    crop.TADW = 0;
+    crop.WST = 0;
+    crop.WSO = 0;
+    crop.WLV = 0;
+    crop.LV[0] = 0;
+    crop.LASUM = 0;
+    crop.LAIEXP = 0;
+    crop.LAI = 0;
+	crop.KDif = 0;
+    crop.SAI = 0;
+    crop.PAI = 0;
     crop.RD = crop.p.RDI;
 	crop.TSUM = 0;
-	crop.TSUME = 0.;
-	crop.DTSUME = 0.;
-    crop.TRA = 0.;
-    crop.RFTRA = 0.;
-	crop.GASS = 0.;
+	crop.TSUME = 0;
+	crop.DTSUME = 0;
+    crop.TRA = 0;
+    crop.RFTRA = 0;
+	crop.GASS = 0;
 	crop.GRLV = 0;
 	
 	// adjusting for CO2 effects
