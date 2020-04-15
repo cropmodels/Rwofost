@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(Rwofost)
 source("pcse_tests.R")
+ydir <- "../ex_tests/test_data/"
 
 ydir <- "C:/github/cropmodels/Rwofost_test/test_data/"
 group <- "potentialproduction"

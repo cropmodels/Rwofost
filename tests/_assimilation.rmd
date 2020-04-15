@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r cc, fig.height=4, fig.width=5}
 
 library(Rwofost)
-ydir <- "C:/github/cropmodels/Rwofost_test/test_data/"
+ydir <- "../ex_tests/test_data/"
 group <- "assimilation"
 
 for (i in 1:44) {

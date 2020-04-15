@@ -2,6 +2,7 @@
 .gitattributes
 ^C
 ^npk
+^tests
+^ext_tests
 LICENSE
 README.md
-^tests

@@ -16,7 +16,8 @@ public:
 };
 
 
-struct WofostControl {
+class WofostControl {
+public:
 	long modelstart;
 	unsigned cropstart; // sowing, emergence, ...;
 	//bool long_output;
@@ -45,7 +46,8 @@ struct WofostControl {
 
 
 /*
-struct WofostCropParametersNPK {
+class WofostCropParametersNPK {
+public:
 	double TCNT, TCPT, TCKT;
 	double DVSNPK_STOP, NFIX_FR, NPART;
 	double NMAXSO, PMAXSO, KMAXSO;
@@ -58,7 +60,8 @@ struct WofostCropParametersNPK {
 };
 */
 
-struct WofostCropParameters {
+class WofostCropParameters {
+public:
     bool IAIRDU = false; // airducts present (true for rice)
 	int IDSL;
 	double DVSEND = 2; // now fixed
@@ -80,7 +83,8 @@ struct WofostCropParameters {
 	
 } ;
 
-struct WofostCropRates {
+class WofostCropRates {
+public:
 // rates
 	double GASS, GWST, GWSO;
 	double DRST, DRLV, DRRT, GWRT, DRSO; // dead rates
@@ -91,7 +95,8 @@ struct WofostCropRates {
     double VERNFAC; // Red. factor for phenol. devel.
 };
 
-struct WofostCropStates {
+class WofostCropStates {
+public:
 	double RD=0;
 	double RDOLD, GRLV, DWRT, DWLV, DWST, DWSO;
 	double DVS, LAI, LAIEXP, SAI, PAI, WRT, WLV, WST, WSO;
@@ -102,8 +107,8 @@ struct WofostCropStates {
 	bool ISVERNALISED; // has the vernalisation been reached?
 };
 
-struct WofostCrop {
-
+class WofostCrop {
+public:
 	WofostCropParameters p;
 	WofostCropRates r;
 	WofostCropStates s;
@@ -127,7 +132,7 @@ struct WofostCrop {
 	/*
 	WofostCropParametersNPK pn; // nutrient parameters
 
-	struct ratesNPK {
+	class ratesNPK {
 		double RNUSO, RPUSO, RKUSO;
 		double RNUPTAKE, RPUPTAKE, RKUPTAKE;
 		double RNULV, RNUST, RNURT, RPULV, RPUST, RPURT, RKULV, RKUST, RKURT;
@@ -139,7 +144,7 @@ struct WofostCrop {
 	};
 	ratesNPK rn;
 	
-	struct statesNPK {
+	class statesNPK {
 		double ANLV, ANST, ANRT, ANSO;
 		double APLV, APST, APRT, APSO;
 		double AKLV, AKST, AKRT, AKSO;
@@ -149,7 +154,7 @@ struct WofostCrop {
 	};
 	statesNPK sn;
 	
-	struct variablesNPK {
+	class variablesNPK {
 		double NNI, PNI, KNI, NPKI, NPKREF;
 		double NTRANSLOCATABLE, PTRANSLOCATABLE, KTRANSLOCATABLE;
 		double NDEMLV, NDEMST, NDEMRT, NDEMSO, PDEMLV, PDEMST, PDEMRT, PDEMSO, KDEMLV, KDEMST, KDEMRT, KDEMSO;
@@ -163,7 +168,8 @@ struct WofostCrop {
 };
 
 /*
-struct WofostSoilParametersNPK {
+class WofostSoilParametersNPK {
+public:
 	double BG_N_SUPPLY, BG_P_SUPPLY, BG_K_SUPPLY;
 	std::vector<double> N_recovery, P_recovery, K_recovery;
 	double NSOILBASE_FR, PSOILBASE_FR, KSOILBASE_FR;
@@ -172,7 +178,8 @@ struct WofostSoilParametersNPK {
 };
 */
 
-struct WofostSoilParameters {
+class WofostSoilParameters {
+public:
 
 	bool IZT = false; //groundwater present 
 	int IFUNRN;
@@ -192,7 +199,8 @@ struct WofostSoilParameters {
 };
 
 
-struct WofostSoil {
+class WofostSoil {
+public:
 
 	WofostSoilParameters p;
 	//WofostSoilParametersNPK pn;
@@ -216,13 +224,13 @@ struct WofostSoil {
 	std::vector<double> SDEFTB, DEFDTB, CAPRFU;
 
 	/*
-	struct ratesNPK {
+	class ratesNPK {
 		double RNSOIL, RPSOIL, RKSOIL;
 		double RNAVAIL, RPAVAIL, RKAVAIL;
 	};
 	ratesNPK rn;
 
-	struct statesNPK {
+	class statesNPK {
 		double NSOIL, PSOIL, KSOIL;
 		double NAVAIL, PAVAIL, KAVAIL;
 	};
@@ -232,28 +240,32 @@ struct WofostSoil {
 };
 
 
-struct WofostAtmosphere {
+class WofostAtmosphere {
+public:
 	double RAIN, AVRAD, TEMP, DTEMP, TMIN, TMAX, E0, ES0, ET0, DAYL, DAYLP, WIND, VAP;
 	double SINLD, COSLD, DTGA, DSINB, DSINBE, DifPP;
 	double ATMTR, ANGOT;
 };
 
 
-struct WofostForcer {
+class WofostForcer {
+public:
 	bool force_DVS=false, force_LAI=false, force_SM=false, force_FR=false, force_DMI=false, force_ADMI=false, force_FL=false, force_PAI=false, force_RFTRA=false, force_SAI=false,
 	force_WRT=false, force_WLV=false, force_WSO=false, force_WST=false;
 	std::vector<double> DVS, LAI, SM, FR, DMI, ADMI, FL, PAI, RFTRA, SAI, WRT, WLV, WSO, WST;
 };
 
 
-struct WofostOutput {
+class WofostOutput {
+public:
 	std::vector<std::string> names;
 	std::vector<double> values;
 };
 
 
 
-struct WofostModel {
+class WofostModel {
+public:
 
 	unsigned step, time, DOY, npk_step;
 	int IDHALT, ISTATE;
