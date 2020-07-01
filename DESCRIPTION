@@ -5,7 +5,7 @@ Title: WOFOST Crop Growth Simulation Model
 Version: 0.6-3
 Date: 2020-03-24
 LinkingTo: Rcpp
-Imports: meteor, methods (>= 0.2-2), Rcpp (>= 0.12.4)
+Imports: meteor, terra, raster, methods (>= 0.2-2), Rcpp (>= 0.12.4)
 Depends: R (>= 3.5.0)
 URL: https://github.com/cropmodels/Rwofost
 SystemRequirements: C++11

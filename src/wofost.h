@@ -348,9 +348,11 @@ public:
 	void EVTRA();
 	double TOTASS();
 
-	void model_initialize();
-	void model_run();
+	void initialize();
+	void run();
 	void model_output();
+	
+	std::vector<double> run_batch(std::vector<double> tmin, std::vector<double> tmax, std::vector<double> srad, std::vector<double> prec, std::vector<double> vapr, std::vector<double> wind, std::vector<long> date, std::vector<long> mstart);
 
 };
 

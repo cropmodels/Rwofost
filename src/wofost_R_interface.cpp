@@ -213,7 +213,7 @@ NumericMatrix wofost(List crop, DataFrame weather, List soil, List control) {
 	m.soil = sol;
 	m.control = cntr;
 	m.wth = wth;
-	m.model_run();
+	m.run();
 
 // handle messages
 	// std::vector<std::string>  messages;

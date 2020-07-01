@@ -224,7 +224,9 @@ RCPP_MODULE(wofost){
 
     class_<WofostModel>("WofostModel")
 		.constructor()
-		.method("run", &WofostModel::model_run, "run the model")		
+		.method("run", &WofostModel::run, "run the model")		
+		.method("run_batch", &WofostModel::run_batch, "run the model")		
+
 		//.method("setWeather", &setWeather)
 		.field("crop", &WofostModel::crop, "crop")
 		.field("soil", &WofostModel::soil, "soil")
