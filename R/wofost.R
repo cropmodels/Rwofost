@@ -77,6 +77,17 @@ setMethod("soil<-", signature("Rcpp_WofostModel", "list"),
 	}
 )
 
+.getsoil <- function(value) {
+	nms <- names(value)
+	if (!all(.soil_pars %in% nms)) stop(paste("parameters missing:", paste(.soil_pars[!(.soil_pars %in% nms)], collapse=", ")))
+	value <- value[.soil_pars]
+	nms <- names(value)
+	soil <- WofostSoil$new()
+	lapply(1:length(value), function(i) eval(parse(text = paste0("soil$p$", nms[i], " <- ", value[i]))))
+	soil
+}
+
+
 
 
 setMethod("weather<-", signature("Rcpp_WofostModel", "data.frame"), 
