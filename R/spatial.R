@@ -47,12 +47,12 @@ function(object, x, mstart, dates=NULL, filename="", overwrite=FALSE, wopt=list(
 			vapr <- as.vector(t(raster::getValues(x$vapr, b$row[i], b$nrows[i])))
 			wind <- as.vector(t(raster::getValues(x$wind, b$row[i], b$nrows[i])))
 		} else {
-			tmin <- as.vector(t(terra::readValues(x$tmin, b$row[i], b$nrows[i], 1, nc, mat=TRUE))
-			tmax <- as.vector(t(terra::readValues(x$tmax, b$row[i], b$nrows[i], 1, nc, mat=TRUE))
-			srad <- as.vector(t(terra::readValues(x$srad, b$row[i], b$nrows[i], 1, nc, mat=TRUE))
-			prec <- as.vector(t(terra::readValues(x$prec, b$row[i], b$nrows[i], 1, nc, mat=TRUE))
-			vapr <- as.vector(t(terra::readValues(x$vapr, b$row[i], b$nrows[i], 1, nc, mat=TRUE))
-			wind <- as.vector(t(terra::readValues(x$wind, b$row[i], b$nrows[i], 1, nc, mat=TRUE))
+			tmin <- as.vector(t(terra::readValues(x$tmin, b$row[i], b$nrows[i], 1, nc, mat=TRUE)))
+			tmax <- as.vector(t(terra::readValues(x$tmax, b$row[i], b$nrows[i], 1, nc, mat=TRUE)))
+			srad <- as.vector(t(terra::readValues(x$srad, b$row[i], b$nrows[i], 1, nc, mat=TRUE)))
+			prec <- as.vector(t(terra::readValues(x$prec, b$row[i], b$nrows[i], 1, nc, mat=TRUE)))
+			vapr <- as.vector(t(terra::readValues(x$vapr, b$row[i], b$nrows[i], 1, nc, mat=TRUE)))
+			wind <- as.vector(t(terra::readValues(x$wind, b$row[i], b$nrows[i], 1, nc, mat=TRUE)))
 		}
 		wof <- object$run_batch(tmin, tmax, srad, prec, vapr, wind, dates, mstart)
 		terra::writeValues(out, wof, b$row[i], b$nrows[i])
