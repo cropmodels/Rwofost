@@ -42,10 +42,9 @@ function(object, weather, soilindex, soils, mstart, cstart=30, dates=NULL, filen
 	}
 
 	nc <- ncol(out)
-	if (!use_raster) {
-		terra::readStart(weather)
-		if (is.null(wopt$names)) wopt$names <- as.character(mstart)
-	}
+	if (!use_raster) terra::readStart(weather)
+
+	if (is.null(wopt$names)) wopt$names <- as.character(mstart)
 	b <- terra::writeStart(out, filename, overwrite, wopt)
 	for (i in 1:b$n) {
 		if (use_raster) {
@@ -69,9 +68,8 @@ function(object, weather, soilindex, soils, mstart, cstart=30, dates=NULL, filen
 		wof <- object$run_batch(tmin, tmax, srad, prec, vapr, wind, dates, sidx, scol, mstart, cstart)
 		terra::writeValues(out, round(wof), b$row[i], b$nrows[i])
 	}
-	if (!use_raster) {
-		terra::readStop(x)
-	}
+	if (!use_raster) terra::readStop(x)
+
 	out <- terra::writeStop(out)
 	return(out)
 }
