@@ -1,7 +1,7 @@
 
 
 setMethod("predict", signature("Rcpp_WofostModel"), 
-function(object, weather, mstart, soilindex=NULL, soils=NULL, dates=NULL, filename="", overwrite=FALSE, wopt=list())  {
+function(object, weather, mstart, soilindex=NULL, soils=NULL, dates=NULL, filename="", overwrite=FALSE, ...)  {
 
 	stopifnot(inherits(weather, "SpatRasterDataset"))
 	
@@ -24,12 +24,14 @@ function(object, weather, mstart, soilindex=NULL, soils=NULL, dates=NULL, filena
 	nss <- nlyr(weather)
 	if (!all(nss == nss[1])) stop("all subdatasets must have the same number of layers")
 	
-	if (is.null(dates)) {
+	#if (is.null(dates)) {
 		if (!weather$tmin@ptr$hasTime) {
 			stop("no dates supplied as argument or with tmin")
 		}
 		dates <- time(weather$tmin)
-	}
+	#} else {
+		stopifnot(length(dates) == nrow(weather$tmin))
+	#}
 	if (any(is.na(dates))) {stop("NA in dates not allowed")}
 	out <- rast(weather, nlyr=length(mstart))
 	
@@ -44,8 +46,9 @@ function(object, weather, mstart, soilindex=NULL, soils=NULL, dates=NULL, filena
 	nc <- ncol(out)
 	if (!use_raster) terra::readStart(weather)
 
+	wopt=list(...)
 	if (is.null(wopt$names)) wopt$names <- as.character(mstart)
-	b <- terra::writeStart(out, filename, overwrite, wopt)
+	b <- terra::writeStart(out, filename, overwrite, wopt=wopt)
 	for (i in 1:b$n) {
 		if (use_raster) {
 			tmin <- as.vector(t(raster::getValues(weather$tmin, b$row[i], b$nrows[i])))
