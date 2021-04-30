@@ -122,6 +122,15 @@ wofost_soil <- function(name="") {
 }
 
 
+.makeSoilCollection <- function(soils) {
+	scol <- WofostSoilCollection$new()
+	for (i in 1:length(soils)) {
+		s <- .getsoil(soils[[i]])
+		scol$add(s)
+	}
+	return(scol)
+}
+
 .printDescription <- function(f) {
 	d <- readLines(f)
 	d <- grep("\\#\\#", d, value=TRUE)
