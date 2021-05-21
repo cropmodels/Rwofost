@@ -14,7 +14,8 @@ Make spatial predictions with a WOFOST model. First create a model, then use the
 
 
 \usage{
-\S4method{predict}{Rcpp_WofostModel}(object, weather, mstart, soilindex=NULL, soils=NULL, filename="", overwrite=FALSE, ...)
+\S4method{predict}{Rcpp_WofostModel}(object, weather, mstart, soilindex=NULL,
+     soils=NULL, filename="", overwrite=FALSE, ...)
 }
 
 

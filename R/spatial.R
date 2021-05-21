@@ -1,7 +1,7 @@
 
 
 setMethod("predict", signature("Rcpp_WofostModel"), 
-function(object, weather, mstart, soilindex=NULL, soils=NULL, dates=NULL, filename="", overwrite=FALSE, ...)  {
+function(object, weather, mstart, soilindex=NULL, soils=NULL, filename="", overwrite=FALSE, ...)  {
 
 	stopifnot(inherits(weather, "SpatRasterDataset"))
 	

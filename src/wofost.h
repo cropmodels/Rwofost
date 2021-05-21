@@ -104,7 +104,7 @@ public:
 
 	unsigned VERN; // Vernalisation state (days)
 	long DOV;      // Day when vernalisation requirements are fulfilled.
-	bool ISVERNALISED; // has the vernalisation been reached?
+	bool ISVERNALISED = false; // has the vernalisation been reached?
 };
 
 class WofostCrop {
@@ -114,7 +114,7 @@ public:
 	WofostCropStates s;
 		
 // variables
-	bool alive;
+	bool alive = true;
 	int emergence, ILVOLD, IDANTH;
 	double EFF, AMAX, PGASS, RFTRA, TRANRF;
 	double LASUM, KDif, TRAMX;
@@ -278,7 +278,7 @@ public:
 	//bool IOX;
 
 	std::vector<std::string> messages;
-	bool fatalError;
+	bool fatalError=false;
 
 	WofostSoil soil;
 	WofostCrop crop;
