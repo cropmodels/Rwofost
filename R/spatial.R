@@ -30,10 +30,11 @@ function(object, weather, mstart, soilindex=NULL, soils=NULL, filename="", overw
 		}
 		dates <- terra::time(weather$tmin)
 	#} else {
-		stopifnot(length(dates) == nrow(weather$tmin))
+		stopifnot(length(dates) == nlyr(weather$tmin))
 	#}
 	if (any(is.na(dates))) {stop("NA in dates not allowed")}
-	out <- terra::rast(weather, nlyr=length(mstart))
+	out <- terra::rast(weather)
+	nlyr(out) = length(mstart)
 	
 	use_raster <- FALSE
 	if (substr(unlist(terra::sources(weather[1])[1]),1,6) == "NETCDF") {

@@ -11,6 +11,7 @@ License: GNU General Public License (GNU GPL) v. 2
 
 class WofostWeather {
 public:
+	virtual ~WofostWeather(){}
 	std::vector<long> date;
 	std::vector<double> srad, tmin, tmax, prec, wind, vapr;
 };
@@ -18,6 +19,7 @@ public:
 
 class WofostControl {
 public:
+	virtual ~WofostControl(){}
 	long modelstart;
 	unsigned cropstart; // sowing, emergence, ...;
 	//bool long_output;
@@ -62,6 +64,7 @@ public:
 
 class WofostCropParameters {
 public:
+	virtual ~WofostCropParameters(){}
     bool IAIRDU = false; // airducts present (true for rice)
 	int IDSL;
 	double DVSEND = 2; // now fixed
@@ -86,6 +89,7 @@ public:
 class WofostCropRates {
 public:
 // rates
+	virtual ~WofostCropRates(){}
 	double GASS, GWST, GWSO;
 	double DRST, DRLV, DRRT, GWRT, DRSO; // dead rates
 	double DVR, DTSUME, DTSUM, GLAIEX;
@@ -97,6 +101,7 @@ public:
 
 class WofostCropStates {
 public:
+	virtual ~WofostCropStates(){}
 	double RD=0;
 	double RDOLD, GRLV, DWRT, DWLV, DWST, DWSO;
 	double DVS, LAI, LAIEXP, SAI, PAI, WRT, WLV, WST, WSO;
@@ -109,6 +114,7 @@ public:
 
 class WofostCrop {
 public:
+	virtual ~WofostCrop(){}
 	WofostCropParameters p;
 	WofostCropRates r;
 	WofostCropStates s;
@@ -180,6 +186,7 @@ public:
 
 class WofostSoilParameters {
 public:
+	virtual ~WofostSoilParameters(){}
 
 	bool IZT = false; //groundwater present 
 	int IFUNRN;
@@ -202,6 +209,7 @@ public:
 class WofostSoil {
 public:
 
+	virtual ~WofostSoil(){}
 	WofostSoilParameters p;
 	//WofostSoilParametersNPK pn;
 
@@ -241,6 +249,8 @@ public:
 
 class WofostSoilCollection {
 public:
+	virtual ~WofostSoilCollection(){}
+
 	std::vector<WofostSoil> soils;
 	size_t size() { return soils.size(); }
 	void push_back(WofostSoil s) { soils.push_back(s); }	
@@ -248,6 +258,8 @@ public:
 
 class WofostAtmosphere {
 public:
+	virtual ~WofostAtmosphere(){}
+
 	double RAIN, AVRAD, TEMP, DTEMP, TMIN, TMAX, E0, ES0, ET0, DAYL, DAYLP, WIND, VAP;
 	double SINLD, COSLD, DTGA, DSINB, DSINBE, DifPP;
 	double ATMTR, ANGOT;
@@ -256,6 +268,7 @@ public:
 
 class WofostForcer {
 public:
+	virtual ~WofostForcer(){}
 	bool force_DVS=false, force_LAI=false, force_SM=false, force_FR=false, force_DMI=false, force_ADMI=false, force_FL=false, force_PAI=false, force_RFTRA=false, force_SAI=false,
 	force_WRT=false, force_WLV=false, force_WSO=false, force_WST=false;
 	std::vector<double> DVS, LAI, SM, FR, DMI, ADMI, FL, PAI, RFTRA, SAI, WRT, WLV, WSO, WST;
@@ -264,6 +277,7 @@ public:
 
 class WofostOutput {
 public:
+	virtual ~WofostOutput(){}
 	std::vector<std::string> names;
 	std::vector<double> values;
 };
@@ -272,6 +286,7 @@ public:
 
 class WofostModel {
 public:
+	virtual ~WofostModel(){}
 
 	unsigned step, time, DOY, npk_step;
 	int IDHALT, ISTATE;
