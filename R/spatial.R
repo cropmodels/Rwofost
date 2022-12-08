@@ -17,33 +17,30 @@ function(object, weather, mstart, soilindex=NULL, soils=NULL, filename="", overw
 		scol <- .makeSoilCollection(list( wofost_soil("ec1") ))
 	}
 	nms <- names(weather)
-	if (!(all(nms %in% needed))) {
+	if (!(all(needed %in% nms))) {
 		stop(paste("missing these variables:", needed[!(nms %in% needed)]))
 	}
 	weather <- weather[needed]
 	nss <- terra::nlyr(weather)
 	if (!all(nss == nss[1])) stop("all subdatasets must have the same number of layers")
 	
-	#if (is.null(dates)) {
-		if (!weather$tmin@ptr$hasTime) {
-			stop("no dates supplied as argument or with tmin")
-		}
-		dates <- terra::time(weather$tmin)
-	#} else {
-		stopifnot(length(dates) == nlyr(weather$tmin))
-	#}
+	if (!weather$tmin@ptr$hasTime) {
+		stop("no dates supplied as argument or with tmin")
+	}
+	dates <- terra::time(weather$tmin)
+	stopifnot(length(dates) == nlyr(weather$tmin))
 	if (any(is.na(dates))) {stop("NA in dates not allowed")}
 	out <- terra::rast(weather)
 	nlyr(out) = length(mstart)
 	
 	use_raster <- FALSE
-	if (substr(unlist(terra::sources(weather[1])[1]),1,6) == "NETCDF") {
-		use_raster <- TRUE
-		p <- unlist(terra::sources(weather[1])[1])
-		f <- unlist(strsplit(gsub("NETCDF:\"", "", p), "\""))[1]
-		weather <- lapply(needed, function(i) raster::brick(f, varname=i))
-		names(weather) <- needed
-	}
+#	if (substr(unlist(terra::sources(weather[1])[1]),1,6) == "NETCDF") {
+#		use_raster <- TRUE
+#		p <- unlist(terra::sources(weather[1])[1])
+#		f <- unlist(strsplit(gsub("NETCDF:\"", "", p), "\""))[1]
+#		weather <- lapply(needed, function(i) raster::brick(f, varname=i))
+#		names(weather) <- needed
+#	}
 	nc <- ncol(out)
 	if (!use_raster) terra::readStart(weather)
 
@@ -87,5 +84,4 @@ function(object, weather, mstart, soilindex=NULL, soils=NULL, filename="", overw
 	return(out)
 }
 )
-
 

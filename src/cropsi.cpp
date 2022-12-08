@@ -33,7 +33,6 @@ IDEM    I4  Day of emergence                                     I/O
 //DOANTH  R4  Day of anthesis                                      O
 IDHALT  I4  Day that simulation is halted                        I/O
 LAT     R4  Latitude of the site                         degr    I
-AVRAD   R4  Daily short wave radiation                   J/m2/d  I
 TMIN    R4  minimum daily air temperature                _C      I
 TMAX    R4  maximum daily air temperature                _C      I
 E0      R4  potential evaporation rate from water surf   cm d-1  I
