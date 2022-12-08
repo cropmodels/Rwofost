@@ -34,13 +34,13 @@ function(object, weather, mstart, soilindex=NULL, soils=NULL, filename="", overw
 	nlyr(out) = length(mstart)
 	
 	use_raster <- FALSE
-#	if (substr(unlist(terra::sources(weather[1])[1]),1,6) == "NETCDF") {
-#		use_raster <- TRUE
-#		p <- unlist(terra::sources(weather[1])[1])
-#		f <- unlist(strsplit(gsub("NETCDF:\"", "", p), "\""))[1]
-#		weather <- lapply(needed, function(i) raster::brick(f, varname=i))
-#		names(weather) <- needed
-#	}
+	if (substr(unlist(terra::sources(weather[1])[1]),1,6) == "NETCDF") {
+		use_raster <- TRUE
+		p <- unlist(terra::sources(weather[1])[1])
+		f <- unlist(strsplit(gsub("NETCDF:\"", "", p), "\""))[1]
+		weather <- lapply(needed, function(i) raster::brick(f, varname=i))
+		names(weather) <- needed
+	}
 	nc <- ncol(out)
 	if (!use_raster) terra::readStart(weather)
 
@@ -84,4 +84,5 @@ function(object, weather, mstart, soilindex=NULL, soils=NULL, filename="", overw
 	return(out)
 }
 )
+
 
