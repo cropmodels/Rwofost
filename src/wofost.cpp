@@ -12,22 +12,26 @@ License: GNU General Public License (GNU GPL) v. 2
 #include <string.h>
 //#include <iostream>
 
-
 bool WofostModel::weather_step() {
+
 	if (time >= wth.tmin.size()) {
 		fatalError = true;
 		messages.push_back("reached end of weather data");
 		return false;
 	} else {
+		
 		atm.TMIN = wth.tmin[time];
 		atm.TMAX = wth.tmax[time];
 		atm.TEMP  = (atm.TMIN + atm.TMAX) / 2.;
 		atm.DTEMP = (atm.TMAX + atm.TEMP) / 2.;
-
 		atm.AVRAD = wth.srad[time] * 1000;
+
+	if (control.water_limited) {
 		atm.WIND = wth.wind[time];
 		atm.VAP = wth.vapr[time] * 10;
 		atm.RAIN = wth.prec[time] / 10 ; // cm !
+	}
+	
 
 /*
 		//seven day running average of minimum temperature
@@ -211,13 +215,14 @@ void WofostModel::force_states() {
 }
 
 
+
 void WofostModel::run() {
 
 	step = 1;
 	//npk_step = 0;
 	unsigned cropstart_step = step + control.cropstart;
-
 	initialize();
+
 	if (fatalError) return;
 // model can start long before crop and run the soil water balance
 	bool crop_emerged = false;
@@ -231,17 +236,19 @@ void WofostModel::run() {
 
 	while (! crop_emerged) {
 		force_states();
-
 		weather_step();
+
 		//if(control.nutrient_limited){
 		//	npk_soil_dynamics_rates();
 		//} else{
 		soil_rates();
 		//}
+
 		//soil.EVWMX = atm.E0;
 		//soil.EVSMX = atm.ES0;
 
 		if (step >= cropstart_step) {
+
 			if (ISTATE == 0 ) { // find day of sowing
 				STDAY();
 			} else if (ISTATE == 1) { // find day of emergence
@@ -301,9 +308,7 @@ void WofostModel::run() {
 
 //	crop_initialize();
 
-
 	while ((crop.alive) && (step < maxdur)) {
-
 		force_states();
 
 		if (! weather_step()) break;

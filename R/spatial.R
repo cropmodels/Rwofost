@@ -14,7 +14,7 @@ function(object, weather, mstart, soilindex=NULL, soils=NULL, filename="", overw
 		scol <- .makeSoilCollection(soils)
 	} else {
 		needed <- c("tmin", "tmax", "srad")
-		scol <- .makeSoilCollection(list( wofost_soil("ec1") ))
+		scol <- Rwofost:::.makeSoilCollection(list( wofost_soil("ec1") ))
 	}
 	nms <- names(weather)
 	if (!(all(needed %in% nms))) {
