@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // wofost
 NumericMatrix wofost(List crop, DataFrame weather, List soil, List control);
 RcppExport SEXP _Rwofost_wofost(SEXP cropSEXP, SEXP weatherSEXP, SEXP soilSEXP, SEXP controlSEXP) {

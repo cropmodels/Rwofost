@@ -1,17 +1,24 @@
 
 
 setMethod("predict", signature("Rcpp_WofostModel"), 
-function(object, weather, mstart, soilindex=NULL, soils=NULL, filename="", overwrite=FALSE, ...)  {
+function(object, weather, mstart, soils=NULL, soiltypes=NULL, filename="", overwrite=FALSE, ...)  {
 
 	stopifnot(inherits(weather, "SpatRasterDataset"))
+	stopifnot(inherits(mstart, "Date"))
+	if (any(is.na(mstart))) {
+		error("mstart cannot be NA")
+	}
 	
 	watlim <- object$control$water_limited
 	if (watlim) {
-		stopifnot(inherits(soilindex, "SpatRaster"))
-		stopifnot(inherits(soils, "list"))
-		terra::compareGeom(weather[1], soilindex, lyrs=FALSE)
+		stopifnot(inherits(soils, "SpatRaster"))
+		if (!("index" %in% names(soils))) {
+			stop("no layer called 'index' in soils")
+		}	
+		stopifnot(inherits(soiltypes, "list"))
+		terra::compareGeom(weather[1], soils, lyrs=FALSE)
 		needed <- c("tmin", "tmax", "srad", "prec", "vapr", "wind")
-		scol <- .makeSoilCollection(soils)
+		scol <- .makeSoilCollection(soiltypes)
 	} else {
 		needed <- c("tmin", "tmax", "srad")
 		scol <- Rwofost:::.makeSoilCollection(list( wofost_soil("ec1") ))
@@ -31,7 +38,7 @@ function(object, weather, mstart, soilindex=NULL, soils=NULL, filename="", overw
 	stopifnot(length(dates) == nlyr(weather$tmin))
 	if (any(is.na(dates))) {stop("NA in dates not allowed")}
 	out <- terra::rast(weather)
-	nlyr(out) = length(mstart)
+	nlyr(out) <- length(mstart)
 	
 	use_raster <- FALSE
 	if (substr(unlist(terra::sources(weather[1])[1]),1,6) == "NETCDF") {
@@ -68,12 +75,19 @@ function(object, weather, mstart, soilindex=NULL, soils=NULL, filename="", overw
 			}
 		}
 		if (watlim) {
-			sidx <- as.vector(soilindex)
+			sidx <- as.vector(terra::readValues(soils$index, b$row[i], b$nrows[i], 1, nc))
 			sidx[is.na(sidx)] <- -99
-			sids <- as.integer(sidx)
-			wof <- object$run_batch(tmin, tmax, srad, prec, vapr, wind, dates, mstart, TRUE, sidx, scol)
+			sidx <- as.integer(sidx)
+			if ("depth" %in% names(soils)) {
+				depth <- as.vector(terra::readValues(soils$depth, b$row[i], b$nrows[i], 1, nc))
+				depth[is.na(depth)] <- -99
+			} else {
+				depth <- rep(-99, length(sidx))
+				warning("soils does not have a depth layer")
+			}
+			wof <- object$run_batch(tmin, tmax, srad, prec, vapr, wind, dates, mstart, sidx, scol, depth)
 		} else {
-			wof <- object$run_batch(tmin, tmax, srad, 0, 0, 0, dates, mstart, FALSE, 0, scol)
+			wof <- object$run_batch(tmin, tmax, srad, 0, 0, 0, dates, mstart, 0, scol, 0)
 		}
 		
 		terra::writeValues(out, round(wof), b$row[i], b$nrows[i])

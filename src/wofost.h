@@ -376,8 +376,7 @@ public:
 	std::vector<double> run_batch(std::vector<double> tmin, std::vector<double> tmax, 
 		std::vector<double> srad, std::vector<double> prec, std::vector<double> vapr, 
 		std::vector<double> wind, std::vector<long> date, std::vector<long> mstart, 
-		bool watlim, std::vector<int> soilindex, WofostSoilCollection soils);
-
+		std::vector<int> soilindex, WofostSoilCollection soils, std::vector<double> depth);
 };
 
 
