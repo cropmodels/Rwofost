@@ -11,14 +11,18 @@ function(object, weather, mstart, soils=NULL, soiltypes=NULL, filename="", overw
 	
 	watlim <- object$control$water_limited
 	if (watlim) {
-		stopifnot(inherits(soils, "SpatRaster"))
-		if (!("index" %in% names(soils))) {
-			stop("no layer called 'index' in soils")
-		}	
-		stopifnot(inherits(soiltypes, "list"))
-		terra::compareGeom(weather[1], soils, lyrs=FALSE)
 		needed <- c("tmin", "tmax", "srad", "prec", "vapr", "wind")
-		scol <- .makeSoilCollection(soiltypes)
+		if (is.null(soils)) {
+			scol <- Rwofost:::.makeSoilCollection(list( wofost_soil("ec1") ))
+		} else {
+			stopifnot(inherits(soils, "SpatRaster"))
+			if (!("index" %in% names(soils))) {
+				stop("no layer called 'index' in soils")
+			}	
+			stopifnot(inherits(soiltypes, "list"))
+			terra::compareGeom(weather[1], soils, lyrs=FALSE)
+			scol <- .makeSoilCollection(soiltypes)
+		}
 	} else {
 		needed <- c("tmin", "tmax", "srad")
 		scol <- Rwofost:::.makeSoilCollection(list( wofost_soil("ec1") ))
@@ -75,17 +79,21 @@ function(object, weather, mstart, soils=NULL, soiltypes=NULL, filename="", overw
 			}
 		}
 		if (watlim) {
-			sidx <- as.vector(terra::readValues(soils$index, b$row[i], b$nrows[i], 1, nc))
-			sidx[is.na(sidx)] <- -99
-			sidx <- as.integer(sidx)
-			if ("depth" %in% names(soils)) {
-				depth <- as.vector(terra::readValues(soils$depth, b$row[i], b$nrows[i], 1, nc))
-				depth[is.na(depth)] <- -99
+			if (!is.null(soils)) {
+				sidx <- as.vector(terra::readValues(soils$index, b$row[i], b$nrows[i], 1, nc))
+				sidx[is.na(sidx)] <- -99
+				sidx <- as.integer(sidx)
+				if ("depth" %in% names(soils)) {
+					depth <- as.vector(terra::readValues(soils$depth, b$row[i], b$nrows[i], 1, nc))
+					depth[is.na(depth)] <- -99
+				} else {
+					depth <- rep(-99, length(sidx))
+					warning("soils does not have a depth layer")
+				}
+				wof <- object$run_batch(tmin, tmax, srad, prec, vapr, wind, dates, mstart, sidx, scol, depth)
 			} else {
-				depth <- rep(-99, length(sidx))
-				warning("soils does not have a depth layer")
+				wof <- object$run_batch(tmin, tmax, srad, prec, vapr, wind, dates, mstart, 0, scol, 0)			
 			}
-			wof <- object$run_batch(tmin, tmax, srad, prec, vapr, wind, dates, mstart, sidx, scol, depth)
 		} else {
 			wof <- object$run_batch(tmin, tmax, srad, 0, 0, 0, dates, mstart, 0, scol, 0)
 		}

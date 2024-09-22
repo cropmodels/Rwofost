@@ -22,16 +22,20 @@ std::vector<double> WofostModel::run_batch(std::vector<double> tmin, std::vector
 	std::vector<double> out(nc * nsim, NAN);
 
 	// nc = number of cells 
-	if (watlim && (nc != soilindex.size())) {
-		Rcpp::Rcout << "bad soil index data" << std::endl;
-		return out;
-	}
+	bool varsoils = false;
 	int nsoils = soils.soils.size();
-	if (nsoils == 0) {
-		Rcpp::Rcout << "bad soil data" << std::endl;
-		return out;
+	if (watlim && (nsoils > 0)) {
+		if (nc != soilindex.size()) {
+			Rcpp::Rcout << "bad soil index data" << std::endl;
+			return out;
+		}
+		if (nsoils == 0) {
+			Rcpp::Rcout << "bad soil data" << std::endl;
+			return out;
+		}
+		soil = soils.soils[0];
+		varsoils = true;
 	}
-	soil = soils.soils[0];
 	control.output_option = "BATCH";
 	wth.date = date;
 
@@ -41,13 +45,15 @@ std::vector<double> WofostModel::run_batch(std::vector<double> tmin, std::vector
 			continue;
 		}
 		if (watlim) {
-			double sidx = soilindex[i]-1;
-			if ((sidx < 0) || sidx >= nsoils) {
-				continue;
-			} 
-			soil = soils.soils[sidx-1];
-			if (depth[i] >= 0) {
-				soil.p.RDMSOL = depth[i];
+			if (varsoils) {
+				double sidx = soilindex[i]-1;
+				if ((sidx < 0) || sidx >= nsoils) {
+					continue;
+				} 
+				soil = soils.soils[sidx-1];
+				if (depth[i] >= 0) {
+					soil.p.RDMSOL = depth[i];
+				}
 			}
 			wth.vapr = std::vector<double>(vapr.begin()+offset, vapr.begin()+offset+sz);
 			wth.wind = std::vector<double>(wind.begin()+offset, wind.begin()+offset+sz);
