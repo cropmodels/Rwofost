@@ -25,13 +25,13 @@ function(object, weather, mstart, soils=NULL, soiltypes=NULL, filename="", overw
 	}
 	nms <- names(weather)
 	if (!(all(needed %in% nms))) {
-		stop(paste("missing these variables:", needed[!(nms %in% needed)]))
+		stop(paste("missing these variables:", paste(needed[!(needed %in% nms)], collapse=", ")))
 	}
 	weather <- weather[needed]
 	nss <- terra::nlyr(weather)
 	if (!all(nss == nss[1])) stop("all subdatasets must have the same number of layers")
 	
-	if (!weather$tmin@ptr$hasTime) {
+	if (!terra::has.time(weather$tmin)) {
 		stop("no dates supplied as argument or with tmin")
 	}
 	dates <- terra::time(weather$tmin)
