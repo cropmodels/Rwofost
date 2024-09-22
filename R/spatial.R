@@ -92,7 +92,7 @@ function(object, weather, mstart, soils=NULL, soiltypes=NULL, filename="", overw
 				}
 				wof <- object$run_batch(tmin, tmax, srad, prec, vapr, wind, dates, mstart, sidx, scol, depth)
 			} else {
-				wof <- object$run_batch(tmin, tmax, srad, prec, vapr, wind, dates, mstart, 0, scol, 0)			
+				wof <- object$run_batch(tmin, tmax, srad, prec, vapr, wind, dates, mstart, 0[], scol, 0[])			
 			}
 		} else {
 			wof <- object$run_batch(tmin, tmax, srad, 0, 0, 0, dates, mstart, 0, scol, 0)

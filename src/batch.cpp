@@ -24,7 +24,7 @@ std::vector<double> WofostModel::run_batch(std::vector<double> tmin, std::vector
 	// nc = number of cells 
 	bool varsoils = false;
 	int nsoils = soils.soils.size();
-	if (watlim && (nsoils > 0)) {
+	if (watlim && (nsoils > 1)) {
 		if (nc != soilindex.size()) {
 			Rcpp::Rcout << "bad soil index data" << std::endl;
 			return out;
@@ -33,9 +33,9 @@ std::vector<double> WofostModel::run_batch(std::vector<double> tmin, std::vector
 			Rcpp::Rcout << "bad soil data" << std::endl;
 			return out;
 		}
-		soil = soils.soils[0];
 		varsoils = true;
 	}
+	soil = soils.soils[0];
 	control.output_option = "BATCH";
 	wth.date = date;
 
