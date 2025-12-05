@@ -145,6 +145,11 @@ void WofostModel::initialize() {
 	DOY = doy_from_days(wth.date[time]);
     crop.alive = true;
 
+	// for potential production
+	atm.WIND = 0;
+	atm.VAP = 0;
+	atm.RAIN = 0;		
+
 	soil_initialize();
 	/*
 	if(control.nutrient_limited){
