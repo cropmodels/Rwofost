@@ -69,7 +69,7 @@ Note that there should not be any time gaps between the days in the data.frame
 \references{
 Van Diepen, C.A., J. Wolf, and H van Keulen, 1989. WOFOST: a simulation model of crop production. Soil Use and Management, 5: 16-24
 
-Van Keulen, H. and J. Wolf, 1986. Modelling of agricultural production : weather, soils and crops. \url{http://edepot.wur.nl/168025}
+Van Keulen, H. and J. Wolf, 1986. Modelling of agricultural production : weather, soils and crops. \url{https://edepot.wur.nl/168025}
 }
 
 \examples{

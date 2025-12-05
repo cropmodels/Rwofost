@@ -8,7 +8,8 @@ WOFOST soil parameters
 
 \description{
 This function returns a list with soil parameters for the WOFOST model.
-See this manual \url{https://www.wur.nl/en/show/WOFOST-7.1-User-Manual.htm} for their interpretation.
+See this manual \url{https://swap.wur.nl/Documents/WCC_WOFOST_717_Manual.pdf
+} for their interpretation.
 
 }
 

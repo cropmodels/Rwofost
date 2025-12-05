@@ -6,7 +6,7 @@ function(object, weather, mstart, soils=NULL, soiltypes=NULL, filename="", overw
 	stopifnot(inherits(weather, "SpatRasterDataset"))
 	stopifnot(inherits(mstart, "Date"))
 	if (any(is.na(mstart))) {
-		error("mstart cannot be NA")
+		stop("mstart cannot be NA")
 	}
 	
 	watlim <- object$control$water_limited
@@ -39,10 +39,10 @@ function(object, weather, mstart, soils=NULL, soiltypes=NULL, filename="", overw
 		stop("no dates supplied as argument or with tmin")
 	}
 	dates <- terra::time(weather$tmin)
-	stopifnot(length(dates) == nlyr(weather$tmin))
+	stopifnot(length(dates) == terra::nlyr(weather$tmin))
 	if (any(is.na(dates))) {stop("NA in dates not allowed")}
 	out <- terra::rast(weather)
-	nlyr(out) <- length(mstart)
+	terra::nlyr(out) <- length(mstart)
 	
 	use_raster <- FALSE
 	if (substr(unlist(terra::sources(weather[1])[1]),1,6) == "NETCDF") {
