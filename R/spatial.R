@@ -12,16 +12,17 @@ function(object, weather, mstart, soils=NULL, soiltypes=NULL, filename="", overw
 	watlim <- object$control$water_limited
 	if (watlim) {
 		needed <- c("tmin", "tmax", "srad", "prec", "vapr", "wind")
-		if (is.null(soils)) {
-			scol <- Rwofost:::.makeSoilCollection(list( wofost_soil("ec1") ))
+		if (is.null(soiltypes)) {
+			scol <- .makeSoilCollection(list( wofost_soil("ec1") ))
+			message("no soils provided")
 		} else {
 			stopifnot(inherits(soils, "SpatRaster"))
 			if (!("index" %in% names(soils))) {
 				stop("no layer called 'index' in soils")
 			}	
-			stopifnot(inherits(soiltypes, "list"))
 			terra::compareGeom(weather[1], soils, lyrs=FALSE)
-			scol <- .makeSoilCollection(soiltypes)
+			stopifnot(inherits(soiltypes, "list"))
+			scol <- Rwofost:::.makeSoilCollection(soiltypes)
 		}
 	} else {
 		needed <- c("tmin", "tmax", "srad")
@@ -41,8 +42,8 @@ function(object, weather, mstart, soils=NULL, soiltypes=NULL, filename="", overw
 	dates <- terra::time(weather$tmin)
 	stopifnot(length(dates) == terra::nlyr(weather$tmin))
 	if (any(is.na(dates))) {stop("NA in dates not allowed")}
-	out <- terra::rast(weather)
-	terra::nlyr(out) <- length(mstart)
+	rout <- terra::rast(weather)
+	terra::nlyr(rout) <- length(mstart)
 	
 	use_raster <- FALSE
 	if (substr(unlist(terra::sources(weather[1])[1]),1,6) == "NETCDF") {
@@ -50,14 +51,19 @@ function(object, weather, mstart, soils=NULL, soiltypes=NULL, filename="", overw
 		p <- unlist(terra::sources(weather[1])[1])
 		f <- unlist(strsplit(gsub("NETCDF:\"", "", p), "\""))[1]
 		weather <- lapply(needed, function(i) raster::brick(f, varname=i))
+		#weather <- lapply(needed, function(i) terra::rast(f, i, md=TRUE))
 		names(weather) <- needed
 	}
-	nc <- ncol(out)
+	nc <- ncol(rout)
 	if (!use_raster) terra::readStart(weather)
 
 	wopt=list(...)
 	if (is.null(wopt$names)) wopt$names <- as.character(mstart)
-	b <- terra::writeStart(out, filename, overwrite, wopt=wopt)
+	b <- terra::writeStart(rout, filename, overwrite, wopt=wopt)
+	b <- blocks(rast(weather[[1]]), n=10*6)
+	#nr <- nrow(rout)
+	#b <- list(row=1:nr, nrows=rep(1, nr), n = nr)
+
 	for (i in 1:b$n) {
 		if (use_raster) {
 			tmin <- as.vector(t(raster::getValues(weather$tmin, b$row[i], b$nrows[i])))
@@ -78,6 +84,7 @@ function(object, weather, mstart, soils=NULL, soiltypes=NULL, filename="", overw
 				wind <- as.vector(t(terra::readValues(weather$wind, b$row[i], b$nrows[i], 1, nc, mat=TRUE)))
 			}
 		}
+		tmin[tmin<0] <- 0
 		if (watlim) {
 			if (!is.null(soils)) {
 				sidx <- as.vector(terra::readValues(soils$index, b$row[i], b$nrows[i], 1, nc))
@@ -92,18 +99,17 @@ function(object, weather, mstart, soils=NULL, soiltypes=NULL, filename="", overw
 				}
 				wof <- object$run_batch(tmin, tmax, srad, prec, vapr, wind, dates, mstart, sidx, scol, depth)
 			} else {
-				wof <- object$run_batch(tmin, tmax, srad, prec, vapr, wind, dates, mstart, 0[], scol, 0[])			
+				wof <- object$run_batch(tmin, tmax, srad, prec, vapr, wind, dates, mstart, 0[], scol, 0[])	
 			}
 		} else {
 			wof <- object$run_batch(tmin, tmax, srad, 0, 0, 0, dates, mstart, 0, scol, 0)
 		}
 		
-		terra::writeValues(out, round(wof), b$row[i], b$nrows[i])
+		terra::writeValues(rout, round(wof), b$row[i], b$nrows[i])
 	}
 	if (!use_raster) terra::readStop(weather)
 
-	out <- terra::writeStop(out)
-	return(out)
+	terra::writeStop(rout)
 }
 )
 

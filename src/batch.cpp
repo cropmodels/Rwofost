@@ -50,23 +50,34 @@ std::vector<double> WofostModel::run_batch(std::vector<double> tmin, std::vector
 				if ((sidx < 0) || sidx >= nsoils) {
 					continue;
 				} 
-				soil = soils.soils[sidx-1];
+				soil = soils.soils[sidx];
 				if (depth[i] >= 0) {
 					soil.p.RDMSOL = depth[i];
 				}
 			}
-			wth.vapr = std::vector<double>(vapr.begin()+offset, vapr.begin()+offset+sz);
-			wth.wind = std::vector<double>(wind.begin()+offset, wind.begin()+offset+sz);
-			wth.prec = std::vector<double>(prec.begin()+offset, prec.begin()+offset+sz);
 		}
+		wth.vapr = std::vector<double>(vapr.begin()+offset, vapr.begin()+offset+sz);
+		wth.wind = std::vector<double>(wind.begin()+offset, wind.begin()+offset+sz);
+		wth.prec = std::vector<double>(prec.begin()+offset, prec.begin()+offset+sz);
 		wth.tmin = std::vector<double>(tmin.begin()+offset, tmin.begin()+offset+sz);
 		wth.tmax = std::vector<double>(tmax.begin()+offset, tmax.begin()+offset+sz);
 		wth.srad = std::vector<double>(srad.begin()+offset, srad.begin()+offset+sz);
 		
+		double yield;
 		for (size_t j=0; j<nsim; j++) {
 			control.modelstart = mstart[j];
-			run();
-			double yield = output.values[output.values.size()-1];		
+			try {
+				run();
+			} catch(...) {
+				Rcpp::Rcout << "run fail\n";
+				output.values = {NAN};
+			}
+			try {
+				yield = output.values[output.values.size()-1];		
+			} catch(...) {
+				Rcpp::Rcout << "array fail\n";
+				yield = NAN;
+			}
 			out[j*nc+i] = yield;
 		}
 	}

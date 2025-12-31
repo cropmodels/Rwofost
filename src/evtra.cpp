@@ -21,6 +21,7 @@ SWEAF computes the fraction of easily available soil water between field capacit
 #include "wofost.h"
 #include "SimUtil.h"
 
+//#include "Rcpp.h"
 
 double SWEAF(double ET0, double CGNR){
     double A = 0.76, B = 1.5;
@@ -55,10 +56,13 @@ void WofostModel::EVTRA() {
         crop.TRA  = crop.TRAMX;
     } else {
         //calculation critical soil moisture content
+		
         double SWDEP = SWEAF(atm.ET0, crop.p.DEPNR);
         double SMCR = (1. - SWDEP) * (soil.p.SMFCF - soil.p.SMW) + soil.p.SMW;
         //reduction in transpiration in case of water shortage
         double RFWS = LIMIT(0.,1., (soil.SM - soil.p.SMW) / (SMCR - soil.p.SMW));
+
+//Rcpp::Rcout << SWDEP << " " << SMCR << " " << RFWS << std::endl;
 
         //reduction in transpiration in case of oxygen shortage
         //for non-rice crops and possibly deficient land drainage        
@@ -75,6 +79,7 @@ void WofostModel::EVTRA() {
             double RFOSMX = clamp(0, 1, (soil.p.SM0 - soil.SM)/(soil.p.SM0 - SMAIR));
 			RFOS   = RFOSMX + (1 - DSOS/4) * (1-RFOSMX);
         } 	
+//		Rcpp::Rcout << RFWS << " " << RFOS  << " " << crop.RFTRA << " " << crop.TRAMX << std::endl;
 		crop.RFTRA =  RFWS * RFOS;
         crop.TRA =  crop.RFTRA * crop.TRAMX;
 		crop.TRANRF = crop.TRA / crop.TRAMX;		

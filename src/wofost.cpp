@@ -19,6 +19,14 @@ bool WofostModel::weather_step() {
 		messages.push_back("reached end of weather data");
 		return false;
 	} else {
+		if (std::isnan(wth.tmin[time]) || std::isnan(wth.tmax[time]) || 
+				std::isnan(wth.prec[time]) || std::isnan(wth.srad[time]) || 
+				std::isnan(wth.vapr[time]) || std::isnan(wth.wind[time])) {
+			fatalError = true;
+			messages.push_back("missing value in weather data");
+			return false;
+		}
+		
 		
 		atm.TMIN = wth.tmin[time];
 		atm.TMAX = wth.tmax[time];
