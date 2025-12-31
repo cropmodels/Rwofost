@@ -101,7 +101,7 @@ addSMTAB <- function(x) {
 	tab[2,] <- tab[2,] / scale
 	shift <- x$SMTAB[2,1] - tab[2,1]
 	tab[2,] <- tab[2,] + shift
-    c(list(SMTAB=tab, x)
+    c(list(SMTAB=tab, x))
 
 }
 
