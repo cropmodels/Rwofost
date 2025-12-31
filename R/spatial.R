@@ -99,7 +99,7 @@ function(object, weather, mstart, soils=NULL, filename="", overwrite=FALSE, ...)
 			depth[is.na(depth)] <- -99
 			wof <- object$run_batch(tmin, tmax, srad, prec, vapr, wind, dates, mstart, sidx, scol, depth, elv, lat)
 		} else {
-			wof <- object$run_batch(tmin, tmax, srad, 0, 0, 0, dates, mstart, 0, scol, 0,  elevation, latitude)
+			wof2 <- object$run_batch(tmin, tmax, srad, 0, 0, 0, dates, mstart, 0, scol, 0, elv, lat)
 		}
 		
 		terra::writeValues(rout, round(wof), b$row[i], b$nrows[i])
