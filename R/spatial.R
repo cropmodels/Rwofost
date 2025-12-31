@@ -1,7 +1,7 @@
 	
 
 setMethod("predict", signature("Rcpp_WofostModel"), 
-function(object, weather, mstart, soils=NULL, filename="", overwrite=FALSE, ...)  {
+function(object, weather, mstart, soils=NULL, soiltypes, filename="", overwrite=FALSE, ...)  {
 
 	stopifnot(inherits(weather, "SpatRasterDataset"))
 	stopifnot(inherits(mstart, "Date"))
@@ -10,8 +10,6 @@ function(object, weather, mstart, soils=NULL, filename="", overwrite=FALSE, ...)
 	}
 
 	stopifnot(c("soil", "soildepth", "latitude", "elevation") %in% names(soils))
-	soiltypes <- levels(soils$soil)[[1]][,2]
-	soiltypes <- lapply(soiltypes, jsonlite::fromJSON)
 
 	watlim <- object$control$water_limited
 	if (watlim) {
