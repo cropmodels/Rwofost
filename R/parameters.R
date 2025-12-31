@@ -34,15 +34,15 @@
 		f <- list.files(system.file("wofost/soil", package="Rwofost"), full.names=TRUE)
 	}
 	x <- gsub(".ini", "", basename(f))
-	y <- rep("", 5*ceiling((length(x))/5))
-	y[1:length(x)] <- x
-	y <- matrix(y, ncol=5, byrow=TRUE)
-	y <- apply(y, 1, function(i)paste(i, collapse=", "))
-	y <- paste(gsub(", ,", "", y), collapse="\n")
 	if (error) {
-		stop(paste(group, "not available. Choose one of:\n"), y)
+		y <- rep("", 5*ceiling((length(x))/5))
+		y[1:length(x)] <- x
+		y <- matrix(y, ncol=5, byrow=TRUE)
+		y <- apply(y, 1, function(i)paste(i, collapse=", "))
+		y <- paste(gsub(", ,", "", y), collapse="\n")
+		stop(paste(group, "not available. Choose one of:\n"), y, "\n")
 	} 
-	return(y)
+	return(x)
 }
 
 
@@ -92,6 +92,19 @@ wofost_control <- function(filename="") {
 }
 
 
+
+addSMTAB <- function(x) {
+
+	s <- wofost_soil("ec3")
+	scale <- (s$SM0 - s$SMW) / (x$SM0 - x$SMW)
+	tab <- s$SMTAB
+	tab[2,] <- tab[2,] / scale
+	shift <- x$SMTAB[2,1] - tab[2,1]
+	tab[2,] <- tab[2,] + shift
+    c(list(SMTAB=tab, x)
+
+}
+
 wofost_soil <- function(name="") {
 
 	if (missing(name)) {
@@ -105,6 +118,9 @@ wofost_soil <- function(name="") {
 	if (file.exists(name)) {
 		ini <- .readIniFile(name)
 		lst <- .getNumLst(ini)
+		#if (is.null(lst$SMTAB)) {
+		#	lst <- addSMTAB(lst)
+		#}
 		return(lst)
 	}
 
@@ -115,6 +131,9 @@ wofost_soil <- function(name="") {
 		ini <- .readIniFile(f[i])
 		ini <- ini[ini[,2] %in% .soil_pars, ]
 		lst <- .getNumLst(ini)
+		#if (is.null(lst$SMTAB)) {
+		#	lst <- addSMTAB(lst)
+		#}
 		return(lst)
 	} else {
 		.notavailable("soil")

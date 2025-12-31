@@ -34,7 +34,7 @@ IFUNRN  I*4  flag indicating the way to calculate the                   I
 SSI     R*4  initial surface storage                            cm      I
 SMLIM   R*4  max. initial soil moisture in topsoil              cm      I
 SSMAX   R*4  maximum surface storage                            cm      I
-WAV     R*4  initial (at emergence) amount of water in excess of        I
+WAV     R*4  initial amount of water in excess of        I
              wilting point, but not exceeding field capacity    cm
 NOTINF  R*4  if FUNRAI=0 non-infiltrating fraction of rainfall          I
              if FUNRAI=1 maximum non-infiltrating fraction

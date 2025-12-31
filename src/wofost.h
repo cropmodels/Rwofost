@@ -40,6 +40,7 @@ public:
 	bool IOXWL = false;  //oxygen limitation
 	//int	IPRODL, IWB; // water limited (1) or potential (0)
 	bool water_limited = false; 
+	bool cold_limited = false;
 	// nutrient_limited = false;
 	//std::vector<double> N_amount, P_amount, K_amount;
 	//std::vector<long> NPKdates;
@@ -67,9 +68,10 @@ public:
 	virtual ~WofostCropParameters(){}
     bool IAIRDU = false; // airducts present (true for rice)
 	int IDSL;
-	double killTMP = -50;
 	double DVSEND = 2; // now fixed
 	double DVSI = 0;
+	double TCOLD1, TCOLD2;
+
 	double DLO, DLC, TSUM1, TSUM2, TDWI, RGRLAI, SPA, SPAN, TBASE;
 	double CVL, CVO, CVR, CVS, Q10, RML, RMO, RMR, RMS, PERDL, CFET, DEPNR, RDMCR, RRI, RDI;
 	double LAIEM;
@@ -377,7 +379,8 @@ public:
 	std::vector<double> run_batch(std::vector<double> tmin, std::vector<double> tmax, 
 		std::vector<double> srad, std::vector<double> prec, std::vector<double> vapr, 
 		std::vector<double> wind, std::vector<long> date, std::vector<long> mstart, 
-		std::vector<int> soilindex, WofostSoilCollection soils, std::vector<double> depth);
+		std::vector<int> soilindex, WofostSoilCollection soils, std::vector<double> depth,
+		std::vector<double> elevation, std::vector<double> latitude);
 };
 
 

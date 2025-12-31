@@ -6,7 +6,7 @@ Version: 0.8-8
 Date: 2025-12-30
 LinkingTo: Rcpp
 Imports: meteor, methods (>= 0.2-2), Rcpp (>= 0.12.4)
-Suggests: terra, raster
+Suggests: terra, raster, jsonlite
 Depends: R (>= 3.5.0)
 URL: https://CRAN.R-project.org/package=Rwofost
 BugReports: https://github.com/cropmodels/Rwofost/issues

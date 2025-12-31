@@ -9,7 +9,7 @@ June 2020
 
 #include "Rcpp.h"
 
-std::vector<double> WofostModel::run_batch(std::vector<double> tmin, std::vector<double> tmax, std::vector<double> srad, std::vector<double> prec, std::vector<double> vapr, std::vector<double> wind, std::vector<long> date, std::vector<long> mstart, std::vector<int> soilindex, WofostSoilCollection soils, std::vector<double> depth) {
+std::vector<double> WofostModel::run_batch(std::vector<double> tmin, std::vector<double> tmax, std::vector<double> srad, std::vector<double> prec, std::vector<double> vapr, std::vector<double> wind, std::vector<long> date, std::vector<long> mstart, std::vector<int> soilindex, WofostSoilCollection soils, std::vector<double> depth, std::vector<double> elevation, std::vector<double> latitude) {
 
 
 	bool watlim = control.water_limited;
@@ -40,6 +40,9 @@ std::vector<double> WofostModel::run_batch(std::vector<double> tmin, std::vector
 	wth.date = date;
 
 	for (size_t i=0; i<nc; i++) {
+		control.latitude=latitude[i];
+		control.elevation=elevation[i];
+		
 		size_t offset = sz * i;
 		if (std::isnan(tmin[offset])) {
 			continue;

@@ -23,7 +23,7 @@ wofost_crop(name="", describe=FALSE)
 \value{ list }
 
 \references{
-van Heemst
+van Heemst, H., 1988. Plant data values required for simple and universal simulation models: review and bibliography. Simulation reports CABO-TT. Wageningen.
 }
 
 \seealso{ \code{\link{wofost}} }
