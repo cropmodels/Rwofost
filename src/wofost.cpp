@@ -27,8 +27,8 @@ bool WofostModel::weather_step() {
 			return false;
 		}
 		
-		
 		atm.TMIN = wth.tmin[time];
+				
 		atm.TMAX = wth.tmax[time];
 		atm.TEMP  = (atm.TMIN + atm.TMAX) / 2.;
 		atm.DTEMP = (atm.TMAX + atm.TEMP) / 2.;
@@ -98,6 +98,7 @@ void WofostModel::initialize() {
 		std::string m = "no weather data";
 	    messages.push_back(m);
 	    fatalError = true;
+		return;
 	}
 
 
@@ -326,6 +327,8 @@ void WofostModel::run() {
 
 		if (! weather_step()) break;
 		crop_rates();
+		//if (!crop.alive) break;
+				
 		//if (control.nutrient_limited){
 		//	npk_soil_dynamics_rates();
 		//} else {

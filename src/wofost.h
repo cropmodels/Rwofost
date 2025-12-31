@@ -67,6 +67,7 @@ public:
 	virtual ~WofostCropParameters(){}
     bool IAIRDU = false; // airducts present (true for rice)
 	int IDSL;
+	double killTMP = -50;
 	double DVSEND = 2; // now fixed
 	double DVSI = 0;
 	double DLO, DLC, TSUM1, TSUM2, TDWI, RGRLAI, SPA, SPAN, TBASE;

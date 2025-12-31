@@ -150,6 +150,14 @@ void WofostModel::crop_rates() {
 	crop.TMINRA = accumulate(crop.TMNSAV.begin(), crop.TMNSAV.end(), 0.0) / crop.TMNSAV.size(); 
 */
 
+
+//	if (atm.TMIN < crop.p.killTMP) {
+//		messages.push_back("crop died from low temperature stress");
+//		crop.alive = false;
+//		return;
+//	}
+
+
 	std::move(crop.TMNSAV.begin()+1, crop.TMNSAV.end(), crop.TMNSAV.begin());
     crop.TMNSAV[6] = atm.TMIN;
     crop.TMINRA = 0.;
@@ -465,4 +473,4 @@ void WofostModel::crop_states() {
 		crop.alive = false;
 	}
 }
-
+		

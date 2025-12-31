@@ -60,9 +60,9 @@ function(object, weather, mstart, soils=NULL, soiltypes=NULL, filename="", overw
 	wopt=list(...)
 	if (is.null(wopt$names)) wopt$names <- as.character(mstart)
 	b <- terra::writeStart(rout, filename, overwrite, wopt=wopt)
-	b <- blocks(rast(weather[[1]]), n=10*6)
-	#nr <- nrow(rout)
-	#b <- list(row=1:nr, nrows=rep(1, nr), n = nr)
+	#b <- blocks(rast(weather[[1]]), n=10*6)
+	nr <- nrow(rout)
+	b <- list(row=1:nr, nrows=rep(1, nr), n = nr)
 
 	for (i in 1:b$n) {
 		if (use_raster) {
@@ -84,7 +84,6 @@ function(object, weather, mstart, soils=NULL, soiltypes=NULL, filename="", overw
 				wind <- as.vector(t(terra::readValues(weather$wind, b$row[i], b$nrows[i], 1, nc, mat=TRUE)))
 			}
 		}
-		tmin[tmin<0] <- 0
 		if (watlim) {
 			if (!is.null(soils)) {
 				sidx <- as.vector(terra::readValues(soils$index, b$row[i], b$nrows[i], 1, nc))
