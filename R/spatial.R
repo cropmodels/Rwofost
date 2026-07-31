@@ -64,7 +64,7 @@ function(object, weather, mstart, soils=NULL, soiltypes, filename="", overwrite=
 	b <- terra::writeStart(rout, filename, overwrite, wopt=wopt)
 	#b <- blocks(rast(weather[[1]]), n=10*6)
 	nr <- nrow(rout)
-	time(rout) <- mstart
+	terra::time(rout) <- mstart
 	
 	b <- list(row=1:nr, nrows=rep(1, nr), n = nr)
 

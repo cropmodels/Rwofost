@@ -13,8 +13,6 @@
 \description{
 This package provides an R interface to a C++ implementation of the WOFOST crop growth simulation model.
 
-This is the first release. Please consider this version unstable. It needs more work to simplify its use.  
-
 More detailed documentation is also forthcoming, but there is ample general documentation available on-line. The documentation for the FORTRAN version 7.1 is most applicable. For example, \href{https://swap.wur.nl/Documents/WCC_WOFOST_717_Manual.pdf
 }{this manual}.
 

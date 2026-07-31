@@ -60,7 +60,7 @@ inline double AFGEN(std::vector<double> xy, double x) {
 		y = xy[n-1];
 	} else {
 		for(int i=2; i<n; i=i+2) {
-			if (xy[i] > x) {
+			if (xy[i] >= x) {
 				double slope = (xy[i+1] - xy[i-1]) / (xy[i] - xy[i-2]);
 				y = xy[i-1] + (x - xy[i-2]) * slope;
 				break;
@@ -81,7 +81,7 @@ inline double AFGEN2(const std::vector<double> &xy, const double &x) {
 		y = xy[n-1];
 	} else {
 		for (size_t i=1; i<hn; i++) {
-			if (x < xy[i]) {
+			if (x <= xy[i]) {
 				double slope = (xy[i+hn] - xy[i+hn-1]) / (xy[i] - xy[i-1]);
 				y = xy[i+hn] + (x - xy[i]) * slope;
 				break;
@@ -96,13 +96,13 @@ inline double AFGEN2(const std::vector<double> &xy, const double &x) {
 inline double LINT(std::vector<std::vector<double> > xy, double x) {
   int n = xy.size();
   double y = -1;
-  if (x < xy[0][0] ) {
+  if (x <= xy[0][0] ) {
     y = xy[0][1];
-  } else if (x > xy[n-1][0]) {
+  } else if (x >= xy[n-1][0]) {
     y = xy[n-1][1];
   } else {
     for(int i=1; i<n; i++) {
-      if (xy[i][0] > x) {
+      if (xy[i][0] >= x) {
         double slope = (xy[i][1] - xy[i-1][1]) / (xy[i][0] - xy[i-1][0]);
         y = xy[i-1][1] + (x - xy[i-1][0]) * slope;
         break;
@@ -116,13 +116,13 @@ inline double LINT(std::vector<std::vector<double> > xy, double x) {
 inline double approx(std::vector<std::vector<double> > xy, double x) {
   int n = xy.size();
   double y = -1;
-  if (x < xy[0][0] ) {
+  if (x <= xy[0][0] ) {
     y = xy[0][1];
-  } else if (x > xy[n-1][0]) {
+  } else if (x >= xy[n-1][0]) {
     y = xy[n-1][1];
   } else {
     for(int i=1; i<n; i++) {
-      if (xy[i][0] > x) {
+      if (xy[i][0] >= x) {
         double slope = (xy[i][1] - xy[i-1][1]) / (xy[i][0] - xy[i-1][0]);
         y = xy[i-1][1] + (x - xy[i-1][0]) * slope;
         break;
@@ -145,7 +145,7 @@ inline double approx(std::vector<double> xy, double x) {
 		y = Y[n-1];
 	} else {
 		for(int i=1; i<n; i++) {
-			if (X[i] > x) {
+			if (X[i] >= x) {
 				double slope = (Y[i] - Y[i-1]) / (X[i] - X[i-1]);
 				y = Y[i-1] + (x - X[i-1]) * slope;
 				break;

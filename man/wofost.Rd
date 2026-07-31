@@ -84,7 +84,7 @@ plot(d[,"step"], d[, "LAI"])
 
 ## Another example
 crop <- wofost_crop("rapeseed_1001")
-soil <- wofost_soil("soil_5")
+soil <- wofost_soil("ec5")
 contr$modelstart <- as.Date("1977-01-01")
 
 rp <- wofost(crop, w, soil, contr)

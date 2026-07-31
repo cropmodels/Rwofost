@@ -37,7 +37,7 @@ bool WofostModel::weather_step() {
 //		if (control.water_limited) {
 			atm.WIND = wth.wind[time];
 			atm.VAP = wth.vapr[time] * 10;
-			atm.RAIN = wth.prec[time] / 10 ; // cm !
+			atm.RAIN = wth.prec[time] / 10. ; // cm !
 //		}
 	
 
