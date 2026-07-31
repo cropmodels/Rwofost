@@ -3,10 +3,7 @@ This repository has a C++ implemntation of the WOFOST crop growth simulation mod
 
 You can install the R package from CRAN with `install.packages("Rwofost")`
 
-To install the *development version* you can do 
+The easiest way to use the *development* version is to install it from the R-universe, like this:
 
-`install.packages("meteor")`
+install.packages('RWofost', repos='https://rspatial.r-universe.dev')
 
-`remotes::install_github("cropmodels/Rwofost")`
-
-Note that if you are on windows, you must have [Rtools](https://cran.r-project.org/bin/windows/Rtools/) installed, or install it first to be able to compile and install this package. 
