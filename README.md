@@ -5,5 +5,6 @@ You can install the R package from CRAN with `install.packages("Rwofost")`
 
 The easiest way to use the *development* version is to install it from the R-universe, like this:
 
-install.packages('RWofost', repos='https://rspatial.r-universe.dev')
-
+```
+install.packages('RWofost', repos='https://cropmodels.r-universe.dev')
+```
